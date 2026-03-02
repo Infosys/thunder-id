@@ -34,11 +34,12 @@ func (e *AuthnProviderError) Error() string {
 
 // Error codes.
 const (
-	ErrorCodeSystemError          ErrorCode = "AUP-0001"
-	ErrorCodeAuthenticationFailed ErrorCode = "AUP-0002"
-	ErrorCodeUserNotFound         ErrorCode = "AUP-0003"
-	ErrorCodeInvalidToken         ErrorCode = "AUP-0004"
-	ErrorCodeNotImplemented       ErrorCode = "AUP-0005"
+	ErrorCodeSystemError                  ErrorCode = "AUP-0001"
+	ErrorCodeAuthenticationFailed         ErrorCode = "AUP-0002"
+	ErrorCodeUserNotFound                 ErrorCode = "AUP-0003"
+	ErrorCodeInvalidToken                 ErrorCode = "AUP-0004"
+	ErrorCodeNotImplemented               ErrorCode = "AUP-0005"
+	ErrorCodeMissingOrInvalidIndividualID ErrorCode = "AUP-0006"
 )
 
 // NewError creates a new authentication provider error.
