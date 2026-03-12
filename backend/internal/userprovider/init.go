@@ -29,6 +29,9 @@ func InitializeUserProvider(userSvc user.UserServiceInterface) UserProviderInter
 	switch userProviderConfig.Type {
 	case "disabled":
 		return initializeDisabledUserProvider()
+	case "mosip":
+		// user provider is disabled if authn provider is mosip
+		return initializeDisabledUserProvider()
 	default:
 		return initializeDefaultUserProvider(userSvc)
 	}

@@ -2,6 +2,11 @@ server:
   hostname: "localhost"
   port: 8090
 
+gate_client:
+  login_path: "/login"
+  scheme: "http"
+  port: 3000
+
 tls:
   min_version: "1.2"
   cert_file: "repository/resources/security/server.cert"
@@ -56,3 +61,6 @@ passkey:
 consent:
   enabled: true
   base_url: "http://localhost:9090/api/v1"
+  
+authn_provider:
+  type: "mosip"

@@ -36,7 +36,7 @@ func InitializeAuthnProvider(userSvc user.UserServiceInterface) AuthnProviderInt
 	case "mosip":
 		return initializeMOSIPAuthnProvider()
 	default:
-		return initializeMOSIPAuthnProvider() //initializeDefaultAuthnProvider(userSvc)
+		return initializeDefaultAuthnProvider(userSvc)
 	}
 }
 

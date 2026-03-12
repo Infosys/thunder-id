@@ -44,12 +44,14 @@ import (
 	"time"
 
 	systemhttp "github.com/asgardeo/thunder/internal/system/http"
+
 	"software.sslmate.com/src/go-pkcs12"
 )
 
 // mosipAuthnProvider is an authentication provider that communicates with MOSIP.
 type mosipAuthnProvider struct {
 	httpClient systemhttp.HTTPClientInterface
+	logger     *log.Logger
 }
 
 // newMOSIPAuthnProvider creates a new REST authentication provider.
@@ -174,25 +176,42 @@ func (m *mosipAuthnProvider) Authenticate(ctx context.Context, identifiers map[s
 	if err != nil {
 		return nil, NewError(ErrorCodeSystemError, "failed to get request signature", err.Error())
 	}
-	return m.callKycAuthEndpoint(requestBytes, requestSignature, relyingPartyId, clientId, claimsMetadataRequired, authHeaderValue)
+
+	authResult, err := m.callKycAuthEndpoint(requestBytes, requestSignature, relyingPartyId, clientId, claimsMetadataRequired, authHeaderValue)
+	if err != nil {
+		if authnErr, ok := err.(*AuthnProviderError); ok {
+			return nil, authnErr
+		}
+		// Optionally handle other error types or wrap as needed
+		return nil, &AuthnProviderError{Code: ErrorCodeSystemError, Message: "unexpected error", Description: err.Error()}
+	}
+
+	authResult.Token = strings.Join([]string{authResult.Token, individualId}, "||") // Clean up token if needed
+	return authResult, nil
 }
 
 // GetAttributes implements [AuthnProviderInterface].
 func (m *mosipAuthnProvider) GetAttributes(ctx context.Context, token string, requestedAttributes *RequestedAttributes, metadata *GetAttributesMetadata) (*GetAttributesResult, *AuthnProviderError) {
+	username := strings.Split(token, "||")[1] // Extract username from token (assuming format "kycToken||username")
+	kycToken := strings.Split(token, "||")[0] // Extract KYC token from token (assuming format "kycToken||username")
+	consentedAttributes := []string{"sub"}
+
+	if requestedAttributes != nil && len(requestedAttributes.Attributes) > 0 {
+		for attr := range requestedAttributes.Attributes {
+			consentedAttributes = append(consentedAttributes, attr)
+		}
+	}
+
 	idaKycExchangeRequest := &IdaKycExchangeRequest{
-		ID:            "mosip.identity.kycexchange",
-		Version:       "1.0",
-		RequestTime:   GetUTCDateTime(),
-		TransactionID: "1234567890", // TODO generate unique transaction ID as needed
-		KycToken:      token,
-		ConsentObtained: []string{
-			"sub",
-			"name",
-			"email",
-		},
-		Locales:      []string{"eng"},
-		RespType:     "JWT",
-		IndividualId: "encrypted:base64stringhere==",
+		ID:              "mosip.identity.kycexchange",
+		Version:         "1.0",
+		RequestTime:     GetUTCDateTime(),
+		TransactionID:   "1234567890", // TODO generate unique transaction ID as needed
+		KycToken:        kycToken,
+		ConsentObtained: consentedAttributes, // assuming consent is obtained if there are requested attributes
+		Locales:         []string{"eng"},
+		RespType:        "JWT",
+		IndividualId:    username,
 	}
 
 	requestBytes, err := json.Marshal(idaKycExchangeRequest)
@@ -677,14 +696,17 @@ func (m *mosipAuthnProvider) callKycExchangeEndpoint(
 		return nil, NewError(ErrorCodeAuthenticationFailed, "failed to parse IdaKycExchangeResponseWrapper", err.Error())
 	}
 
+	log.Printf("IDA KYC Exchange response wrapper: %+v", wrapper)
+
 	// Success path
 	if wrapper.Response != nil && wrapper.Response.EncryptedKyc != "" {
+		log.Printf("IDA KYC Exchange Response.EncryptedKyc: %+v", wrapper.Response.EncryptedKyc)
+		userattributes, _ := decodeJWTUnsafe(wrapper.Response.EncryptedKyc)
+		convertedAttributes := convertToAttributeResponseMap(userattributes)
 		return &GetAttributesResult{
 			UserID: "",
 			AttributesResponse: &AttributesResponse{
-				Attributes: map[string]*AttributeResponse{
-					"encryptedKyc": {Value: wrapper.Response.EncryptedKyc},
-				},
+				Attributes: convertedAttributes,
 			},
 		}, nil
 	}
@@ -703,6 +725,39 @@ func (m *mosipAuthnProvider) callKycExchangeEndpoint(
 	// Take first error (common pattern)
 	firstErr := wrapper.Errors[0]
 	return nil, NewError(ErrorCodeAuthenticationFailed, firstErr.ErrorMessage, firstErr.ActionMessage)
+}
+
+func decodeJWTUnsafe(token string) (map[string]interface{}, error) {
+	parts := strings.Split(token, ".")
+	if len(parts) != 3 {
+		return nil, fmt.Errorf("invalid JWT format")
+	}
+
+	payload := parts[1]
+	// Fix padding if needed
+	payload += strings.Repeat("=", (4-len(payload)%4)%4)
+
+	decoded, err := base64.URLEncoding.DecodeString(payload)
+	if err != nil {
+		return nil, err
+	}
+
+	var claims map[string]interface{}
+	if err := json.Unmarshal(decoded, &claims); err != nil {
+		return nil, err
+	}
+
+	return claims, nil
+}
+
+func convertToAttributeResponseMap(input map[string]interface{}) map[string]*AttributeResponse {
+	result := make(map[string]*AttributeResponse)
+	for key, value := range input {
+		result[key] = &AttributeResponse{
+			Value: value,
+		}
+	}
+	return result
 }
 
 //---------------------------------------------------------------------------------------------------------
