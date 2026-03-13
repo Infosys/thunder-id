@@ -58,9 +58,9 @@ passkey:
   allowed_origins:
     - "https://localhost:8090"
 
-consent:
-  enabled: true
-  base_url: "http://localhost:9090/api/v1"
-  
 authn_provider:
   type: "mosip"
+  
+consent:
+  enabled: true
+  base_url: "http://localhost:4000/api/v1"

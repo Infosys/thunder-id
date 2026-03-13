@@ -34,7 +34,7 @@ func InitializeAuthnProvider(userSvc user.UserServiceInterface) AuthnProviderInt
 	case "rest":
 		return initializeRestAuthnProvider()
 	case "mosip":
-		return initializeMOSIPAuthnProvider()
+		return InitializeMOSIPAuthnProvider()
 	default:
 		return initializeDefaultAuthnProvider(userSvc)
 	}
@@ -61,13 +61,13 @@ func initializeRestAuthnProvider() AuthnProviderInterface {
 	return newRestAuthnProvider(baseURL, apiKey, httpClient)
 }
 
-// initializeMOSIPAuthnProvider initializes the MOSIP authentication provider.
-func initializeMOSIPAuthnProvider() AuthnProviderInterface {
+// InitializeMOSIPAuthnProvider initializes the MOSIP authentication provider.
+func InitializeMOSIPAuthnProvider() *MOSIPAuthnProvider {
 	authnProviderConfig := config.GetThunderRuntime().Config.AuthnProvider
 	timeout := time.Duration(authnProviderConfig.Rest.Timeout) * time.Second
 	if timeout == 0 {
 		timeout = 10 * time.Second
 	}
 	httpClient := systemhttp.NewHTTPClientWithTimeout(timeout)
-	return newMOSIPAuthnProvider(httpClient)
+	return NewMOSIPAuthnProvider(httpClient)
 }

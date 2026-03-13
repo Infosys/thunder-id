@@ -22,8 +22,9 @@ import "github.com/asgardeo/thunder/internal/flow/common"
 
 // Executor name constants
 const (
-	ExecutorNameBasicAuth = "BasicAuthExecutor"
-	ExecutorNameSMSAuth   = "SMSOTPAuthExecutor"
+	ExecutorNameBasicAuth      = "BasicAuthExecutor"
+	ExecutorNameSMSAuth        = "SMSOTPAuthExecutor"
+	ExecutorNameMosipIDSendOTP = "MosipIDSendOTPExecutor"
 	// nolint:gosec // G101: This is an executor name, not a credential
 	ExecutorNamePasskeyAuth                  = "PasskeyAuthExecutor"
 	ExecutorNameOAuth                        = "OAuthExecutor"

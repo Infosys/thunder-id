@@ -48,22 +48,22 @@ import (
 	"software.sslmate.com/src/go-pkcs12"
 )
 
-// mosipAuthnProvider is an authentication provider that communicates with MOSIP.
-type mosipAuthnProvider struct {
+// MOSIPAuthnProvider is an authentication provider that communicates with MOSIP.
+type MOSIPAuthnProvider struct {
 	httpClient systemhttp.HTTPClientInterface
 	logger     *log.Logger
 }
 
-// newMOSIPAuthnProvider creates a new REST authentication provider.
-func newMOSIPAuthnProvider(httpClient systemhttp.HTTPClientInterface) AuthnProviderInterface {
-	return &mosipAuthnProvider{
+// NewMOSIPAuthnProvider creates a new REST authentication provider.
+func NewMOSIPAuthnProvider(httpClient systemhttp.HTTPClientInterface) *MOSIPAuthnProvider {
+	return &MOSIPAuthnProvider{
 		httpClient: httpClient,
 	}
 }
 
 //---------------------------------------------------------------------------------------------------------
 
-func (m *mosipAuthnProvider) SendOTP(ctx context.Context, identifiers map[string]interface{}, metadata *AuthnMetadata) (*SendOTPResult, *AuthnProviderError) {
+func (m *MOSIPAuthnProvider) SendOTP(ctx context.Context, identifiers map[string]interface{}, metadata *AuthnMetadata) (*SendOTPResult, *AuthnProviderError) {
 
 	transactionId := "1234567890" // TODO generate unique transaction ID as needed
 	individualId, ok := identifiers["username"].(string)
@@ -95,7 +95,7 @@ func (m *mosipAuthnProvider) SendOTP(ctx context.Context, identifiers map[string
 }
 
 // Authenticate implements [AuthnProviderInterface].
-func (m *mosipAuthnProvider) Authenticate(ctx context.Context, identifiers map[string]interface{}, credentials map[string]interface{}, metadata *AuthnMetadata) (*AuthnResult, *AuthnProviderError) {
+func (m *MOSIPAuthnProvider) Authenticate(ctx context.Context, identifiers map[string]interface{}, credentials map[string]interface{}, metadata *AuthnMetadata) (*AuthnResult, *AuthnProviderError) {
 	authHeaderValue := "Authorization"
 	relyingPartyId := "partnernameforautomationesi-372269"
 	clientId := "I6eXdnnLGGj2A2BcTL-jug_0ujpnQXlBpKAbBCkGWEM"
@@ -177,13 +177,9 @@ func (m *mosipAuthnProvider) Authenticate(ctx context.Context, identifiers map[s
 		return nil, NewError(ErrorCodeSystemError, "failed to get request signature", err.Error())
 	}
 
-	authResult, err := m.callKycAuthEndpoint(requestBytes, requestSignature, relyingPartyId, clientId, claimsMetadataRequired, authHeaderValue)
-	if err != nil {
-		if authnErr, ok := err.(*AuthnProviderError); ok {
-			return nil, authnErr
-		}
-		// Optionally handle other error types or wrap as needed
-		return nil, &AuthnProviderError{Code: ErrorCodeSystemError, Message: "unexpected error", Description: err.Error()}
+	authResult, authnErr := m.callKycAuthEndpoint(requestBytes, requestSignature, relyingPartyId, clientId, claimsMetadataRequired, authHeaderValue)
+	if authnErr != nil {
+		return nil, authnErr
 	}
 
 	authResult.Token = strings.Join([]string{authResult.Token, individualId}, "||") // Clean up token if needed
@@ -191,7 +187,7 @@ func (m *mosipAuthnProvider) Authenticate(ctx context.Context, identifiers map[s
 }
 
 // GetAttributes implements [AuthnProviderInterface].
-func (m *mosipAuthnProvider) GetAttributes(ctx context.Context, token string, requestedAttributes *RequestedAttributes, metadata *GetAttributesMetadata) (*GetAttributesResult, *AuthnProviderError) {
+func (m *MOSIPAuthnProvider) GetAttributes(ctx context.Context, token string, requestedAttributes *RequestedAttributes, metadata *GetAttributesMetadata) (*GetAttributesResult, *AuthnProviderError) {
 	username := strings.Split(token, "||")[1] // Extract username from token (assuming format "kycToken||username")
 	kycToken := strings.Split(token, "||")[0] // Extract KYC token from token (assuming format "kycToken||username")
 	consentedAttributes := []string{"sub"}
@@ -332,7 +328,7 @@ func SymmetricEncrypt(plaintext []byte, key []byte) (encrypted []byte, err error
 	return output, nil
 }
 
-func (m *mosipAuthnProvider) fetchIDAPartnerCertificate() (*x509.Certificate, error) {
+func (m *MOSIPAuthnProvider) fetchIDAPartnerCertificate() (*x509.Certificate, error) {
 	idaPartnerCertificateUrl := "https://api-internal.collab.mosip.net/mosip-certs/ida-partner.cer"
 	req, err := http.NewRequest(http.MethodGet, idaPartnerCertificateUrl, nil)
 	if err != nil {
@@ -498,7 +494,7 @@ func CreateAndSignJWTWithX5C(
 	return headerB64 + ".." + sigB64, nil
 }
 
-func (m *mosipAuthnProvider) callSendOtpEndpoint(
+func (m *MOSIPAuthnProvider) callSendOtpEndpoint(
 	requestBody []byte, // already marshaled JSON of IdaKycAuthRequest
 	signature string, // from helperService.getRequestSignature(requestBody)
 	relyingPartyId string,
@@ -572,7 +568,7 @@ func (m *mosipAuthnProvider) callSendOtpEndpoint(
 }
 
 // PerformKycAuth sends the KYC auth request to IDA and processes the response
-func (m *mosipAuthnProvider) callKycAuthEndpoint(
+func (m *MOSIPAuthnProvider) callKycAuthEndpoint(
 	requestBody []byte, // already marshaled JSON of IdaKycAuthRequest
 	signature string, // from helperService.getRequestSignature(requestBody)
 	relyingPartyId string,
@@ -647,7 +643,7 @@ func (m *mosipAuthnProvider) callKycAuthEndpoint(
 }
 
 // PerformKycExchange sends the KYC exchange request to IDA and processes the response
-func (m *mosipAuthnProvider) callKycExchangeEndpoint(
+func (m *MOSIPAuthnProvider) callKycExchangeEndpoint(
 	requestBody []byte,
 	signature string,
 	relyingPartyId string,

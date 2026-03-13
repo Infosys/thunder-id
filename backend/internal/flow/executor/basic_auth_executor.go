@@ -21,7 +21,6 @@
 package executor
 
 import (
-	"encoding/json"
 	"errors"
 
 	authncm "github.com/asgardeo/thunder/internal/authn/common"
@@ -205,22 +204,22 @@ func (b *basicAuthExecutor) getAuthenticatedUser(ctx *core.NodeContext,
 
 	// Try to retrieve the user and get the attributes
 	userAttributes := map[string]interface{}{}
-	user, err := b.userProvider.GetUser(authnResult.UserID)
+	// user, err := b.userProvider.GetUser(authnResult.UserID)
 
-	if err != nil {
-		if err.Code != userprovider.ErrorCodeNotImplemented {
-			logger.Error("Failed to get user attributes", log.Error(err))
-			return nil, errors.New("failed to get user attributes")
-		}
-		logger.Debug("User provider is not implemented. User attributes will be empty.")
-	}
+	// if err != nil {
+	// 	if err.Code != userprovider.ErrorCodeNotImplemented {
+	// 		logger.Error("Failed to get user attributes", log.Error(err))
+	// 		return nil, errors.New("failed to get user attributes")
+	// 	}
+	// 	logger.Debug("User provider is not implemented. User attributes will be empty.")
+	// }
 
-	if err == nil && user != nil {
-		if err := json.Unmarshal(user.Attributes, &userAttributes); err != nil {
-			logger.Error("Failed to unmarshal user attributes", log.Error(err))
-			return nil, errors.New("failed to unmarshal user attributes")
-		}
-	}
+	// if err == nil && user != nil {
+	// 	if err := json.Unmarshal(user.Attributes, &userAttributes); err != nil {
+	// 		logger.Error("Failed to unmarshal user attributes", log.Error(err))
+	// 		return nil, errors.New("failed to unmarshal user attributes")
+	// 	}
+	// }
 
 	return &authncm.AuthenticatedUser{
 		IsAuthenticated:     true,

@@ -172,6 +172,10 @@ $appData = @{
     isRegistrationFlowEnabled = $true
     userAttributes = @("given_name","family_name","email","groups")
     allowedUserTypes = @("Customer")
+    loginConsent = @{
+        enabled = $true
+        validityPeriod = 120
+    }
     inboundAuthConfig = @(
         @{
             type = "oauth2"
@@ -198,7 +202,7 @@ $appData = @{
                     profile = @("name","given_name","family_name","picture")
                     email = @("email","email_verified")
                     phone = @("phone_number","phone_number_verified")
-                    group = @("groups")
+                    group = @()
                 }
             }
         }

@@ -3,115 +3,424 @@
     "handle": "default-basic-flow",
     "flowType": "AUTHENTICATION",
     "nodes": [
+  {
+    "id": "start",
+    "type": "START",
+    "layout": {
+      "size": {
+        "width": 101,
+        "height": 34
+      },
+      "position": {
+        "x": 206,
+        "y": 111
+      }
+    },
+    "onSuccess": "prompt_credentials"
+  },
+  {
+    "id": "prompt_credentials",
+    "meta": {
+      "components": [
         {
-            "id": "start",
-            "type": "START",
-            "onSuccess": "prompt_credentials"
+          "id": "text_001",
+          "type": "TEXT",
+          "label": "Sign In",
+          "variant": "HEADING_1",
+          "category": "DISPLAY",
+          "resourceType": "ELEMENT"
         },
         {
-            "id": "prompt_credentials",
-            "type": "PROMPT",
-            "meta": {
-                "components": [
-                    {
-                        "alt": "{{ t(signin:images.app_logo.alt) }}",
-                        "category": "DISPLAY",
-                        "height": "60",
-                        "id": "image",
-                        "resourceType": "ELEMENT",
-                        "src": "{{ meta(application.logo_url) }}",
-                        "type": "IMAGE",
-                        "width": ""
-                    },
-                    {
-                        "align": "center",
-                        "type": "TEXT",
-                        "id": "text_001",
-                        "label": "{{ t(signin:forms.credentials.title) }}",
-                        "variant": "HEADING_1"
-                    },
-                    {
-                        "type": "BLOCK",
-                        "id": "block_001",
-                        "components": [
-                            {
-                                "id": "input_001",
-                                "ref": "username",
-                                "type": "TEXT_INPUT",
-                                "label": "{{ t(signin:forms.credentials.fields.username.label) }}",
-                                "required": true,
-                                "placeholder": "{{ t(signin:forms.credentials.fields.username.placeholder) }}"
-                            },
-                            {
-                                "id": "input_002",
-                                "ref": "password",
-                                "type": "PASSWORD_INPUT",
-                                "label": "{{ t(signin:forms.credentials.fields.password.label) }}",
-                                "required": true,
-                                "placeholder": "{{ t(signin:forms.credentials.fields.password.placeholder) }}"
-                            },
-                            {
-                                "type": "ACTION",
-                                "id": "action_001",
-                                "label": "{{ t(signin:forms.credentials.actions.submit.label) }}",
-                                "variant": "PRIMARY",
-                                "eventType": "SUBMIT"
-                            }
-                        ]
-                    }
-                ]
+          "id": "block_001",
+          "type": "BLOCK",
+          "category": "BLOCK",
+          "components": [
+            {
+              "id": "input_001",
+              "ref": "username",
+              "hint": "",
+              "type": "TEXT_INPUT",
+              "label": "Username",
+              "category": "FIELD",
+              "required": true,
+              "inputType": "text",
+              "placeholder": "Enter your username",
+              "resourceType": "ELEMENT"
             },
-            "prompts": [
-                {
-                    "inputs": [
-                        {
-                            "ref": "input_001",
-                            "identifier": "username",
-                            "type": "TEXT_INPUT",
-                            "required": true
-                        },
-                        {
-                            "ref": "input_002",
-                            "identifier": "password",
-                            "type": "PASSWORD_INPUT",
-                            "required": true
-                        }
-                    ],
-                    "action": {
-                        "ref": "action_001",
-                        "nextNode": "basic_auth"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "basic_auth",
-            "type": "TASK_EXECUTION",
-            "executor": {
-                "name": "BasicAuthExecutor"
-            },
-            "onSuccess": "authorization_check",
-            "onIncomplete": "prompt_credentials"
-        },
-        {
-            "id": "authorization_check",
-            "type": "TASK_EXECUTION",
-            "executor": {
-                "name": "AuthorizationExecutor"
-            },
-            "onSuccess": "auth_assert"
-        },
-        {
-            "id": "auth_assert",
-            "type": "TASK_EXECUTION",
-            "executor": {
-                "name": "AuthAssertExecutor"
-            },
-            "onSuccess": "end"
-        },
-        {
-            "id": "end",
-            "type": "END"
+            {
+              "id": "action_001",
+              "type": "ACTION",
+              "label": "Sign In",
+              "variant": "PRIMARY",
+              "category": "ACTION",
+              "eventType": "SUBMIT",
+              "resourceType": "ELEMENT"
+            }
+          ],
+          "resourceType": "ELEMENT"
         }
+      ]
+    },
+    "type": "PROMPT",
+    "layout": {
+      "size": {
+        "width": 350,
+        "height": 441
+      },
+      "position": {
+        "x": 562,
+        "y": 62
+      }
+    },
+    "prompts": [
+      {
+        "action": {
+          "ref": "action_001",
+          "nextNode": "task_execution_tavd"
+        },
+        "inputs": [
+          {
+            "ref": "input_001",
+            "type": "TEXT_INPUT",
+            "required": true,
+            "identifier": "username"
+          }
+        ]
+      }
     ]
+  },
+  {
+    "id": "task_execution_tavd",
+    "type": "TASK_EXECUTION",
+    "layout": {
+      "size": {
+        "width": 200,
+        "height": 113
+      },
+      "position": {
+        "x": 1047,
+        "y": 192
+      }
+    },
+    "executor": {
+      "name": "MosipIDSendOTPExecutor",
+      "inputs": [
+        {
+          "ref": "input_001",
+          "type": "TEXT_INPUT",
+          "required": true,
+          "identifier": "username"
+        }
+      ]
+    },
+    "onSuccess": "view_htqd"
+  },
+  {
+    "id": "view_htqd",
+    "meta": {
+      "components": [
+        {
+          "id": "text_l1a9",
+          "type": "TEXT",
+          "label": "Verify OTP",
+          "variant": "HEADING_3",
+          "category": "DISPLAY",
+          "resourceType": "ELEMENT"
+        },
+        {
+          "id": "block_ruvj",
+          "type": "BLOCK",
+          "category": "BLOCK",
+          "components": [
+            {
+              "id": "otp_input_edds",
+              "ref": "otp",
+              "hint": "",
+              "type": "TEXT_INPUT",
+              "label": "Enter the code sent to your mobile",
+              "category": "FIELD",
+              "required": false,
+              "inputType": "text",
+              "placeholder": "",
+              "resourceType": "ELEMENT"
+            },
+            {
+              "id": "action_cmmz",
+              "type": "ACTION",
+              "label": "Verify",
+              "variant": "PRIMARY",
+              "category": "ACTION",
+              "eventType": "TRIGGER",
+              "resourceType": "ELEMENT"
+            },
+            {
+              "id": "resend_kg0x",
+              "type": "ACTION",
+              "label": "Resend OTP",
+              "category": "ACTION",
+              "eventType": "SUBMIT",
+              "resourceType": "ELEMENT"
+            }
+          ],
+          "resourceType": "ELEMENT"
+        }
+      ]
+    },
+    "type": "PROMPT",
+    "layout": {
+      "size": {
+        "width": 350,
+        "height": 545
+      },
+      "position": {
+        "x": 1400,
+        "y": -24
+      }
+    },
+    "prompts": [
+      {
+        "action": {
+          "ref": "action_cmmz",
+          "nextNode": "basic_auth"
+        },
+        "inputs": [
+          {
+            "ref": "otp_input_edds",
+            "type": "OTP_INPUT",
+            "required": false,
+            "identifier": "otp"
+          }
+        ]
+      },
+      {
+        "action": {
+          "ref": "resend_kg0x",
+          "nextNode": "task_execution_tavd"
+        },
+        "inputs": [
+          {
+            "ref": "otp_input_edds",
+            "type": "OTP_INPUT",
+            "required": false,
+            "identifier": "otp"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "basic_auth",
+    "type": "TASK_EXECUTION",
+    "layout": {
+      "size": {
+        "width": 217,
+        "height": 113
+      },
+      "position": {
+        "x": 1883,
+        "y": 215
+      }
+    },
+    "executor": {
+      "name": "BasicAuthExecutor",
+      "inputs": [
+        {
+          "ref": "input_001",
+          "type": "TEXT_INPUT",
+          "required": true,
+          "identifier": "username"
+        },
+        {
+          "ref": "otp_input_edds",
+          "type": "OTP_INPUT",
+          "required": true,
+          "identifier": "otp"
+        }
+      ]
+    },
+    "onSuccess": "task_execution_aol8",
+    "onIncomplete": "prompt_credentials"
+  },
+  {
+    "id": "view_496i",
+    "meta": {
+      "components": [
+        {
+          "id": "text_ung2",
+          "type": "TEXT",
+          "label": "We need your consent",
+          "variant": "HEADING_3",
+          "category": "DISPLAY",
+          "resourceType": "ELEMENT"
+        },
+        {
+          "id": "text_919e",
+          "type": "TEXT",
+          "label": "This app would like to access the following information. Please review and choose what you'd like to share.",
+          "variant": "BODY_1",
+          "category": "DISPLAY",
+          "resourceType": "ELEMENT"
+        },
+        {
+          "id": "block_ychp",
+          "type": "BLOCK",
+          "category": "BLOCK",
+          "components": [
+            {
+              "id": "timer_nv2s",
+              "type": "TIMER",
+              "category": "DISPLAY",
+              "resourceType": "ELEMENT"
+            },
+            {
+              "id": "consent_ul1v",
+              "type": "CONSENT",
+              "category": "DISPLAY"
+            },
+            {
+              "id": "action_c3d0",
+              "type": "ACTION",
+              "label": "Allow",
+              "variant": "PRIMARY",
+              "category": "ACTION",
+              "eventType": "SUBMIT",
+              "resourceType": "ELEMENT"
+            },
+            {
+              "id": "action_94sn",
+              "type": "ACTION",
+              "label": "Deny",
+              "variant": "SECONDARY",
+              "category": "ACTION",
+              "eventType": "SUBMIT",
+              "resourceType": "ELEMENT"
+            }
+          ],
+          "resourceType": "ELEMENT"
+        }
+      ]
+    },
+    "type": "PROMPT",
+    "layout": {
+      "size": {
+        "width": 350,
+        "height": 803
+      },
+      "position": {
+        "x": 1462,
+        "y": -906
+      }
+    },
+    "prompts": [
+      {
+        "action": {
+          "ref": "action_c3d0",
+          "nextNode": "task_execution_aol8"
+        },
+        "inputs": [
+          {
+            "ref": "input_0r23",
+            "type": "CONSENT_INPUT",
+            "required": true,
+            "identifier": "consent_decisions"
+          }
+        ]
+      },
+      {
+        "action": {
+          "ref": "action_94sn",
+          "nextNode": "task_execution_aol8"
+        },
+        "inputs": [
+          {
+            "ref": "input_0r23",
+            "type": "CONSENT_INPUT",
+            "required": true,
+            "identifier": "consent_decisions"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "task_execution_aol8",
+    "type": "TASK_EXECUTION",
+    "layout": {
+      "size": {
+        "width": 200,
+        "height": 113
+      },
+      "position": {
+        "x": 1137,
+        "y": 169
+      }
+    },
+    "executor": {
+      "name": "ConsentExecutor",
+      "inputs": [
+        {
+          "ref": "input_odue",
+          "type": "CONSENT_INPUT",
+          "required": true,
+          "identifier": "consent_decisions"
+        }
+      ]
+    },
+    "onSuccess": "authorization_check",
+    "properties": {
+      "timeout": "120"
+    },
+    "onIncomplete": "view_496i"
+  },
+  {
+    "id": "authorization_check",
+    "type": "TASK_EXECUTION",
+    "layout": {
+      "size": {
+        "width": 200,
+        "height": 113
+      },
+      "position": {
+        "x": 2200,
+        "y": 215
+      }
+    },
+    "executor": {
+      "name": "AuthorizationExecutor"
+    },
+    "onSuccess": "auth_assert"
+  },
+  {
+    "id": "auth_assert",
+    "type": "TASK_EXECUTION",
+    "layout": {
+      "size": {
+        "width": 244,
+        "height": 113
+      },
+      "position": {
+        "x": 2512,
+        "y": 215
+      }
+    },
+    "executor": {
+      "name": "AuthAssertExecutor"
+    },
+    "onSuccess": "end"
+  },
+  {
+    "id": "end",
+    "type": "END",
+    "layout": {
+      "size": {
+        "width": 85,
+        "height": 34
+      },
+      "position": {
+        "x": 2880,
+        "y": 255
+      }
+    }
+  }
+]
 }

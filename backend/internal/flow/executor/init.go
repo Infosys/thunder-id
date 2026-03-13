@@ -21,6 +21,7 @@ package executor
 import (
 	"github.com/asgardeo/thunder/internal/attributecache"
 	"github.com/asgardeo/thunder/internal/authn"
+	"github.com/asgardeo/thunder/internal/authnprovider"
 	"github.com/asgardeo/thunder/internal/authz"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	"github.com/asgardeo/thunder/internal/flow/core"
@@ -61,6 +62,7 @@ func Initialize(
 		flowFactory, userProvider, authRegistry.CredentialsAuthnService, observabilitySvc))
 	reg.RegisterExecutor(ExecutorNameSMSAuth, newSMSOTPAuthExecutor(
 		flowFactory, otpService, observabilitySvc, userProvider))
+	reg.RegisterExecutor(ExecutorNameMosipIDSendOTP, newMosipIDSendOTPExecutor(flowFactory, authnprovider.InitializeMOSIPAuthnProvider()))
 	reg.RegisterExecutor(ExecutorNamePasskeyAuth, newPasskeyAuthExecutor(
 		flowFactory, authRegistry.PasskeyService, observabilitySvc, userProvider))
 
