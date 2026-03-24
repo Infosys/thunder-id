@@ -184,8 +184,15 @@ read -r -d '' SAMPLE_APP_PAYLOAD <<JSON || true
       "scopeClaims": {
         "profile": ["name","given_name","family_name","picture"],
         "email": ["email","email_verified"],
-        "phone": ["phone_number","phone_number_verified"],
-        "group": ["groups"]
+        "phone": ["phone_number","phone_number_verified"]
+      },
+      "user_info" : {
+        "response_type" : "JWS",
+        "user_attributes": ["name", "email", "picture", "phone_number"]
+      },
+      "certificate": {
+        "type": "JWKS",
+        "value": "{\"keys\":[{\"kid\":\"test-key\",\"kty\":\"RSA\",\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"RS256\",\"n\":\"4j7Z20Y6wCXekSWLJbuF2_vHqo5DbmbR2Ze4G7Kyxq9u_scUJEhMB0gdaOVb-z4vPZCq9G2ICSgRNN5bNMMeSvsvIOVVZacAssm6iNyVMvz_qJQT4bAbVG87-KqC_rSy7LAdaNW9VZZ2LoQPjt5rNyXHx6P26H_wrC86DiogBWqFaCy5UjY3CMY4q3SOpLEj5aObJdKtlozRD6-F8HMe7di9N__c4yUIIuNW-LO2lh9S2SP2NYORb-HT7k-r8GZEr-4SBtRuaoUXbVX_139ppN_WC0yuvk2VoBYzDr6xdpOgZgvSVr4xEJoJxURrsiFWPKLLoyWxZ9iMMDpWE0jcSw\"}]}"
       }
     }
   }]

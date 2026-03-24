@@ -198,6 +198,8 @@ func (m *MOSIPAuthnProvider) GetAttributes(ctx context.Context, token string, re
 		}
 	}
 
+	log.Printf("GetAttributes called with requestedAttributes: %v, consentedAttributes: %v", requestedAttributes.Attributes, consentedAttributes)
+
 	idaKycExchangeRequest := &IdaKycExchangeRequest{
 		ID:              "mosip.identity.kycexchange",
 		Version:         "1.0",
@@ -696,7 +698,6 @@ func (m *MOSIPAuthnProvider) callKycExchangeEndpoint(
 
 	// Success path
 	if wrapper.Response != nil && wrapper.Response.EncryptedKyc != "" {
-		log.Printf("IDA KYC Exchange Response.EncryptedKyc: %+v", wrapper.Response.EncryptedKyc)
 		userattributes, _ := decodeJWTUnsafe(wrapper.Response.EncryptedKyc)
 		convertedAttributes := convertToAttributeResponseMap(userattributes)
 		return &GetAttributesResult{

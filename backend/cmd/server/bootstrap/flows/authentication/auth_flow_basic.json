@@ -244,73 +244,74 @@
   {
     "id": "view_496i",
     "meta": {
-      "components": [
-        {
-          "id": "text_ung2",
-          "type": "TEXT",
-          "label": "We need your consent",
-          "variant": "HEADING_3",
-          "category": "DISPLAY",
-          "resourceType": "ELEMENT"
-        },
-        {
-          "id": "text_919e",
-          "type": "TEXT",
-          "label": "This app would like to access the following information. Please review and choose what you'd like to share.",
-          "variant": "BODY_1",
-          "category": "DISPLAY",
-          "resourceType": "ELEMENT"
-        },
-        {
-          "id": "block_ychp",
-          "type": "BLOCK",
-          "category": "BLOCK",
-          "components": [
-            {
-              "id": "timer_nv2s",
-              "type": "TIMER",
-              "category": "DISPLAY",
-              "resourceType": "ELEMENT"
+                "components": [
+                    {
+                        "category": "DISPLAY",
+                        "id": "text_1qwp",
+                        "label": "{{meta(application.name)}} wants to access your account",
+                        "resourceType": "ELEMENT",
+                        "type": "TEXT",
+                        "variant": "HEADING_3"
+                    },
+                    {
+                        "category": "DISPLAY",
+                        "id": "display_xmoe",
+                        "label": "Take appropriate action in: {time}",
+                        "resourceType": "ELEMENT",
+                        "type": "TIMER"
+                    },
+                    {
+                        "category": "DISPLAY",
+                        "id": "text_s2a6",
+                        "label": "Please review the information requested by the application and provide your consent to proceed.",
+                        "resourceType": "ELEMENT",
+                        "type": "TEXT",
+                        "variant": "BODY_1"
+                    },
+                    {
+                        "category": "BLOCK",
+                        "components": [
+                            {
+                                "category": "DISPLAY",
+                                "id": "consent_e1pb",
+                                "type": "CONSENT"
+                            },
+                            {
+                                "category": "ACTION",
+                                "eventType": "SUBMIT",
+                                "id": "action_c3d0",
+                                "label": "Allow",
+                                "resourceType": "ELEMENT",
+                                "type": "ACTION",
+                                "variant": "PRIMARY"
+                            },
+                            {
+                                "category": "ACTION",
+                                "eventType": "SUBMIT",
+                                "id": "action_94sn",
+                                "label": "Deny",
+                                "resourceType": "ELEMENT",
+                                "type": "ACTION",
+                                "variant": "SECONDARY"
+                            }
+                        ],
+                        "id": "block_pbfj",
+                        "resourceType": "ELEMENT",
+                        "type": "BLOCK"
+                    }
+                ]
             },
-            {
-              "id": "consent_ul1v",
-              "type": "CONSENT",
-              "category": "DISPLAY"
-            },
-            {
-              "id": "action_c3d0",
-              "type": "ACTION",
-              "label": "Allow",
-              "variant": "PRIMARY",
-              "category": "ACTION",
-              "eventType": "SUBMIT",
-              "resourceType": "ELEMENT"
-            },
-            {
-              "id": "action_94sn",
-              "type": "ACTION",
-              "label": "Deny",
-              "variant": "SECONDARY",
-              "category": "ACTION",
-              "eventType": "SUBMIT",
-              "resourceType": "ELEMENT"
-            }
-          ],
-          "resourceType": "ELEMENT"
-        }
-      ]
-    },
     "type": "PROMPT",
     "layout": {
-      "size": {
-        "width": 350,
-        "height": 803
-      },
-      "position": {
-        "x": 1462,
-        "y": -906
-      }
-    },
+                "size": {
+                    "width": 350,
+                    "height": 849
+                },
+                "position": {
+                    "x": 1376,
+                    "y": -731
+                }
+            },
     "prompts": [
       {
         "action": {
