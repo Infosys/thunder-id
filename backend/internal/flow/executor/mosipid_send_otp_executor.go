@@ -124,7 +124,8 @@ func (e *mosipIDSendOTPExecutor) sendOTP(ctx *core.NodeContext,
 	}
 
 	// Call AuthnProvider send-OTP API.
-	result, authnErr := e.mosipAuthnProvider.SendOTP(ctx.Context, identifiers, nil)
+	metadata := buildAuthnMetadata(ctx)
+	result, authnErr := e.mosipAuthnProvider.SendOTP(ctx.Context, identifiers, metadata)
 	if authnErr != nil {
 		logger.Error("Failed to send OTP via external API", log.Error(authnErr))
 		return execResp, fmt.Errorf("failed to send OTP via external API: %w", authnErr)
@@ -157,4 +158,35 @@ func (e *mosipIDSendOTPExecutor) getUsernameFromContext(ctx *core.NodeContext) (
 		return "", fmt.Errorf("username not found in context")
 	}
 	return username, nil
+}
+
+func buildAuthnMetadata(ctx *core.NodeContext) *authnprovider.AuthnMetadata {
+	metadata := &authnprovider.AuthnMetadata{
+		AppMetadata: make(map[string]interface{}),
+	}
+
+	// Copy application metadata if present
+	if ctx.Application.Metadata != nil {
+		for key, value := range ctx.Application.Metadata {
+			metadata.AppMetadata[key] = value
+		}
+	}
+
+	metadata.AppMetadata["app_id"] = ctx.AppID
+	metadata.AppMetadata["transaction_id"] = ctx.FlowID
+
+	// Extract client IDs from InboundAuthConfig
+	var clientIDs []string
+	for _, inboundConfig := range ctx.Application.InboundAuthConfig {
+		if inboundConfig.OAuthAppConfig != nil && inboundConfig.OAuthAppConfig.ClientID != "" {
+			clientIDs = append(clientIDs, inboundConfig.OAuthAppConfig.ClientID)
+		}
+	}
+
+	// Add client IDs to metadata if present
+	if len(clientIDs) > 0 {
+		metadata.AppMetadata["client_ids"] = clientIDs
+	}
+
+	return metadata
 }

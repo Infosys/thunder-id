@@ -156,6 +156,12 @@
       "security": {
         "api_key": ""
       }
+    },
+    "mosip": {
+      "otp_base_url": "",
+      "kyc_auth_base_url": "",
+      "kyc_exchange_base_url": "",
+      "partner_certificate_url": ""
     }
   },
   "consent": {

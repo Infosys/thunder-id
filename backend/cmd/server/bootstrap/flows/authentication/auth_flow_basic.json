@@ -40,11 +40,11 @@
               "ref": "username",
               "hint": "",
               "type": "TEXT_INPUT",
-              "label": "Username",
+              "label": "UIN",
               "category": "FIELD",
               "required": true,
               "inputType": "text",
-              "placeholder": "Enter your username",
+              "placeholder": "Enter your UIN",
               "resourceType": "ELEMENT"
             },
             {

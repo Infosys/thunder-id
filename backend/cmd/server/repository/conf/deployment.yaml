@@ -14,28 +14,31 @@ tls:
 
 database:
   config:
-    type: "sqlite"
-    path: "repository/database/configdb.db"
-    options: "_journal_mode=WAL&_busy_timeout=5000&_pragma=foreign_keys(1)"
-    max_open_conns: 500
-    max_idle_conns: 100
-    conn_max_lifetime: 3600
+    type: "postgres"
+    hostname: "localhost"
+    port: 5432
+    name: "thunder_config"
+    username: "postgres"
+    password: "postgres"
+    sslmode: "disable"
 
   runtime:
-    type: "sqlite"
-    path: "repository/database/runtimedb.db"
-    options: "_journal_mode=WAL&_busy_timeout=5000&_pragma=foreign_keys(1)"
-    max_open_conns: 500
-    max_idle_conns: 100
-    conn_max_lifetime: 3600
+    type: "postgres"
+    hostname: "localhost"
+    port: 5432
+    name: "thunder_runtime"
+    username: "postgres"
+    password: "postgres"
+    sslmode: "disable"
 
   user:
-    type: "sqlite"
-    path: "repository/database/userdb.db"
-    options: "_journal_mode=WAL&_busy_timeout=5000&_pragma=foreign_keys(1)"
-    max_open_conns: 500
-    max_idle_conns: 100
-    conn_max_lifetime: 3600
+    type: "postgres"
+    hostname: "localhost"
+    port: 5432
+    name: "thunder_user"
+    username: "postgres"
+    password: "postgres"
+    sslmode: "disable"
 
 crypto:
   encryption:
@@ -60,6 +63,28 @@ passkey:
 
 authn_provider:
   type: "mosip"
+  mosip:
+    otp_base_url: "https://api-internal.collab.mosip.net/idauthentication/v1/otp/S1NfjLsrh2ng8eJ73Z1x8L7ryBBmzi0H2d2jGgLQOiE0h2X7Sv/"
+    kyc_auth_base_url: "https://api-internal.collab.mosip.net/idauthentication/v1/kyc-auth/delegated/S1NfjLsrh2ng8eJ73Z1x8L7ryBBmzi0H2d2jGgLQOiE0h2X7Sv/"
+    kyc_exchange_base_url: "https://api-internal.collab.mosip.net/idauthentication/v1/kyc-exchange/delegated/S1NfjLsrh2ng8eJ73Z1x8L7ryBBmzi0H2d2jGgLQOiE0h2X7Sv/"
+    partner_certificate_url: "https://api-internal.collab.mosip.net/mosip-certs/ida-partner.cer"
+    p12_file_path: "C:\\Users\\sachin.rana06\\Downloads\\bec4ca0b_50c5_4ed5_b6f9_53e4609e08fa.pfx"
+    p12_password: "localtest"
+    individual_id_type: "UIN"
+    otp_channels:
+      - "phone"
+      - "email"
+    env: "Staging"
+    domain_uri: ""
+    locales:
+      - "eng"
+    kyc_exchange_resp_type: "JWT"
+    ida_otp_id: "mosip.identity.otp"
+    ida_otp_version: "1.0"
+    ida_kyc_auth_id: "mosip.identity.kycauth"
+    ida_kyc_auth_version: "1.0"
+    ida_kyc_exchange_id: "mosip.identity.kycexchange"
+    ida_kyc_exchange_version: "1.0"
   
 consent:
   enabled: true

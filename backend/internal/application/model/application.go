@@ -154,6 +154,7 @@ type ApplicationCertificate struct {
 //
 //nolint:lll
 type ApplicationRequest struct {
+	ID                        string                      `json:"id,omitempty" yaml:"id,omitempty"`
 	Name                      string                      `json:"name" yaml:"name"`
 	Description               string                      `json:"description" yaml:"description"`
 	AuthFlowID                string                      `json:"authFlowId,omitempty" yaml:"auth_flow_id,omitempty"`

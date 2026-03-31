@@ -162,6 +162,7 @@ Write-Host ""
 Log-Info "Creating Sample App application..."
 
 $appData = @{
+    id = "partnernameforautomationesi-372269"
     name = "Sample App"
     description = "Sample application for testing"
     url = "https://localhost:3000"
@@ -170,7 +171,7 @@ $appData = @{
     policyUri = "https://localhost:3000/privacy"
     contacts = @("admin@example.com", "support@example.com")
     isRegistrationFlowEnabled = $true
-    userAttributes = @("given_name","family_name","email","groups")
+    userAttributes = @("name","phone_number","email")
     allowedUserTypes = @("Customer")
     loginConsent = @{
         enabled = $true
@@ -180,8 +181,8 @@ $appData = @{
         @{
             type = "oauth2"
             config = @{
-                clientId = "sample_app_client"
-                redirectUris = @("https://localhost:3000")
+                clientId = "I6eXdnnLGGj2A2BcTL-jug_0ujpnQXlBpKAbBCkGWEM"
+                redirectUris = @("https://localhost:3000","https://oidcdebugger.com/debug")
                 grantTypes = @("authorization_code")
                 responseTypes = @("code")
                 tokenEndpointAuthMethod = "none"
@@ -191,11 +192,11 @@ $appData = @{
                 token = @{
                     accessToken = @{
                         validityPeriod = 3600
-                        userAttributes = @("given_name","family_name","email","groups")
+                        userAttributes = @("name","phone_number","email")
                     }
                     idToken = @{
                         validityPeriod = 3600
-                        userAttributes = @("given_name","family_name","email","groups")
+                        userAttributes = @("name","phone_number","email")
                     }
                 }
                 scopeClaims = @{

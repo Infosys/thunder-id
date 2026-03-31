@@ -527,6 +527,9 @@ func (a *authAssertExecutor) buildGetAttributesMetadata(ctx *core.NodeContext) *
 		}
 	}
 
+	metadata.AppMetadata["app_id"] = ctx.AppID
+	metadata.AppMetadata["transaction_id"] = ctx.FlowID
+
 	// Extract client IDs from InboundAuthConfig
 	var clientIDs []string
 	for _, inboundConfig := range ctx.Application.InboundAuthConfig {

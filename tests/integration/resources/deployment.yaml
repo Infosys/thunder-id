@@ -8,18 +8,32 @@ tls:
 
 database:
   config:
-    type: "sqlite"
-    path: "repository/database/configdb.db"
-    options: "_journal_mode=WAL&_busy_timeout=60000&_pragma=foreign_keys(1)"
-  runtime:
-    type: "sqlite"
-    path: "repository/database/runtimedb.db"
-    options: "_journal_mode=WAL&_busy_timeout=60000&_pragma=foreign_keys(1)"
-  user:
-    type: "sqlite"
-    path: "repository/database/userdb.db"
-    options: "_journal_mode=WAL&_busy_timeout=60000&_pragma=foreign_keys(1)"
+    type: "postgres"
+    hostname: "localhost"
+    port: 5432
+    name: "thunder_config"
+    username: "postgres"
+    password: "postgres"
+    sslmode: "disable"
 
+  runtime:
+    type: "postgres"
+    hostname: "localhost"
+    port: 5432
+    name: "thunder_runtime"
+    username: "postgres"
+    password: "postgres"
+    sslmode: "disable"
+
+  user:
+    type: "postgres"
+    hostname: "localhost"
+    port: 5432
+    name: "thunder_user"
+    username: "postgres"
+    password: "postgres"
+    sslmode: "disable"
+    
 flow:
   max_version_history: 3
 

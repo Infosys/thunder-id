@@ -470,6 +470,42 @@ function Initialize-Databases {
     )
     
     Write-Host "================================================================"
+
+    # --- Determine database type from deployment.yaml ---
+    $db_type = "sqlite"
+    if (Test-Path $CONFIG_FILE) {
+        if (Get-Command yq -ErrorAction SilentlyContinue) {
+            $identity_type = & yq eval '.database.config.type // "sqlite"' $CONFIG_FILE 2>$null
+        }
+        else {
+            $content = Get-Content $CONFIG_FILE -Raw
+            if ($content -match 'database:\s*\n\s+config:\s*\n\s+type:\s*["'']?(\w+)["'']?') {
+                $identity_type = $matches[1].Trim()
+            }
+            else {
+                $identity_type = "sqlite"
+            }
+        }
+        if ($identity_type -eq "postgres") {
+            $db_type = "postgres"
+        }
+    }
+
+    if ($db_type -eq "postgres") {
+        Initialize-PostgresDatabases
+    }
+    else {
+        Initialize-SQLiteDatabases -override $override
+    }
+
+    Write-Host "================================================================"
+}
+
+function Initialize-SQLiteDatabases {
+    param(
+        [bool]$override = $false
+    )
+    
     Write-Host "Initializing SQLite databases..."
 
     # Check for sqlite3 CLI availability
@@ -529,7 +565,110 @@ function Initialize-Databases {
     }
 
     Write-Host "SQLite database initialization complete."
-    Write-Host "================================================================"
+}
+
+function Initialize-PostgresDatabases {
+    Write-Host "Initializing PostgreSQL databases..."
+
+    # Check for psql CLI availability
+    $psqlCmd = Get-Command psql -ErrorAction SilentlyContinue
+    if (-not $psqlCmd) {
+        Write-Host ""
+        Write-Host "ERROR: 'psql' CLI not found on PATH. The build script uses the psql command to initialize PostgreSQL databases."
+        Write-Host "On Windows you can install psql using one of the following methods:"
+        Write-Host "  1) Chocolatey (requires admin PowerShell):"
+        Write-Host "       choco install postgresql"
+        Write-Host "  2) Scoop (recommended for user installs):"
+        Write-Host "       scoop install postgresql"
+        Write-Host "  3) Download from https://www.postgresql.org/download/ and add the bin folder to your PATH."
+        Write-Host ""
+        throw "psql CLI not found. Install PostgreSQL client tools and re-run the build."
+    }
+
+    # Read PostgreSQL connection details from deployment.yaml for each database
+    $db_configs = @("config", "runtime", "user")
+    $db_script_dirs = @("configdb", "runtimedb", "userdb")
+
+    for ($i = 0; $i -lt $db_configs.Length; $i++) {
+        $config_key = $db_configs[$i]
+        $script_dir = $db_script_dirs[$i]
+        $script_path = Join-Path $SERVER_DB_SCRIPTS_DIR "$script_dir/postgres.sql"
+
+        # Read connection details from deployment.yaml
+        if (Get-Command yq -ErrorAction SilentlyContinue) {
+            $pg_host = & yq eval ".database.$config_key.hostname // `"localhost`"" $CONFIG_FILE 2>$null
+            $pg_port = & yq eval ".database.$config_key.port // 5432" $CONFIG_FILE 2>$null
+            $pg_name = & yq eval ".database.$config_key.name // `"`"" $CONFIG_FILE 2>$null
+            $pg_user = & yq eval ".database.$config_key.username // `"postgres`"" $CONFIG_FILE 2>$null
+            $pg_password = & yq eval ".database.$config_key.password // `"`"" $CONFIG_FILE 2>$null
+            $pg_sslmode = & yq eval ".database.$config_key.sslmode // `"disable`"" $CONFIG_FILE 2>$null
+        }
+        else {
+            # Fallback: parse deployment.yaml with regex for this database section
+            $content = Get-Content $CONFIG_FILE -Raw
+            $pg_host = "localhost"
+            $pg_port = "5432"
+            $pg_name = ""
+            $pg_user = "postgres"
+            $pg_password = "postgres"
+            $pg_sslmode = "disable"
+
+            # Extract the section for this config key using a multi-line regex approach
+            if ($content -match "(?ms)${config_key}:\s*\n\s+type:\s*[`"']?postgres[`"']?\s*\n((?:\s+\w+:.*\n)*)") {
+                $section = $matches[1]
+                if ($section -match 'hostname:\s*["'']?([^"''\n]+)["'']?') { $pg_host = $matches[1].Trim() }
+                if ($section -match 'port:\s*(\d+)') { $pg_port = $matches[1].Trim() }
+                if ($section -match '\bname:\s*["'']?([^"''\n]+)["'']?') { $pg_name = $matches[1].Trim() }
+                if ($section -match 'username:\s*["'']?([^"''\n]+)["'']?') { $pg_user = $matches[1].Trim() }
+                if ($section -match 'password:\s*["'']?([^"''\n]+)["'']?') { $pg_password = $matches[1].Trim() }
+                if ($section -match 'sslmode:\s*["'']?([^"''\n]+)["'']?') { $pg_sslmode = $matches[1].Trim() }
+            }
+        }
+
+        if ([string]::IsNullOrEmpty($pg_name)) {
+            Write-Host " ! Skipping $config_key database: no database name configured in deployment.yaml"
+            continue
+        }
+
+        if (-not (Test-Path $script_path)) {
+            Write-Host " ! Skipping $config_key database ($pg_name): SQL script not found at $script_path"
+            continue
+        }
+
+        # Set PGPASSWORD environment variable for non-interactive authentication
+        $env:PGPASSWORD = $pg_password
+
+        Write-Host " - Dropping database '$pg_name' if it exists..."
+        & psql -h $pg_host -p $pg_port -U $pg_user -d "postgres" -c "DROP DATABASE IF EXISTS `"$pg_name`";" 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            # Try terminating active connections first, then drop
+            Write-Host " - Terminating active connections to '$pg_name'..."
+            & psql -h $pg_host -p $pg_port -U $pg_user -d "postgres" -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '$pg_name' AND pid <> pg_backend_pid();" 2>&1 | Out-Null
+            & psql -h $pg_host -p $pg_port -U $pg_user -d "postgres" -c "DROP DATABASE IF EXISTS `"$pg_name`";"
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to drop PostgreSQL database '$pg_name' with exit code $LASTEXITCODE"
+            }
+        }
+
+        Write-Host " - Creating database '$pg_name'..."
+        & psql -h $pg_host -p $pg_port -U $pg_user -d "postgres" -c "CREATE DATABASE `"$pg_name`";"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to create PostgreSQL database '$pg_name' with exit code $LASTEXITCODE"
+        }
+
+        Write-Host " - Running schema script on '$pg_name' using $script_path"
+        & psql -h $pg_host -p $pg_port -U $pg_user -d $pg_name -f $script_path
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to initialize PostgreSQL database '$pg_name' with exit code $LASTEXITCODE"
+        }
+
+        Write-Host " - Database '$pg_name' initialized successfully."
+    }
+
+    # Clean up PGPASSWORD
+    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
+
+    Write-Host "PostgreSQL database initialization complete."
 }
 
 function Prepare-Backend-For-Packaging {
@@ -617,27 +756,27 @@ function Package {
         Copy-Item -Path "setup.sh" -Destination $package_folder -Force
     }
 
-    Write-Host "Packaging consent server..."
-    $packageFolderAbs = (Resolve-Path -Path $package_folder).Path
-    & (Join-Path $SCRIPT_DIR "scripts/package-consent-server.ps1") `
-        -GoOS $GO_OS -GoArch $GO_ARCH -DistOutputPath $packageFolderAbs
-    if ($LASTEXITCODE -ne 0) {
-        throw "Consent server packaging failed with exit code $LASTEXITCODE"
-    }
+    # Write-Host "Packaging consent server..."
+    # $packageFolderAbs = (Resolve-Path -Path $package_folder).Path
+    # & (Join-Path $SCRIPT_DIR "scripts/package-consent-server.ps1") `
+    #     -GoOS $GO_OS -GoArch $GO_ARCH -DistOutputPath $packageFolderAbs
+    # if ($LASTEXITCODE -ne 0) {
+    #     throw "Consent server packaging failed with exit code $LASTEXITCODE"
+    # }
 
-    Write-Host "Creating zip file..."
-    $zipFile = Join-Path $DIST_DIR "$PRODUCT_FOLDER.zip"
-    if (Test-Path $zipFile) {
-        Remove-Item $zipFile -Force
-    }
+    # Write-Host "Creating zip file..."
+    # $zipFile = Join-Path $DIST_DIR "$PRODUCT_FOLDER.zip"
+    # if (Test-Path $zipFile) {
+    #     Remove-Item $zipFile -Force
+    # }
     
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($package_folder, $zipFile)
+    # Add-Type -AssemblyName System.IO.Compression.FileSystem
+    # [System.IO.Compression.ZipFile]::CreateFromDirectory($package_folder, $zipFile)
     
-    Remove-Item -Path $package_folder -Recurse -Force
-    if (Test-Path $BUILD_DIR) {
-        Remove-Item -Path $BUILD_DIR -Recurse -Force
-    }
+    # Remove-Item -Path $package_folder -Recurse -Force
+    # if (Test-Path $BUILD_DIR) {
+    #     Remove-Item -Path $BUILD_DIR -Recurse -Force
+    # }
     Write-Host "================================================================"
 }
 

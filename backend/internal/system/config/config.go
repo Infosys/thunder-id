@@ -355,8 +355,31 @@ type PasskeyConfig struct {
 
 // AuthnProviderConfig holds the authentication provider configuration details.
 type AuthnProviderConfig struct {
-	Type string     `yaml:"type" json:"type"`
-	Rest RestConfig `yaml:"rest" json:"rest"`
+	Type  string      `yaml:"type" json:"type"`
+	Rest  RestConfig  `yaml:"rest" json:"rest"`
+	MOSIP MOSIPConfig `yaml:"mosip" json:"mosip"`
+}
+
+// MOSIPConfig holds the MOSIP authentication provider configuration details.
+type MOSIPConfig struct {
+	OTPBaseURL            string   `yaml:"otp_base_url" json:"otp_base_url"`
+	KycAuthBaseURL        string   `yaml:"kyc_auth_base_url" json:"kyc_auth_base_url"`
+	KycExchangeBaseURL    string   `yaml:"kyc_exchange_base_url" json:"kyc_exchange_base_url"`
+	PartnerCertificateURL string   `yaml:"partner_certificate_url" json:"partner_certificate_url"`
+	P12FilePath           string   `yaml:"p12_file_path" json:"p12_file_path"`
+	P12Password           string   `yaml:"p12_password" json:"p12_password"`
+	IndividualIDType      string   `yaml:"individual_id_type" json:"individual_id_type"`
+	OTPChannels           []string `yaml:"otp_channels" json:"otp_channels"`
+	Env                   string   `yaml:"env" json:"env"`
+	DomainURI             string   `yaml:"domain_uri" json:"domain_uri"`
+	Locales               []string `yaml:"locales" json:"locales"`
+	KycExchangeRespType   string   `yaml:"kyc_exchange_resp_type" json:"kyc_exchange_resp_type"`
+	IDAOtpID              string   `yaml:"ida_otp_id" json:"ida_otp_id"`
+	IDAOtpVersion         string   `yaml:"ida_otp_version" json:"ida_otp_version"`
+	IDAKycAuthID          string   `yaml:"ida_kyc_auth_id" json:"ida_kyc_auth_id"`
+	IDAKycAuthVersion     string   `yaml:"ida_kyc_auth_version" json:"ida_kyc_auth_version"`
+	IDAKycExchangeID      string   `yaml:"ida_kyc_exchange_id" json:"ida_kyc_exchange_id"`
+	IDAKycExchangeVersion string   `yaml:"ida_kyc_exchange_version" json:"ida_kyc_exchange_version"`
 }
 
 // UserProviderConfig holds the user provider configuration details.

@@ -50,14 +50,70 @@ import (
 
 // MOSIPAuthnProvider is an authentication provider that communicates with MOSIP.
 type MOSIPAuthnProvider struct {
-	httpClient systemhttp.HTTPClientInterface
-	logger     *log.Logger
+	httpClient            systemhttp.HTTPClientInterface
+	logger                *log.Logger
+	otpBaseURL            string
+	kycAuthBaseURL        string
+	kycExchangeBaseURL    string
+	partnerCertificateURL string
+	p12FilePath           string
+	p12Password           string
+	individualIDType      string
+	otpChannels           []string
+	env                   string
+	domainURI             string
+	locales               []string
+	kycExchangeRespType   string
+	idaOtpID              string
+	idaOtpVersion         string
+	idaKycAuthID          string
+	idaKycAuthVersion     string
+	idaKycExchangeID      string
+	idaKycExchangeVersion string
 }
 
-// NewMOSIPAuthnProvider creates a new REST authentication provider.
-func NewMOSIPAuthnProvider(httpClient systemhttp.HTTPClientInterface) *MOSIPAuthnProvider {
+// NewMOSIPAuthnProvider creates a new MOSIP authentication provider.
+func NewMOSIPAuthnProvider(
+	httpClient systemhttp.HTTPClientInterface,
+	otpBaseURL string,
+	kycAuthBaseURL string,
+	kycExchangeBaseURL string,
+	partnerCertificateURL string,
+	p12FilePath string,
+	p12Password string,
+	individualIDType string,
+	otpChannels []string,
+	env string,
+	domainURI string,
+	locales []string,
+	kycExchangeRespType string,
+	idaOtpID string,
+	idaOtpVersion string,
+	idaKycAuthID string,
+	idaKycAuthVersion string,
+	idaKycExchangeID string,
+	idaKycExchangeVersion string,
+) *MOSIPAuthnProvider {
 	return &MOSIPAuthnProvider{
-		httpClient: httpClient,
+		httpClient:            httpClient,
+		otpBaseURL:            otpBaseURL,
+		kycAuthBaseURL:        kycAuthBaseURL,
+		kycExchangeBaseURL:    kycExchangeBaseURL,
+		partnerCertificateURL: partnerCertificateURL,
+		p12FilePath:           p12FilePath,
+		p12Password:           p12Password,
+		individualIDType:      individualIDType,
+		otpChannels:           otpChannels,
+		env:                   env,
+		domainURI:             domainURI,
+		locales:               locales,
+		kycExchangeRespType:   kycExchangeRespType,
+		idaOtpID:              idaOtpID,
+		idaOtpVersion:         idaOtpVersion,
+		idaKycAuthID:          idaKycAuthID,
+		idaKycAuthVersion:     idaKycAuthVersion,
+		idaKycExchangeID:      idaKycExchangeID,
+		idaKycExchangeVersion: idaKycExchangeVersion,
 	}
 }
 
@@ -65,19 +121,19 @@ func NewMOSIPAuthnProvider(httpClient systemhttp.HTTPClientInterface) *MOSIPAuth
 
 func (m *MOSIPAuthnProvider) SendOTP(ctx context.Context, identifiers map[string]interface{}, metadata *AuthnMetadata) (*SendOTPResult, *AuthnProviderError) {
 
-	transactionId := "1234567890" // TODO generate unique transaction ID as needed
+	transactionId, _ := metadata.AppMetadata["transaction_id"].(string)
 	individualId, ok := identifiers["username"].(string)
 	if !ok || individualId == "" {
 		return nil, NewError(ErrorCodeMissingOrInvalidIndividualID, "missing or invalid individual_id in identifiers", "missing or invalid individual_id in identifiers")
 	}
 	req := IdaSendOtpRequest{
-		ID:               "mosip.identity.otp",
-		Version:          "1.0",
+		ID:               m.idaOtpID,
+		Version:          m.idaOtpVersion,
 		IndividualID:     individualId,
-		IndividualIDType: "UIN",
+		IndividualIDType: m.individualIDType,
 		TransactionID:    transactionId,
 		RequestTime:      GetUTCDateTime(),
-		OtpChannel:       []string{"phone", "email"},
+		OtpChannel:       m.otpChannels,
 	}
 
 	otpRequestBytes, err := json.Marshal(req)
@@ -85,9 +141,9 @@ func (m *MOSIPAuthnProvider) SendOTP(ctx context.Context, identifiers map[string
 		return nil, NewError(ErrorCodeAuthenticationFailed, "Failed to marshal send OTP request", err.Error())
 	}
 	authHeaderValue := "Authorization"
-	relyingPartyId := "partnernameforautomationesi-372269"
-	clientId := "I6eXdnnLGGj2A2BcTL-jug_0ujpnQXlBpKAbBCkGWEM"
-	requestSignature, err := GetRequestSignature(otpRequestBytes)
+	relyingPartyId := metadata.AppMetadata["app_id"].(string)
+	clientId := metadata.AppMetadata["client_ids"].([]string)[0]
+	requestSignature, err := m.GetRequestSignature(otpRequestBytes)
 	if err != nil {
 		return nil, NewError(ErrorCodeSystemError, "failed to get request signature", err.Error())
 	}
@@ -97,25 +153,25 @@ func (m *MOSIPAuthnProvider) SendOTP(ctx context.Context, identifiers map[string
 // Authenticate implements [AuthnProviderInterface].
 func (m *MOSIPAuthnProvider) Authenticate(ctx context.Context, identifiers map[string]interface{}, credentials map[string]interface{}, metadata *AuthnMetadata) (*AuthnResult, *AuthnProviderError) {
 	authHeaderValue := "Authorization"
-	relyingPartyId := "partnernameforautomationesi-372269"
-	clientId := "I6eXdnnLGGj2A2BcTL-jug_0ujpnQXlBpKAbBCkGWEM"
+	relyingPartyId := metadata.AppMetadata["app_id"].(string)
+	clientId := metadata.AppMetadata["client_ids"].([]string)[0]
 
-	individualId, ok := identifiers["username"].(string)
-	if !ok || individualId == "" {
+	individualID, ok := identifiers["username"].(string)
+	if !ok || individualID == "" {
 		return nil, NewError(ErrorCodeMissingOrInvalidIndividualID, "missing or invalid individual_id in identifiers", "missing or invalid individual_id in identifiers")
 	}
 
 	claimsMetadataRequired := false
 	requestTime := GetUTCDateTime()
 	idaKycAuthRequest := &IdaKycAuthRequest{
-		ID:                     "mosip.identity.kycauth", // assuming global/package var or constant
-		Version:                "1.0",                    // assuming global/package var or constant
-		RequestTime:            requestTime,              // from earlier helper
-		DomainURI:              "",                       // assuming global/package var
-		Env:                    "Staging",                // assuming global/package var
+		ID:                     m.idaKycAuthID,
+		Version:                m.idaKycAuthVersion,
+		RequestTime:            requestTime,
+		DomainURI:              m.domainURI,
+		Env:                    m.env,
 		ConsentObtained:        true,
-		IndividualID:           individualId,
-		TransactionID:          "1234567890", // TODO generate unique transaction ID as needed
+		IndividualID:           individualID,
+		TransactionID:          metadata.AppMetadata["transaction_id"].(string),
 		ClaimsMetadataRequired: &claimsMetadataRequired,
 	}
 
@@ -172,7 +228,7 @@ func (m *MOSIPAuthnProvider) Authenticate(ctx context.Context, identifiers map[s
 		return nil, NewError(ErrorCodeSystemError, "failed to marshal IDA KYC auth request", err.Error())
 	}
 
-	requestSignature, err := GetRequestSignature(requestBytes)
+	requestSignature, err := m.GetRequestSignature(requestBytes)
 	if err != nil {
 		return nil, NewError(ErrorCodeSystemError, "failed to get request signature", err.Error())
 	}
@@ -182,7 +238,7 @@ func (m *MOSIPAuthnProvider) Authenticate(ctx context.Context, identifiers map[s
 		return nil, authnErr
 	}
 
-	authResult.Token = strings.Join([]string{authResult.Token, individualId}, "||") // Clean up token if needed
+	authResult.Token = strings.Join([]string{authResult.Token, individualID}, "||") // Clean up token if needed
 	return authResult, nil
 }
 
@@ -201,14 +257,14 @@ func (m *MOSIPAuthnProvider) GetAttributes(ctx context.Context, token string, re
 	log.Printf("GetAttributes called with requestedAttributes: %v, consentedAttributes: %v", requestedAttributes.Attributes, consentedAttributes)
 
 	idaKycExchangeRequest := &IdaKycExchangeRequest{
-		ID:              "mosip.identity.kycexchange",
-		Version:         "1.0",
+		ID:              m.idaKycExchangeID,
+		Version:         m.idaKycExchangeVersion,
 		RequestTime:     GetUTCDateTime(),
-		TransactionID:   "1234567890", // TODO generate unique transaction ID as needed
+		TransactionID:   metadata.AppMetadata["transaction_id"].(string),
 		KycToken:        kycToken,
-		ConsentObtained: consentedAttributes, // assuming consent is obtained if there are requested attributes
-		Locales:         []string{"eng"},
-		RespType:        "JWT",
+		ConsentObtained: consentedAttributes,
+		Locales:         m.locales,
+		RespType:        m.kycExchangeRespType,
 		IndividualId:    username,
 	}
 
@@ -217,23 +273,20 @@ func (m *MOSIPAuthnProvider) GetAttributes(ctx context.Context, token string, re
 		return nil, NewError(ErrorCodeSystemError, "failed to marshal IDA KYC exchange request", err.Error())
 	}
 	authHeaderValue := "Authorization"
-	relyingPartyId := "partnernameforautomationesi-372269"
-	clientId := "I6eXdnnLGGj2A2BcTL-jug_0ujpnQXlBpKAbBCkGWEM"
-	requestSignature, err := GetRequestSignature(requestBytes)
+	relyingPartyId := metadata.AppMetadata["app_id"].(string)
+	clientId := metadata.AppMetadata["client_ids"].([]string)[0] // Assuming at least one client ID is present; adjust as needed
+	requestSignature, err := m.GetRequestSignature(requestBytes)
 	if err != nil {
 		return nil, NewError(ErrorCodeSystemError, "failed to get request signature", err.Error())
 	}
 	return m.callKycExchangeEndpoint(requestBytes, requestSignature, relyingPartyId, clientId, authHeaderValue)
 }
 
-func GetRequestSignature(requestBody []byte) (string, error) {
-	// Configuration
-	p12File := "/opt/mosip/codebase/thunder/bec4ca0b_50c5_4ed5_b6f9_53e4609e08fa.pfx" // your .p12 file path
-	p12Password := "localtest"                                                        // keystore password
+func (m *MOSIPAuthnProvider) GetRequestSignature(requestBody []byte) (string, error) {
 	encodedRequestBody := B64EncodeBytes(requestBody)
 
 	// Load RSA private key and certificate from .p12
-	privateKey, signedCertificate, err := LoadRSAPrivateKeyAndCertFromP12(p12File, p12Password)
+	privateKey, signedCertificate, err := LoadRSAPrivateKeyAndCertFromP12(m.p12FilePath, m.p12Password)
 	if err != nil {
 		return "", NewError(ErrorCodeSystemError, "failed to load RSA private key and certificate from P12", err.Error())
 	}
@@ -331,7 +384,7 @@ func SymmetricEncrypt(plaintext []byte, key []byte) (encrypted []byte, err error
 }
 
 func (m *MOSIPAuthnProvider) fetchIDAPartnerCertificate() (*x509.Certificate, error) {
-	idaPartnerCertificateUrl := "https://api-internal.collab.mosip.net/mosip-certs/ida-partner.cer"
+	idaPartnerCertificateUrl := m.partnerCertificateURL
 	req, err := http.NewRequest(http.MethodGet, idaPartnerCertificateUrl, nil)
 	if err != nil {
 		return nil, err
@@ -499,17 +552,17 @@ func CreateAndSignJWTWithX5C(
 func (m *MOSIPAuthnProvider) callSendOtpEndpoint(
 	requestBody []byte, // already marshaled JSON of IdaKycAuthRequest
 	signature string, // from helperService.getRequestSignature(requestBody)
-	relyingPartyId string,
-	clientId string,
+	relyingPartyID string,
+	clientID string,
 	authHeaderValue string, // e.g. "Bearer xxx" or whatever you set
 ) (*SendOTPResult, *AuthnProviderError) {
 	// Build full URI: .../relyingPartyId/clientId
-	baseUrl := "https://api-internal.collab.mosip.net/idauthentication/v1/otp/S1NfjLsrh2ng8eJ73Z1x8L7ryBBmzi0H2d2jGgLQOiE0h2X7Sv/"
+	baseUrl := m.otpBaseURL
 	u, err := url.Parse(baseUrl)
 	if err != nil {
 		return nil, NewError(ErrorCodeAuthenticationFailed, err.Error(), err.Error())
 	}
-	u.Path = strings.TrimRight(u.Path, "/") + "/" + url.PathEscape(relyingPartyId) + "/" + url.PathEscape(clientId)
+	u.Path = strings.TrimRight(u.Path, "/") + "/" + url.PathEscape(relyingPartyID) + "/" + url.PathEscape(clientID)
 
 	// Prepare request
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(requestBody))
@@ -573,18 +626,18 @@ func (m *MOSIPAuthnProvider) callSendOtpEndpoint(
 func (m *MOSIPAuthnProvider) callKycAuthEndpoint(
 	requestBody []byte, // already marshaled JSON of IdaKycAuthRequest
 	signature string, // from helperService.getRequestSignature(requestBody)
-	relyingPartyId string,
-	clientId string,
+	relyingPartyID string,
+	clientID string,
 	claimsMetadataRequired bool,
 	authHeaderValue string, // e.g. "Bearer xxx" or whatever you set
 ) (*AuthnResult, *AuthnProviderError) {
 	// Build full URI: .../relyingPartyId/clientId
-	baseUrl := "https://api-internal.collab.mosip.net/idauthentication/v1/kyc-auth/delegated/S1NfjLsrh2ng8eJ73Z1x8L7ryBBmzi0H2d2jGgLQOiE0h2X7Sv/"
+	baseUrl := m.kycAuthBaseURL
 	u, err := url.Parse(baseUrl)
 	if err != nil {
 		return nil, NewError(ErrorCodeAuthenticationFailed, err.Error(), err.Error())
 	}
-	u.Path = strings.TrimRight(u.Path, "/") + "/" + url.PathEscape(relyingPartyId) + "/" + url.PathEscape(clientId)
+	u.Path = strings.TrimRight(u.Path, "/") + "/" + url.PathEscape(relyingPartyID) + "/" + url.PathEscape(clientID)
 
 	// Prepare request
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(requestBody))
@@ -648,17 +701,17 @@ func (m *MOSIPAuthnProvider) callKycAuthEndpoint(
 func (m *MOSIPAuthnProvider) callKycExchangeEndpoint(
 	requestBody []byte,
 	signature string,
-	relyingPartyId string,
-	clientId string,
+	relyingPartyID string,
+	clientID string,
 	authHeaderValue string,
 ) (*GetAttributesResult, *AuthnProviderError) {
 	// Build full URI: .../relyingPartyId/clientId
-	baseUrl := "https://api-internal.collab.mosip.net/idauthentication/v1/kyc-exchange/delegated/S1NfjLsrh2ng8eJ73Z1x8L7ryBBmzi0H2d2jGgLQOiE0h2X7Sv/"
+	baseUrl := m.kycExchangeBaseURL
 	u, err := url.Parse(baseUrl)
 	if err != nil {
 		return nil, NewError(ErrorCodeAuthenticationFailed, err.Error(), err.Error())
 	}
-	u.Path = strings.TrimRight(u.Path, "/") + "/" + url.PathEscape(relyingPartyId) + "/" + url.PathEscape(clientId)
+	u.Path = strings.TrimRight(u.Path, "/") + "/" + url.PathEscape(relyingPartyID) + "/" + url.PathEscape(clientID)
 
 	// Prepare request
 	req, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewReader(requestBody))

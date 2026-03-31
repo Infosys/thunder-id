@@ -17,6 +17,14 @@
             "remotePath": "${workspaceFolder}",
             "port": 2345,
             "host": "127.0.0.1"
+        },
+        {
+            "name": "Debug Server",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/backend/cmd/server",
+            "cwd": "${workspaceFolder}/target/dist/thunder-0.26.0-win-x64/"
         }
     ]
 }

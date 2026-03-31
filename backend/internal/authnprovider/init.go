@@ -64,10 +64,31 @@ func initializeRestAuthnProvider() AuthnProviderInterface {
 // InitializeMOSIPAuthnProvider initializes the MOSIP authentication provider.
 func InitializeMOSIPAuthnProvider() *MOSIPAuthnProvider {
 	authnProviderConfig := config.GetThunderRuntime().Config.AuthnProvider
+	mosipConfig := authnProviderConfig.MOSIP
 	timeout := time.Duration(authnProviderConfig.Rest.Timeout) * time.Second
 	if timeout == 0 {
 		timeout = 10 * time.Second
 	}
 	httpClient := systemhttp.NewHTTPClientWithTimeout(timeout)
-	return NewMOSIPAuthnProvider(httpClient)
+	return NewMOSIPAuthnProvider(
+		httpClient,
+		mosipConfig.OTPBaseURL,
+		mosipConfig.KycAuthBaseURL,
+		mosipConfig.KycExchangeBaseURL,
+		mosipConfig.PartnerCertificateURL,
+		mosipConfig.P12FilePath,
+		mosipConfig.P12Password,
+		mosipConfig.IndividualIDType,
+		mosipConfig.OTPChannels,
+		mosipConfig.Env,
+		mosipConfig.DomainURI,
+		mosipConfig.Locales,
+		mosipConfig.KycExchangeRespType,
+		mosipConfig.IDAOtpID,
+		mosipConfig.IDAOtpVersion,
+		mosipConfig.IDAKycAuthID,
+		mosipConfig.IDAKycAuthVersion,
+		mosipConfig.IDAKycExchangeID,
+		mosipConfig.IDAKycExchangeVersion,
+	)
 }

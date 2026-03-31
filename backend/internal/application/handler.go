@@ -57,6 +57,7 @@ func (ah *applicationHandler) HandleApplicationPostRequest(w http.ResponseWriter
 	}
 
 	appDTO := model.ApplicationDTO{
+		ID:                        appRequest.ID,
 		Name:                      appRequest.Name,
 		Description:               appRequest.Description,
 		AuthFlowID:                appRequest.AuthFlowID,
