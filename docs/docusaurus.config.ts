@@ -212,9 +212,8 @@ const config: Config = {
           className: 'navbar__link--dropdown',
           items: [
             {
-              type: 'doc',
-              docId: 'releases',
               label: 'Releases',
+              href: '/docs/next/releases',
               className: 'navbar-resources__releases',
             },
             {
