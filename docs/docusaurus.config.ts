@@ -126,7 +126,13 @@ const config: Config = {
           // Replace {{ProductName}} and {{productSlug}} placeholders inside fenced code blocks at build time.
           rehypePlugins: [[rehypeProductName, {productName: productConfig.project.name, productSlug: (productConfig.project.name as string).toLowerCase()}]],
         },
-        blog: false,
+        blog: {
+          path: 'blog',
+          routeBasePath: 'blog',
+          showReadingTime: true,
+          blogSidebarTitle: 'All posts',
+          blogSidebarCount: 'ALL',
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -183,6 +189,11 @@ const config: Config = {
           docId: 'sdks/overview',
           position: 'right',
           label: 'SDKs',
+        },
+        {
+          to: '/blog',
+          label: 'Blog',
+          position: 'right',
         },
         {
           label: 'Resources',
