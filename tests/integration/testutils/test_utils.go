@@ -648,7 +648,7 @@ func StartServer(port string, zipFilePattern string) error {
 	log.Println("Starting server...")
 
 	serverPath := filepath.Join(extractedProductHome, ServerBinary)
-	cmd := exec.Command(serverPath, "-thunderHome="+extractedProductHome)
+	cmd := exec.Command(serverPath, "-serverHome="+extractedProductHome)
 
 	// logFile is non-nil only when subprocessMode opens a log file. The parent
 	// must close its copy after cmd.Start() so it does not leak the FD.
