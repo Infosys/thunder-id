@@ -392,7 +392,7 @@ func TestInitialize_WithDeclarativeResourcesEnabled_ValidConfigs(t *testing.T) {
 	err := os.MkdirAll(idpDir, 0750)
 	assert.NoError(t, err)
 
-	// Setup config with encryption support (path relative to thunderHome)
+	// Setup config with encryption support (path relative to server home)
 	testConfig := &config.Config{
 		Database: config.DatabaseConfig{
 			Config: config.DataSource{

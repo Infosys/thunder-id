@@ -601,12 +601,12 @@ type Config struct {
 }
 
 // LoadConfig loads the configurations from the specified YAML file and applies defaults.
-func LoadConfig(configPath string, defaultPath string, thunderHome string) (*Config, error) {
+func LoadConfig(configPath string, defaultPath string, serverHome string) (*Config, error) {
 	var cfg Config
 
 	// Load default configuration if provided
 	if defaultPath != "" {
-		defaultCfg, err := loadDefaultConfig(defaultPath, thunderHome)
+		defaultCfg, err := loadDefaultConfig(defaultPath, serverHome)
 		if err != nil {
 			return nil, err
 		}
@@ -615,7 +615,7 @@ func LoadConfig(configPath string, defaultPath string, thunderHome string) (*Con
 
 	// Load user configuration
 	var userCfg Config
-	userCfg, err := loadUserConfig(configPath, thunderHome)
+	userCfg, err := loadUserConfig(configPath, serverHome)
 	if err != nil {
 		return nil, err
 	}
@@ -648,14 +648,14 @@ func LoadConfig(configPath string, defaultPath string, thunderHome string) (*Con
 }
 
 // loadDefaultConfig loads the default configuration from a JSON file.
-func loadDefaultConfig(path string, thunderHome string) (*Config, error) {
+func loadDefaultConfig(path string, serverHome string) (*Config, error) {
 	var cfg Config
 	configPath := filepath.Clean(path)
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, err
 	}
-	data, err = utils.SubstituteFilePaths(data, thunderHome)
+	data, err = utils.SubstituteFilePaths(data, serverHome)
 	if err != nil {
 		return nil, err
 	}
@@ -666,7 +666,7 @@ func loadDefaultConfig(path string, thunderHome string) (*Config, error) {
 	return &cfg, nil
 }
 
-func loadUserConfig(path string, thunderHome string) (Config, error) {
+func loadUserConfig(path string, serverHome string) (Config, error) {
 	var cfg Config
 	configPath := filepath.Clean(path)
 	data, err := os.ReadFile(configPath)
@@ -677,7 +677,7 @@ func loadUserConfig(path string, thunderHome string) (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
-	data, err = utils.SubstituteFilePaths(data, thunderHome)
+	data, err = utils.SubstituteFilePaths(data, serverHome)
 	if err != nil {
 		return Config{}, err
 	}

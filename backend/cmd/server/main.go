@@ -57,9 +57,9 @@ func main() {
 	startupStartedAt := time.Now()
 	logger := log.GetLogger()
 
-	thunderHome := getThunderHome(logger)
+	serverHome := getThunderHome(logger)
 
-	cfg := initThunderConfigurations(logger, thunderHome)
+	cfg := initThunderConfigurations(logger, serverHome)
 	if cfg == nil {
 		logger.Fatal("Failed to initialize configurations")
 	}
@@ -84,7 +84,7 @@ func main() {
 	jwtService := registerServices(mux)
 
 	// Register static file handlers for frontend applications.
-	registerStaticFileHandlers(logger, mux, thunderHome)
+	registerStaticFileHandlers(logger, mux, serverHome)
 
 	// Setup signal handling for graceful shutdown
 	sigChan := make(chan os.Signal, 1)
@@ -97,7 +97,7 @@ func main() {
 		logger.Info("TLS is not enabled, starting server without TLS")
 		ln = createListener(logger, server)
 	} else {
-		tlsConfig := loadCertConfig(logger, cfg, thunderHome)
+		tlsConfig := loadCertConfig(logger, cfg, serverHome)
 		ln = createTLSListener(logger, server, tlsConfig)
 	}
 
@@ -125,11 +125,11 @@ func main() {
 func getThunderHome(logger *log.Logger) string {
 	// Parse project directory from command line arguments.
 	projectHome := ""
-	projectHomeFlag := flag.String("thunderHome", "", "Path to Thunder home directory")
+	projectHomeFlag := flag.String("serverHome", "", "Path to Thunder home directory")
 	flag.Parse()
 
 	if *projectHomeFlag != "" {
-		logger.Info("Using thunderHome from command line argument", log.String("thunderHome", *projectHomeFlag))
+		logger.Info("Using serverHome from command line argument", log.String("serverHome", *projectHomeFlag))
 		projectHome = *projectHomeFlag
 	} else {
 		// If no command line argument is provided, use the current working directory.
@@ -144,17 +144,17 @@ func getThunderHome(logger *log.Logger) string {
 }
 
 // initThunderConfigurations initializes the configurations.
-func initThunderConfigurations(logger *log.Logger, thunderHome string) *config.Config {
+func initThunderConfigurations(logger *log.Logger, serverHome string) *config.Config {
 	// Load the configurations.
-	configFilePath := path.Join(thunderHome, "repository/conf/deployment.yaml")
-	defaultConfigPath := path.Join(thunderHome, "repository/resources/conf/default.json")
-	cfg, err := config.LoadConfig(configFilePath, defaultConfigPath, thunderHome)
+	configFilePath := path.Join(serverHome, "repository/conf/deployment.yaml")
+	defaultConfigPath := path.Join(serverHome, "repository/resources/conf/default.json")
+	cfg, err := config.LoadConfig(configFilePath, defaultConfigPath, serverHome)
 	if err != nil {
 		logger.Fatal("Failed to load configurations", log.Error(err))
 	}
 
 	// Initialize runtime configurations.
-	if err := config.InitializeServerRuntime(thunderHome, cfg); err != nil {
+	if err := config.InitializeServerRuntime(serverHome, cfg); err != nil {
 		logger.Fatal("Failed to initialize server runtime", log.Error(err))
 	}
 
@@ -171,10 +171,10 @@ func initCacheManager(logger *log.Logger) {
 }
 
 // loadCertConfig loads the certificate configuration and extracts the Key ID (kid).
-func loadCertConfig(logger *log.Logger, cfg *config.Config, thunderHome string) *tls.Config {
+func loadCertConfig(logger *log.Logger, cfg *config.Config, serverHome string) *tls.Config {
 	// Build full paths for certificate and key files
-	certFilePath := path.Join(thunderHome, cfg.TLS.CertFile)
-	keyFilePath := path.Join(thunderHome, cfg.TLS.KeyFile)
+	certFilePath := path.Join(serverHome, cfg.TLS.CertFile)
+	keyFilePath := path.Join(serverHome, cfg.TLS.KeyFile)
 
 	// Load TLS configuration
 	tlsConfig, err := pki.LoadTLSConfig(cfg, certFilePath, keyFilePath)
@@ -272,9 +272,9 @@ func gracefulShutdown(
 }
 
 // registerStaticFileHandlers registers static file handlers for frontend applications.
-func registerStaticFileHandlers(logger *log.Logger, mux *http.ServeMux, thunderHome string) {
+func registerStaticFileHandlers(logger *log.Logger, mux *http.ServeMux, serverHome string) {
 	// Serve gate application from /gate
-	gateDir := path.Join(thunderHome, "apps", "gate")
+	gateDir := path.Join(serverHome, "apps", "gate")
 	if directoryExists(gateDir) {
 		logger.Debug("Registering static file handler for Gate application",
 			log.String("path", "/gate/"), log.String("directory", gateDir))
@@ -284,7 +284,7 @@ func registerStaticFileHandlers(logger *log.Logger, mux *http.ServeMux, thunderH
 	}
 
 	// Serve console application from /console
-	consoleDir := path.Join(thunderHome, "apps", "console")
+	consoleDir := path.Join(serverHome, "apps", "console")
 	if directoryExists(consoleDir) {
 		logger.Debug("Registering static file handler for Console application",
 			log.String("path", "/console/"), log.String("directory", consoleDir))

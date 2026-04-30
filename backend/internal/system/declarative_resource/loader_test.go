@@ -72,7 +72,7 @@ type testDTO struct {
 // but cannot be run in the same test suite due to the os.Exit(1) call.
 type ResourceLoaderTestSuite struct {
 	suite.Suite
-	thunderHome  string
+	serverHome  string
 	resourcesDir string
 }
 
@@ -80,7 +80,7 @@ type ResourceLoaderTestSuite struct {
 func (suite *ResourceLoaderTestSuite) SetupSuite() {
 	// Create a temporary directory for server home
 	tempThunderHome := suite.T().TempDir()
-	suite.thunderHome = tempThunderHome
+	suite.serverHome = tempThunderHome
 
 	// Initialize server runtime for testing
 	testConfig := &config.Config{

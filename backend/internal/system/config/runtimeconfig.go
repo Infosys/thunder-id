@@ -34,10 +34,10 @@ var (
 )
 
 // InitializeServerRuntime initializes the server runtime configurations.
-func InitializeServerRuntime(thunderHome string, config *Config) error {
+func InitializeServerRuntime(serverHome string, config *Config) error {
 	once.Do(func() {
 		runtimeConfig = &ServerRuntime{
-			ServerHome: thunderHome,
+			ServerHome: serverHome,
 			Config:      *config,
 		}
 	})
