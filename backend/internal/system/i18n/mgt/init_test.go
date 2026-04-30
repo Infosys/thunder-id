@@ -56,7 +56,7 @@ func (suite *InitTestSuite) TearDownTest() {
 
 func (suite *InitTestSuite) TestInitialize_MutableMode() {
 	// Setup
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = false
 
 	mux := http.NewServeMux()
@@ -76,7 +76,7 @@ func (suite *InitTestSuite) TestInitialize_MutableMode() {
 
 func (suite *InitTestSuite) TestInitialize_DeclarativeMode() {
 	// Setup
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = true
 
 	mux := http.NewServeMux()

@@ -33,7 +33,7 @@ import (
 // GetConfigs reads all configuration files from the specified directory within the resources directory.
 func GetConfigs(configDirectoryPath string) ([][]byte, error) {
 	logger := log.GetLogger().With(log.String("component", "FileBasedRuntime"))
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	immutableConfigFilePath := path.Join(thunderHome, "repository/resources/")
 	absoluteDirectoryPath := filepath.Join(immutableConfigFilePath, configDirectoryPath)
 	files, err := os.ReadDir(absoluteDirectoryPath)

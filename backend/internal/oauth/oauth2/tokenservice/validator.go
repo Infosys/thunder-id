@@ -52,7 +52,7 @@ func newTokenValidator(jwtService jwt.JWTServiceInterface) TokenValidatorInterfa
 // ValidateAccessToken validates an access token and extracts the claims.
 func (tv *tokenValidator) ValidateAccessToken(token string) (*AccessTokenClaims, error) {
 	// Verify signature and standard claims.
-	expectedIss := config.GetThunderRuntime().Config.JWT.Issuer
+	expectedIss := config.GetServerRuntime().Config.JWT.Issuer
 	if err := tv.jwtService.VerifyJWT(token, "", expectedIss); err != nil {
 		return nil, fmt.Errorf("access token verification failed: %v", err.Error)
 	}
@@ -207,7 +207,7 @@ func (tv *tokenValidator) ValidateSubjectToken(
 			return nil, fmt.Errorf("auth assertion must have a single audience")
 		}
 
-		defaultAudience := config.GetThunderRuntime().Config.JWT.Audience
+		defaultAudience := config.GetServerRuntime().Config.JWT.Audience
 		clientAppID := oauthApp.AppID
 
 		if !slices.Contains([]string{defaultAudience, clientAppID}, auds[0]) {
@@ -263,7 +263,7 @@ func (tv *tokenValidator) verifyTokenSignatureByIssuer(
 // validateTimeClaims validates time-based claims (exp, nbf).
 func (tv *tokenValidator) validateTimeClaims(claims map[string]interface{}) error {
 	// Get leeway from config to account for clock skew
-	leeway := config.GetThunderRuntime().Config.JWT.Leeway
+	leeway := config.GetServerRuntime().Config.JWT.Leeway
 	now := time.Now().Unix()
 
 	exp, err := extractInt64Claim(claims, "exp")

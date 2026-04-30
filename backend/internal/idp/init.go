@@ -113,7 +113,7 @@ func initializeStore() (idpStoreInterface, transaction.Transactioner, error) {
 //
 // Returns normalized store mode: "mutable", "declarative", or "composite"
 func getIdentityProviderStoreMode() serverconst.StoreMode {
-	cfg := config.GetThunderRuntime().Config
+	cfg := config.GetServerRuntime().Config
 	// Check if service-level configuration is explicitly set
 	if cfg.IdentityProvider.Store != "" {
 		mode := serverconst.StoreMode(strings.ToLower(strings.TrimSpace(cfg.IdentityProvider.Store)))

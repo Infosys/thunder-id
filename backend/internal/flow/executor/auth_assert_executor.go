@@ -132,7 +132,7 @@ func (a *authAssertExecutor) generateAuthAssertion(ctx *core.NodeContext, logger
 	}
 
 	jwtClaims := make(map[string]interface{})
-	jwtConfig := config.GetThunderRuntime().Config.JWT
+	jwtConfig := config.GetServerRuntime().Config.JWT
 	iss := jwtConfig.Issuer
 	validityPeriod := int64(0)
 

@@ -65,7 +65,7 @@ func (suite *OTelSubscriberTestSuite) TearDownTest() {
 
 // setupTestSubscriber creates a test subscriber with default stdout exporter config
 func (suite *OTelSubscriberTestSuite) setupTestSubscriber() *OTelSubscriber {
-	cfg := &config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry
+	cfg := &config.GetServerRuntime().Config.Observability.Output.OpenTelemetry
 	cfg.Enabled = true
 	cfg.ExporterType = exporterTypeStdout
 	cfg.ServiceName = "test-service"
@@ -85,21 +85,21 @@ func (suite *OTelSubscriberTestSuite) TestNewOTelSubscriber() {
 }
 
 func (suite *OTelSubscriberTestSuite) TestIsEnabled_WhenConfigTrue() {
-	config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry.Enabled = true
+	config.GetServerRuntime().Config.Observability.Output.OpenTelemetry.Enabled = true
 
 	sub := NewOTelSubscriber()
 	assert.True(suite.T(), sub.IsEnabled(), "IsEnabled() should return true when config is enabled")
 }
 
 func (suite *OTelSubscriberTestSuite) TestIsEnabled_WhenConfigFalse() {
-	config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry.Enabled = false
+	config.GetServerRuntime().Config.Observability.Output.OpenTelemetry.Enabled = false
 
 	sub := NewOTelSubscriber()
 	assert.False(suite.T(), sub.IsEnabled(), "IsEnabled() should return false when config is disabled")
 }
 
 func (suite *OTelSubscriberTestSuite) TestInitialize_WithStdoutExporter() {
-	cfg := &config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry
+	cfg := &config.GetServerRuntime().Config.Observability.Output.OpenTelemetry
 	cfg.Enabled = true
 	cfg.ExporterType = exporterTypeStdout
 	cfg.ServiceName = "test-service"
@@ -118,7 +118,7 @@ func (suite *OTelSubscriberTestSuite) TestInitialize_WithStdoutExporter() {
 }
 
 func (suite *OTelSubscriberTestSuite) TestInitialize_WithDefaultCategories() {
-	cfg := &config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry
+	cfg := &config.GetServerRuntime().Config.Observability.Output.OpenTelemetry
 	cfg.Enabled = true
 	cfg.ExporterType = exporterTypeStdout
 	cfg.Categories = []string{}
@@ -140,7 +140,7 @@ func (suite *OTelSubscriberTestSuite) TestGetID() {
 }
 
 func (suite *OTelSubscriberTestSuite) TestGetCategories_WithDefaultCategories() {
-	cfg := &config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry
+	cfg := &config.GetServerRuntime().Config.Observability.Output.OpenTelemetry
 	cfg.Enabled = true
 	cfg.ExporterType = exporterTypeStdout
 	cfg.Categories = []string{}
@@ -154,7 +154,7 @@ func (suite *OTelSubscriberTestSuite) TestGetCategories_WithDefaultCategories() 
 }
 
 func (suite *OTelSubscriberTestSuite) TestGetCategories_WithConfiguredCategories() {
-	cfg := &config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry
+	cfg := &config.GetServerRuntime().Config.Observability.Output.OpenTelemetry
 	cfg.Enabled = true
 	cfg.ExporterType = exporterTypeStdout
 	cfg.Categories = []string{"observability.authentication", "observability.flows"}
@@ -348,7 +348,7 @@ func (suite *OTelSubscriberTestSuite) TestContextPropagation_SameTraceID() {
 		sdktrace.WithSyncer(exporter),
 	)
 
-	cfg := config.GetThunderRuntime()
+	cfg := config.GetServerRuntime()
 	cfg.Config.Observability.Output.OpenTelemetry.Enabled = true
 	cfg.Config.Observability.Output.OpenTelemetry.ExporterType = "memory"
 
@@ -649,8 +649,8 @@ func BenchmarkOTelSubscriber_OnEvent(b *testing.B) {
 	setupTestConfig(&testing.T{})
 	defer resetTestConfig()
 
-	config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry.Enabled = true
-	config.GetThunderRuntime().Config.Observability.Output.OpenTelemetry.ExporterType = exporterTypeStdout
+	config.GetServerRuntime().Config.Observability.Output.OpenTelemetry.Enabled = true
+	config.GetServerRuntime().Config.Observability.Output.OpenTelemetry.ExporterType = exporterTypeStdout
 
 	sub := NewOTelSubscriber()
 	_ = sub.Initialize()

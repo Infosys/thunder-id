@@ -60,7 +60,7 @@ func newRedisFlowStore(p provider.RedisProviderInterface) flowStoreInterface {
 	return &redisFlowStore{
 		client:       p.GetRedisClient(),
 		keyPrefix:    p.GetKeyPrefix(),
-		deploymentID: config.GetThunderRuntime().Config.Server.Identifier,
+		deploymentID: config.GetServerRuntime().Config.Server.Identifier,
 	}
 }
 

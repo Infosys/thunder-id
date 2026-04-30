@@ -160,7 +160,7 @@ func (o *OAuthClient) RequiresPKCE() bool {
 
 // RequiresPAR reports whether pushed authorization requests are required for this OAuth client.
 func (o *OAuthClient) RequiresPAR() bool {
-	return o.RequirePushedAuthorizationRequests || config.GetThunderRuntime().Config.OAuth.PAR.RequirePAR
+	return o.RequirePushedAuthorizationRequests || config.GetServerRuntime().Config.OAuth.PAR.RequirePAR
 }
 
 // IsAllowedGrantType reports whether the given grant type is in the allowed list.
@@ -220,7 +220,7 @@ func ValidateRedirectURI(redirectURIs []string, redirectURI string) error {
 // Exact URIs are compared directly; patterns containing * use wildcard path matching.
 // First match wins (AC-11). Wildcard matching is skipped when the feature flag is off.
 func matchAnyRedirectURIPattern(patterns []string, redirectURI string) bool {
-	wildcardEnabled := config.GetThunderRuntime().Config.OAuth.AllowWildcardRedirectURI
+	wildcardEnabled := config.GetServerRuntime().Config.OAuth.AllowWildcardRedirectURI
 	for _, pattern := range patterns {
 		if !wildcardEnabled || !strings.Contains(pattern, "*") {
 			if pattern == redirectURI {

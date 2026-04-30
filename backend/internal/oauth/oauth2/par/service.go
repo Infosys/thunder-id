@@ -141,7 +141,7 @@ func (s *parService) HandlePushedAuthorizationRequest(
 		OAuthParameters: oauthParams,
 	}
 
-	expiresIn := config.GetThunderRuntime().Config.OAuth.PAR.ExpiresIn
+	expiresIn := config.GetServerRuntime().Config.OAuth.PAR.ExpiresIn
 
 	randomKey, err := s.store.Store(ctx, parRequest, expiresIn)
 	if err != nil {

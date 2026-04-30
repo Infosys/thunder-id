@@ -63,7 +63,7 @@ func (suite *InitTestSuite) TearDownTest() {
 
 func (suite *InitTestSuite) TestInitialize_WithDeclarativeResourcesDisabled() {
 	// Setup: Disable declarative resources
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = false
 
 	mux := http.NewServeMux()
@@ -84,7 +84,7 @@ func (suite *InitTestSuite) TestInitialize_WithDeclarativeResourcesDisabled() {
 
 func (suite *InitTestSuite) TestInitialize_WithDeclarativeResourcesEnabled() {
 	// Setup: Enable declarative resources
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = true
 
 	mux := http.NewServeMux()
@@ -105,7 +105,7 @@ func (suite *InitTestSuite) TestInitialize_WithDeclarativeResourcesEnabled() {
 
 func (suite *InitTestSuite) TestInitialize_FileBasedStoreCreation() {
 	// Setup: Enable declarative resources
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = true
 
 	mux := http.NewServeMux()
@@ -126,7 +126,7 @@ func (suite *InitTestSuite) TestInitialize_FileBasedStoreCreation() {
 
 func (suite *InitTestSuite) TestInitialize_DatabaseStoreCreation() {
 	// Setup: Disable declarative resources (uses database store)
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = false
 
 	mux := http.NewServeMux()
@@ -143,7 +143,7 @@ func (suite *InitTestSuite) TestInitialize_DatabaseStoreCreation() {
 
 func (suite *InitTestSuite) TestInitialize_RoutesRegistered() {
 	// Setup
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = false
 
 	mux := http.NewServeMux()
@@ -164,7 +164,7 @@ func (suite *InitTestSuite) TestInitialize_RoutesRegistered() {
 
 func (suite *InitTestSuite) TestInitialize_ExporterInterfaceCompliance() {
 	// Setup
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = false
 
 	mux := http.NewServeMux()
@@ -192,7 +192,7 @@ func (suite *InitTestSuite) TestInitialize_ExporterInterfaceCompliance() {
 
 func (suite *InitTestSuite) TestInitialize_ServiceInterfaceCompliance() {
 	// Setup
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = false
 
 	mux := http.NewServeMux()
@@ -211,7 +211,7 @@ func (suite *InitTestSuite) TestInitialize_ServiceInterfaceCompliance() {
 
 func (suite *InitTestSuite) TestInitialize_MultipleInitializations() {
 	// Test that multiple initializations work (e.g., for testing scenarios)
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.DeclarativeResources.Enabled = false
 
 	mux1 := http.NewServeMux()

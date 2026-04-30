@@ -327,7 +327,7 @@ func (suite *CacheManagerTestSuite) TestNewCache() {
 	t := suite.T()
 
 	// Save and restore original config
-	originalConfig := config.GetThunderRuntime().Config
+	originalConfig := config.GetServerRuntime().Config
 	defer func() {
 		// Reset config to original
 		config.ResetThunderRuntime()
@@ -419,7 +419,7 @@ func (suite *CacheManagerTestSuite) TestBuildRedisKeyPrefix() {
 	t := suite.T()
 
 	// Preserve runtime config because this test mutates the global runtime singleton.
-	originalConfig := config.GetThunderRuntime().Config
+	originalConfig := config.GetServerRuntime().Config
 	defer func() {
 		config.ResetThunderRuntime()
 		err := config.InitializeThunderRuntime("/test/thunder/home", &originalConfig)

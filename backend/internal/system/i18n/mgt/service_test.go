@@ -284,9 +284,9 @@ func (suite *I18nMgtServiceTestSuite) TestSetTranslationOverrideForKey_StoreErro
 
 func (suite *I18nMgtServiceTestSuite) TestSetTranslationOverrideForKey_Declarative() {
 	// Enable declarative mode
-	config.GetThunderRuntime().Config.DeclarativeResources.Enabled = true
+	config.GetServerRuntime().Config.DeclarativeResources.Enabled = true
 	defer func() {
-		config.GetThunderRuntime().Config.DeclarativeResources.Enabled = false
+		config.GetServerRuntime().Config.DeclarativeResources.Enabled = false
 	}()
 
 	result, err := suite.service.SetTranslationOverrideForKey("en-US", "common", "welcome", "Hello")
@@ -334,9 +334,9 @@ func (suite *I18nMgtServiceTestSuite) TestClearTranslationOverrideForKey_StoreEr
 
 func (suite *I18nMgtServiceTestSuite) TestClearTranslationOverrideForKey_Declarative() {
 	// Enable declarative mode
-	config.GetThunderRuntime().Config.DeclarativeResources.Enabled = true
+	config.GetServerRuntime().Config.DeclarativeResources.Enabled = true
 	defer func() {
-		config.GetThunderRuntime().Config.DeclarativeResources.Enabled = false
+		config.GetServerRuntime().Config.DeclarativeResources.Enabled = false
 	}()
 
 	err := suite.service.ClearTranslationOverrideForKey("en-US", "common", "welcome")
@@ -740,9 +740,9 @@ func (suite *I18nMgtServiceTestSuite) TestSetTranslationOverrides_StoreError() {
 
 func (suite *I18nMgtServiceTestSuite) TestSetTranslationOverrides_Declarative() {
 	// Enable declarative mode
-	config.GetThunderRuntime().Config.DeclarativeResources.Enabled = true
+	config.GetServerRuntime().Config.DeclarativeResources.Enabled = true
 	defer func() {
-		config.GetThunderRuntime().Config.DeclarativeResources.Enabled = false
+		config.GetServerRuntime().Config.DeclarativeResources.Enabled = false
 	}()
 
 	translations := map[string]map[string]string{
@@ -786,9 +786,9 @@ func (suite *I18nMgtServiceTestSuite) TestClearTranslationOverrides_ValidationEr
 
 func (suite *I18nMgtServiceTestSuite) TestClearTranslationOverrides_Declarative() {
 	// Enable declarative mode
-	config.GetThunderRuntime().Config.DeclarativeResources.Enabled = true
+	config.GetServerRuntime().Config.DeclarativeResources.Enabled = true
 	defer func() {
-		config.GetThunderRuntime().Config.DeclarativeResources.Enabled = false
+		config.GetServerRuntime().Config.DeclarativeResources.Enabled = false
 	}()
 
 	err := suite.service.ClearTranslationOverrides("en-US")

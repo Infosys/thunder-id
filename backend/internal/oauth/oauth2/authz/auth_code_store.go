@@ -67,7 +67,7 @@ type authorizationCodeStore struct {
 func newAuthorizationCodeStore() AuthorizationCodeStoreInterface {
 	return &authorizationCodeStore{
 		dbProvider:   provider.GetDBProvider(),
-		deploymentID: config.GetThunderRuntime().Config.Server.Identifier,
+		deploymentID: config.GetServerRuntime().Config.Server.Identifier,
 	}
 }
 

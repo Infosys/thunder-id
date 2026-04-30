@@ -47,7 +47,7 @@ type flowStore struct {
 func newFlowStore(dbProvider provider.DBProviderInterface) flowStoreInterface {
 	return &flowStore{
 		dbProvider:   dbProvider,
-		deploymentID: config.GetThunderRuntime().Config.Server.Identifier,
+		deploymentID: config.GetServerRuntime().Config.Server.Identifier,
 	}
 }
 

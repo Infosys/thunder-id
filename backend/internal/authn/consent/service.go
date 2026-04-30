@@ -311,7 +311,7 @@ func (s *consentEnforcerService) createConsentSessionToken(promptData *ConsentPr
 		return "", err
 	}
 
-	issuer := config.GetThunderRuntime().Config.JWT.Issuer
+	issuer := config.GetServerRuntime().Config.JWT.Issuer
 	claims := map[string]interface{}{
 		consentSessionClaimKey: json.RawMessage(sessionJSON),
 	}
@@ -330,7 +330,7 @@ func (s *consentEnforcerService) createConsentSessionToken(promptData *ConsentPr
 // verifyAndDecodeConsentSession verifies the JWT consent session token and decodes the session data.
 func (s *consentEnforcerService) verifyAndDecodeConsentSession(
 	sessionToken string) (*consentSessionData, error) {
-	issuer := config.GetThunderRuntime().Config.JWT.Issuer
+	issuer := config.GetServerRuntime().Config.JWT.Issuer
 
 	if svcErr := s.jwtService.VerifyJWT(sessionToken, consentSessionTokenAudience, issuer); svcErr != nil {
 		return nil, errors.New("consent session token verification failed: " + svcErr.Error.DefaultValue)

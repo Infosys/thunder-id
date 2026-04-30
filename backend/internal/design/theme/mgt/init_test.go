@@ -77,7 +77,7 @@ func (suite *ThemeInitTestSuite) TestInitializeStore_CompositeMode() {
 	err := config.InitializeThunderRuntime(tempDir, &config.Config{})
 	suite.Require().NoError(err)
 
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Theme.Store = "composite"
 
 	store, err := initializeStore()
@@ -94,7 +94,7 @@ func (suite *ThemeInitTestSuite) TestInitializeStore_DeclarativeMode() {
 	err := config.InitializeThunderRuntime(tempDir, &config.Config{})
 	suite.Require().NoError(err)
 
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Theme.Store = "declarative"
 
 	store, err := initializeStore()

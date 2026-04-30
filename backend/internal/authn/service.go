@@ -430,7 +430,7 @@ func (as *authenticationService) validateAndAppendAuthAssertion(authResponse *co
 	}
 
 	// Generate auth assertion JWT
-	jwtConfig := config.GetThunderRuntime().Config.JWT
+	jwtConfig := config.GetServerRuntime().Config.JWT
 	jwtClaims["aud"] = jwtConfig.Audience
 	token, _, err := as.jwtService.GenerateJWT(user.ID, jwtConfig.Issuer,
 		jwtConfig.ValidityPeriod, jwtClaims, jwt.TokenTypeJWT, "")
@@ -465,7 +465,7 @@ func (as *authenticationService) getAssertionResult(existingContext *assert.Assu
 // extractClaimsFromAssertion extracts assurance context and subject from an existing JWT assertion.
 func (as *authenticationService) extractClaimsFromAssertion(assertion string,
 	logger *log.Logger) (*assert.AssuranceContext, string, *serviceerror.ServiceError) {
-	jwtConfig := config.GetThunderRuntime().Config.JWT
+	jwtConfig := config.GetServerRuntime().Config.JWT
 
 	if err := as.jwtService.VerifyJWT(assertion, "", jwtConfig.Issuer); err != nil {
 		logger.Debug("Failed to verify JWT signature of the assertion", log.String("error", err.Error.DefaultValue))
@@ -608,7 +608,7 @@ func (as *authenticationService) createSessionToken(idpID string, idpType idp.ID
 		"auth_data": sessionData,
 	}
 
-	jwtConfig := config.GetThunderRuntime().Config.JWT
+	jwtConfig := config.GetServerRuntime().Config.JWT
 	claims["aud"] = "auth-svc"
 	token, _, err := as.jwtService.GenerateJWT("auth-svc", jwtConfig.Issuer, 600, claims, jwt.TokenTypeJWT, "")
 	if err != nil {
@@ -622,7 +622,7 @@ func (as *authenticationService) createSessionToken(idpID string, idpType idp.ID
 func (as *authenticationService) verifyAndDecodeSessionToken(token string, logger *log.Logger) (
 	*AuthSessionData, *serviceerror.ServiceError) {
 	// Verify JWT signature and claims
-	jwtConfig := config.GetThunderRuntime().Config.JWT
+	jwtConfig := config.GetServerRuntime().Config.JWT
 	svcErr := as.jwtService.VerifyJWT(token, "auth-svc", jwtConfig.Issuer)
 	if svcErr != nil {
 		logger.Debug("Error verifying session token", log.String("error", svcErr.Error.DefaultValue))

@@ -43,7 +43,7 @@ func Initialize(
 	var flowStore flowStoreInterface
 	var transactioner transaction.Transactioner
 
-	if config.GetThunderRuntime().Config.Database.Runtime.Type == dbprovider.DataSourceTypeRedis {
+	if config.GetServerRuntime().Config.Database.Runtime.Type == dbprovider.DataSourceTypeRedis {
 		flowStore = newRedisFlowStore(dbprovider.GetRedisProvider())
 		transactioner = transaction.NewNoOpTransactioner()
 	} else {

@@ -226,7 +226,7 @@ func (h *refreshTokenGrantHandler) HandleGrant(ctx context.Context, tokenRequest
 	}
 
 	// Check configuration for refresh token renewal
-	conf := config.GetThunderRuntime().Config
+	conf := config.GetServerRuntime().Config
 	renewRefreshToken := conf.OAuth.RefreshToken.RenewOnGrant
 
 	// Issue a new refresh token if renew_on_grant is enabled; otherwise reuse the existing one.

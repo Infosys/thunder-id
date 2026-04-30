@@ -48,7 +48,7 @@ type jweService struct {
 
 // newJWEService creates a new JWE service instance.
 func newJWEService(pkiService pki.PKIServiceInterface) (JWEServiceInterface, error) {
-	preferredKid := config.GetThunderRuntime().Config.JWT.PreferredKeyID
+	preferredKid := config.GetServerRuntime().Config.JWT.PreferredKeyID
 
 	privateKey, err := pkiService.GetPrivateKey(preferredKid)
 	if err != nil {

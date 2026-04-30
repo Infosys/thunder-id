@@ -55,7 +55,7 @@ type pkiService struct {
 
 // newPKIService initializes and returns the cert service
 func newPKIService() (PKIServiceInterface, error) {
-	thunderRuntime := config.GetThunderRuntime()
+	thunderRuntime := config.GetServerRuntime()
 	keyConfigs := thunderRuntime.Config.Crypto.Keys
 	if len(keyConfigs) == 0 {
 		return nil, errors.New("no key configurations found in the system configuration")

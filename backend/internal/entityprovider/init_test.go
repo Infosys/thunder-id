@@ -59,7 +59,7 @@ func TestInitEntityProviderTestSuite(t *testing.T) {
 }
 
 func (suite *InitEntityProviderTestSuite) TestInitializeEntityProvider_WithDisabledType() {
-	config.GetThunderRuntime().Config.EntityProvider = config.EntityProviderConfig{
+	config.GetServerRuntime().Config.EntityProvider = config.EntityProviderConfig{
 		Type: "disabled",
 	}
 
@@ -71,7 +71,7 @@ func (suite *InitEntityProviderTestSuite) TestInitializeEntityProvider_WithDisab
 }
 
 func (suite *InitEntityProviderTestSuite) TestInitializeEntityProvider_WithDefaultType() {
-	config.GetThunderRuntime().Config.EntityProvider = config.EntityProviderConfig{
+	config.GetServerRuntime().Config.EntityProvider = config.EntityProviderConfig{
 		Type: "default",
 	}
 
@@ -83,7 +83,7 @@ func (suite *InitEntityProviderTestSuite) TestInitializeEntityProvider_WithDefau
 }
 
 func (suite *InitEntityProviderTestSuite) TestInitializeEntityProvider_WithEmptyType() {
-	config.GetThunderRuntime().Config.EntityProvider = config.EntityProviderConfig{
+	config.GetServerRuntime().Config.EntityProvider = config.EntityProviderConfig{
 		Type: "",
 	}
 
@@ -95,7 +95,7 @@ func (suite *InitEntityProviderTestSuite) TestInitializeEntityProvider_WithEmpty
 }
 
 func (suite *InitEntityProviderTestSuite) TestInitializeEntityProvider_WithUnknownType() {
-	config.GetThunderRuntime().Config.EntityProvider = config.EntityProviderConfig{
+	config.GetServerRuntime().Config.EntityProvider = config.EntityProviderConfig{
 		Type: "unknown",
 	}
 

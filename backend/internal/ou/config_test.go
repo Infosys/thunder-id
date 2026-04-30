@@ -100,7 +100,7 @@ func TestGetOrganizationUnitStoreMode(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Set up test configuration
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.OrganizationUnit.Store = tt.ouStoreConfig
 			runtime.Config.DeclarativeResources.Enabled = tt.immutableResourcesEnabled
 
@@ -130,7 +130,7 @@ func TestIsCompositeModeEnabled(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.OrganizationUnit.Store = tt.mode
 			runtime.Config.DeclarativeResources.Enabled = false
 
@@ -158,7 +158,7 @@ func TestIsMutableModeEnabled(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.OrganizationUnit.Store = tt.mode
 			runtime.Config.DeclarativeResources.Enabled = false
 
@@ -186,7 +186,7 @@ func TestIsDeclarativeModeEnabled(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.OrganizationUnit.Store = tt.mode
 			runtime.Config.DeclarativeResources.Enabled = false
 

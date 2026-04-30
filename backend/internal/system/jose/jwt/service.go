@@ -76,7 +76,7 @@ type jwtService struct {
 // newJWTService creates a new JWT service instance.
 func newJWTService(pkiService pki.PKIServiceInterface,
 	httpClient httpservice.HTTPClientInterface) (JWTServiceInterface, error) {
-	preferredKid := config.GetThunderRuntime().Config.JWT.PreferredKeyID
+	preferredKid := config.GetServerRuntime().Config.JWT.PreferredKeyID
 
 	privateKey, err := pkiService.GetPrivateKey(preferredKid)
 	if err != nil {
@@ -182,7 +182,7 @@ func (js *jwtService) GenerateJWT(
 		return "", 0, &serviceerror.InternalServerError
 	}
 
-	thunderRuntime := config.GetThunderRuntime()
+	thunderRuntime := config.GetServerRuntime()
 
 	// Create the JWT header.
 	if typ == "" {
@@ -463,7 +463,7 @@ func (js *jwtService) getJWKSKeys(jwksURL string) ([]map[string]interface{}, *se
 		return nil, &ErrorFailedToParseJWKS
 	}
 
-	ttl := time.Duration(config.GetThunderRuntime().Config.Server.SecurityConfig.JWKSCacheTTL) * time.Second
+	ttl := time.Duration(config.GetServerRuntime().Config.Server.SecurityConfig.JWKSCacheTTL) * time.Second
 	js.jwksCache.Store(jwksURL, &jwksCacheEntry{
 		keys:      jwks.Keys,
 		expiresAt: time.Now().Add(ttl),
@@ -482,7 +482,7 @@ func (js *jwtService) verifyJWTClaims(jwtToken string, expectedAud, expectedIss 
 	}
 
 	// Get leeway from config to account for clock skew
-	leeway := config.GetThunderRuntime().Config.JWT.Leeway
+	leeway := config.GetServerRuntime().Config.JWT.Leeway
 
 	// Validate standard claims (exp, nbf, aud, iss)
 	now := time.Now().Unix()

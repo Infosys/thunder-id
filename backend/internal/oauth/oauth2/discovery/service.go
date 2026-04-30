@@ -47,7 +47,7 @@ type discoveryService struct {
 
 // newDiscoveryService creates a new discovery service instance
 func newDiscoveryService(pkiService pki.PKIServiceInterface) DiscoveryServiceInterface {
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	ds := &discoveryService{pkiService: pkiService}
 	ds.baseURL = config.GetServerURL(&runtime.Config.Server)
 	return ds
@@ -95,7 +95,7 @@ func (ds *discoveryService) GetOIDCMetadata(ctx context.Context) *OIDCProviderMe
 }
 
 func (ds *discoveryService) getIssuer() string {
-	return config.GetThunderRuntime().Config.JWT.Issuer
+	return config.GetServerRuntime().Config.JWT.Issuer
 }
 
 func (ds *discoveryService) getAuthorizationEndpoint() string {
@@ -151,7 +151,7 @@ func (ds *discoveryService) getPAREndpoint() string {
 }
 
 func (ds *discoveryService) isGlobalPARRequired() bool {
-	return config.GetThunderRuntime().Config.OAuth.PAR.RequirePAR
+	return config.GetServerRuntime().Config.OAuth.PAR.RequirePAR
 }
 
 func (ds *discoveryService) getSupportedSubjectTypes() []string {

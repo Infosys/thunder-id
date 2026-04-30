@@ -85,7 +85,7 @@ func newStore() (inboundClientStoreInterface, transaction.Transactioner, error) 
 		return nil, nil, err
 	}
 
-	deploymentID := config.GetThunderRuntime().Config.Server.Identifier
+	deploymentID := config.GetServerRuntime().Config.Server.Identifier
 	if _, err := client.QueryContext(context.Background(), queryGetInboundClientCount, deploymentID); err != nil {
 		return nil, nil, fmt.Errorf("failed to verify inbound client table: %w", err)
 	}

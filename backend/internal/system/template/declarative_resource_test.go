@@ -142,7 +142,7 @@ func (suite *TemplateDeclarativeResourceTestSuite) TestLoadDeclarativeResources_
 	err := config.InitializeThunderRuntime(tempDir, testConfig)
 	suite.NoError(err)
 
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	resourceDir := filepath.Join(runtime.ThunderHome, "repository", "resources", "templates")
 	err = os.MkdirAll(resourceDir, 0o750)
 	suite.NoError(err)
@@ -215,7 +215,7 @@ func (suite *TemplateDeclarativeResourceTestSuite) TestLoadDeclarativeResources_
 	err := config.InitializeThunderRuntime(tempDir, testConfig)
 	suite.NoError(err)
 
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	resourceDir := filepath.Join(runtime.ThunderHome, "repository", "resources", "templates")
 	err = os.MkdirAll(resourceDir, 0o750)
 	suite.NoError(err)

@@ -67,7 +67,7 @@ func initEncryptionService() (*EncryptionService, error) {
 	logger := log.GetLogger().With(log.String(log.LoggerKeyComponentName, "EncryptionService"))
 
 	// Try to get key from the application configuration
-	encryptionKey := config.GetThunderRuntime().Config.Crypto.Encryption.Key
+	encryptionKey := config.GetServerRuntime().Config.Crypto.Encryption.Key
 
 	// Check if encryption key is configured
 	if encryptionKey != "" {

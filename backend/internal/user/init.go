@@ -69,7 +69,7 @@ func Initialize(
 
 // getUserStoreMode determines the store mode for users from config.
 func getUserStoreMode() serverconst.StoreMode {
-	store := strings.ToLower(strings.TrimSpace(config.GetThunderRuntime().Config.User.Store))
+	store := strings.ToLower(strings.TrimSpace(config.GetServerRuntime().Config.User.Store))
 	switch serverconst.StoreMode(store) {
 	case serverconst.StoreModeMutable, serverconst.StoreModeDeclarative, serverconst.StoreModeComposite:
 		return serverconst.StoreMode(store)
@@ -82,7 +82,7 @@ func getUserStoreMode() serverconst.StoreMode {
 
 // getUserIndexedAttributes returns the indexed attributes configured for users.
 func getUserIndexedAttributes() []string {
-	return config.GetThunderRuntime().Config.User.IndexedAttributes
+	return config.GetServerRuntime().Config.User.IndexedAttributes
 }
 
 // registerRoutes registers the routes for user management operations.

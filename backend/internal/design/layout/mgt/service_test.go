@@ -200,7 +200,7 @@ func (suite *LayoutServiceTestSuite) TestCreateLayout_DuplicateHandle() {
 
 // Test CreateLayout - Declarative mode enabled
 func (suite *LayoutServiceTestSuite) TestCreateLayout_DeclarativeModeEnabled() {
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Layout.Store = "declarative"
 
 	layoutRequest := CreateLayoutRequest{

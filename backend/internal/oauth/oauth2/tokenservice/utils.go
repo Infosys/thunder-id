@@ -57,7 +57,7 @@ func JoinScopes(scopes []string) string {
 
 // ResolveTokenConfig resolves the token configuration from the OAuth app or falls back to global config.
 func ResolveTokenConfig(oauthApp *inboundmodel.OAuthClient, tokenType TokenType) *TokenConfig {
-	conf := config.GetThunderRuntime().Config
+	conf := config.GetServerRuntime().Config
 
 	tokenConfig := &TokenConfig{
 		Issuer:         conf.JWT.Issuer,

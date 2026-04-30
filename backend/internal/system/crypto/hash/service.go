@@ -68,7 +68,7 @@ type argon2idHashProvider struct {
 
 // newHashService initializes and returns the appropriate hash provider based on configuration
 func newHashService() (HashServiceInterface, error) {
-	cfg := config.GetThunderRuntime().Config.Crypto.PasswordHashing
+	cfg := config.GetServerRuntime().Config.Crypto.PasswordHashing
 	algorithm := CredAlgorithm(cfg.Algorithm)
 
 	switch algorithm {

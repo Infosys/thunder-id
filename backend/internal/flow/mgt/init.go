@@ -122,7 +122,7 @@ func initializeStore() (flowStoreInterface, *compositeFlowStore, transaction.Tra
 //  1. If Flow.Store is explicitly configured, use it
 //  2. Otherwise, fall back to global DeclarativeResources.Enabled
 func getFlowStoreMode() serverconst.StoreMode {
-	cfg := config.GetThunderRuntime().Config
+	cfg := config.GetServerRuntime().Config
 	// Check if service-level configuration is explicitly set
 	if cfg.Flow.Store != "" {
 		mode := serverconst.StoreMode(strings.ToLower(strings.TrimSpace(cfg.Flow.Store)))

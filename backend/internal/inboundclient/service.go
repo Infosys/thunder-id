@@ -436,7 +436,7 @@ func (s *inboundClientService) resolveFlowDefaults(ctx context.Context, c *inbou
 		return nil
 	}
 	if c.AuthFlowID == "" {
-		defaultHandle := config.GetThunderRuntime().Config.Flow.DefaultAuthFlowHandle
+		defaultHandle := config.GetServerRuntime().Config.Flow.DefaultAuthFlowHandle
 		flow, svcErr := s.flowMgt.GetFlowByHandle(ctx, defaultHandle, flowcommon.FlowTypeAuthentication)
 		if svcErr != nil {
 			if svcErr.Type == serviceerror.ServerErrorType {
@@ -703,7 +703,7 @@ func validateRedirectURIs(p *inboundmodel.OAuthProfileData) error {
 		if containsInvalidWildcardSegment(parsedURI.Path) {
 			return ErrOAuthInvalidRedirectURI
 		}
-		wildcardEnabled := config.GetThunderRuntime().Config.OAuth.AllowWildcardRedirectURI
+		wildcardEnabled := config.GetServerRuntime().Config.OAuth.AllowWildcardRedirectURI
 		if strings.ContainsRune(parsedURI.Path, '*') && !wildcardEnabled {
 			return ErrOAuthInvalidRedirectURI
 		}
@@ -946,7 +946,7 @@ func applyInboundDefaults(c *inboundmodel.InboundClient, oauthProfile *inboundmo
 
 // getDefaultAssertionFromDeployment returns the assertion config from the deployment-level JWT settings.
 func getDefaultAssertionFromDeployment() *inboundmodel.AssertionConfig {
-	jwtConfig := config.GetThunderRuntime().Config.JWT
+	jwtConfig := config.GetServerRuntime().Config.JWT
 	return &inboundmodel.AssertionConfig{ValidityPeriod: jwtConfig.ValidityPeriod}
 }
 

@@ -79,7 +79,7 @@ func NewHTTPClientWithTimeout(timeout time.Duration) HTTPClientInterface {
 			Transport: &http.Transport{
 				// #nosec G402 -- Min TLS version is TLS 1.2 or higher based on config
 				TLSClientConfig: &tls.Config{
-					MinVersion: GetTLSVersion(config.GetThunderRuntime().Config),
+					MinVersion: GetTLSVersion(config.GetServerRuntime().Config),
 				},
 			},
 		},
@@ -99,7 +99,7 @@ func NewHTTPClientWithCheckRedirect(checkRedirect func(*http.Request, []*http.Re
 				DialContext: ssrfSafeDialContext,
 				// #nosec G402 -- Min TLS version is TLS 1.2 or higher based on config
 				TLSClientConfig: &tls.Config{
-					MinVersion: GetTLSVersion(config.GetThunderRuntime().Config),
+					MinVersion: GetTLSVersion(config.GetServerRuntime().Config),
 				},
 			},
 			CheckRedirect: checkRedirect,

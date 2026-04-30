@@ -1479,7 +1479,7 @@ func validateHandle(handle string, delimiter string) *serviceerror.ServiceError 
 
 // getDefaultDelimiter returns the default delimiter from configuration.
 func getDefaultDelimiter() string {
-	delimiter := config.GetThunderRuntime().Config.Resource.DefaultDelimiter
+	delimiter := config.GetServerRuntime().Config.Resource.DefaultDelimiter
 	if delimiter == "" {
 		return ":" // Fallback default if not configured
 	}

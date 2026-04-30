@@ -62,7 +62,7 @@ func newIDPStore() (idpStoreInterface, transaction.Transactioner, error) {
 	}
 	return &idpStore{
 		dbProvider:   dbProvider,
-		deploymentID: config.GetThunderRuntime().Config.Server.Identifier,
+		deploymentID: config.GetServerRuntime().Config.Server.Identifier,
 	}, transactioner, nil
 }
 

@@ -87,7 +87,7 @@ func (suite *RuntimeConfigTestSuite) TestInitializeThunderRuntimeOnlyOnce() {
 	assert.NoError(suite.T(), err) // Should not return error
 
 	// Verify that the first initialization remains
-	runtime := GetThunderRuntime()
+	runtime := GetServerRuntime()
 	assert.Equal(suite.T(), "/first/path", runtime.ThunderHome)
 	assert.Equal(suite.T(), "firsthost", runtime.Config.Server.Hostname)
 	assert.Equal(suite.T(), 8000, runtime.Config.Server.Port)
@@ -104,7 +104,7 @@ func (suite *RuntimeConfigTestSuite) TestGetThunderRuntime() {
 	err := InitializeThunderRuntime("/get/test/path", config)
 	assert.NoError(suite.T(), err)
 
-	runtime := GetThunderRuntime()
+	runtime := GetServerRuntime()
 
 	assert.NotNil(suite.T(), runtime)
 	assert.Equal(suite.T(), "/get/test/path", runtime.ThunderHome)
@@ -115,6 +115,6 @@ func (suite *RuntimeConfigTestSuite) TestGetThunderRuntimePanic() {
 	runtimeConfig = nil
 
 	assert.Panics(suite.T(), func() {
-		GetThunderRuntime()
+		GetServerRuntime()
 	})
 }

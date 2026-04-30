@@ -318,7 +318,7 @@ func (s *DeclarativeResourceTestSuite) TestLoadDeclarativeResources_Integration(
 }
 
 func (s *DeclarativeResourceTestSuite) TestLoadDeclarativeResources_WithDBStore() {
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	resourceDir := filepath.Join(thunderHome, "repository", "resources", "layouts")
 	err := os.MkdirAll(resourceDir, 0o750)
 	s.Require().NoError(err)

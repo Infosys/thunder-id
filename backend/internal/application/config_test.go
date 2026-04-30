@@ -46,7 +46,7 @@ func (suite *ConfigTestSuite) SetupSuite() {
 // SetupTest sets up the test environment before each test.
 func (suite *ConfigTestSuite) SetupTest() {
 	// Reset config before each test
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Application.Store = ""
 	runtime.Config.DeclarativeResources.Enabled = false
 }
@@ -135,7 +135,7 @@ func (suite *ConfigTestSuite) TestGetApplicationStoreMode() {
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			// Setup
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.Application.Store = tc.appStore
 			runtime.Config.DeclarativeResources.Enabled = tc.declEnabled
 
@@ -197,7 +197,7 @@ func (suite *ConfigTestSuite) TestIsDeclarativeModeEnabled() {
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			// Setup
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.Application.Store = tc.appStore
 			runtime.Config.DeclarativeResources.Enabled = tc.declEnabled
 
@@ -238,7 +238,7 @@ func (suite *ConfigTestSuite) TestGetApplicationStoreMode_InvalidConfig() {
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			// Setup
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.Application.Store = tc.appStore
 			runtime.Config.DeclarativeResources.Enabled = tc.declEnabled
 

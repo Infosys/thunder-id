@@ -95,7 +95,7 @@ func (suite *TokenValidatorTestSuite) createTestJWT(claims map[string]interface{
 // getDefaultAudience is a helper function to get the configured default audience from runtime.
 // It skips the test if the runtime is not initialized or the audience is not configured.
 func (suite *TokenValidatorTestSuite) getDefaultAudience() string {
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	if runtime == nil {
 		suite.T().Skip("ThunderRuntime not initialized")
 		return ""
@@ -577,7 +577,7 @@ func (suite *TokenValidatorTestSuite) TestValidateSubjectToken_Security_RejectsT
 
 func (suite *TokenValidatorTestSuite) TestValidateSubjectToken_EdgeCase_VeryLongToken() {
 	// Get the configured default audience from runtime
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	if runtime == nil {
 		suite.T().Skip("ThunderRuntime not initialized")
 		return

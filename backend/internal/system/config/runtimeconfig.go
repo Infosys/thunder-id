@@ -45,8 +45,8 @@ func InitializeThunderRuntime(thunderHome string, config *Config) error {
 	return nil
 }
 
-// GetThunderRuntime returns the ThunderRuntime configuration.
-func GetThunderRuntime() *ThunderRuntime {
+// GetServerRuntime returns the ThunderRuntime configuration.
+func GetServerRuntime() *ThunderRuntime {
 	if runtimeConfig == nil {
 		panic("ThunderRuntime is not initialized")
 	}

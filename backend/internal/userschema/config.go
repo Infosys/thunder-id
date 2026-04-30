@@ -40,7 +40,7 @@ import (
 //
 // Returns normalized store mode: "mutable", "declarative", or "composite"
 func getUserSchemaStoreMode() serverconst.StoreMode {
-	cfg := config.GetThunderRuntime().Config
+	cfg := config.GetServerRuntime().Config
 	// Check if service-level configuration is explicitly set
 	if cfg.UserSchema.Store != "" {
 		mode := serverconst.StoreMode(strings.ToLower(strings.TrimSpace(cfg.UserSchema.Store)))

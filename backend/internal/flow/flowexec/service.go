@@ -465,7 +465,7 @@ func (s *flowExecService) getSystemFlowGraph(ctx context.Context, flowType commo
 	handle := ""
 	switch flowType {
 	case common.FlowTypeUserOnboarding:
-		handle = config.GetThunderRuntime().Config.Flow.UserOnboardingFlowHandle
+		handle = config.GetServerRuntime().Config.Flow.UserOnboardingFlowHandle
 	default:
 		return "", &ErrorInvalidFlowType
 	}

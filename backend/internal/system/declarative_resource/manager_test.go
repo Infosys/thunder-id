@@ -100,7 +100,7 @@ func (suite *FileBasedRuntimeManagerTestSuite) setEnvVar(key, value string) {
 
 // Helper function to create test files in the declarative resources directory
 func (suite *FileBasedRuntimeManagerTestSuite) createTestFile(configDir, filename, content string) string {
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	declarativeDir := filepath.Join(thunderHome, "repository", "resources", configDir)
 	err := os.MkdirAll(declarativeDir, 0750)
 	suite.Require().NoError(err)
@@ -168,7 +168,7 @@ func (suite *FileBasedRuntimeManagerTestSuite) TestGetConfigs_WithEnvironmentVar
 func (suite *FileBasedRuntimeManagerTestSuite) TestGetConfigs_EmptyDirectory() {
 	configDir := "empty-configs"
 	// Create empty directory
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	declarativeDir := filepath.Join(thunderHome, "repository", "resources", configDir)
 	err := os.MkdirAll(declarativeDir, 0750)
 	suite.Require().NoError(err)
@@ -186,7 +186,7 @@ func (suite *FileBasedRuntimeManagerTestSuite) TestGetConfigs_DirectoryWithSubdi
 	suite.createTestFile(configDir, "config.json", "valid config")
 
 	// Create a subdirectory
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	declarativeDir := filepath.Join(thunderHome, "repository", "resources", configDir)
 	subDir := filepath.Join(declarativeDir, "subdir")
 	err := os.MkdirAll(subDir, 0750)
@@ -324,7 +324,7 @@ func (suite *FileBasedRuntimeManagerTestSuite) TestGetConfigs_DirectoryReadPermi
 	suite.createTestFile(configDir, "config.yaml", "test: value")
 
 	// Get the directory path and remove read permissions
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	declarativeDir := filepath.Join(thunderHome, "repository", "resources", configDir)
 
 	err := os.Chmod(declarativeDir, 0000)
@@ -347,7 +347,7 @@ func (suite *FileBasedRuntimeManagerTestSuite) TestGetConfigs_CorruptedFile() {
 	configDir := "test-error-corrupted"
 
 	// Create a file with invalid UTF-8 sequences using the file system directly
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	declarativeDir := filepath.Join(thunderHome, "repository", "resources", configDir)
 	err := os.MkdirAll(declarativeDir, 0750)
 	suite.Require().NoError(err)
@@ -497,7 +497,7 @@ func (suite *FileBasedRuntimeManagerTestSuite) TestGetConfigs_BinaryFiles() {
 
 	// Create a binary file (non-text content)
 	binaryContent := []byte{0x00, 0x01, 0x02, 0x03, 0xFF, 0xFE, 0xFD}
-	thunderHome := config.GetThunderRuntime().ThunderHome
+	thunderHome := config.GetServerRuntime().ThunderHome
 	declarativeDir := filepath.Join(thunderHome, "repository", "resources", configDir)
 	err := os.MkdirAll(declarativeDir, 0750)
 	suite.Require().NoError(err)

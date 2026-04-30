@@ -348,7 +348,7 @@ func (s *userInfoService) generateJWSUserInfo(
 		clientID = cid
 	}
 
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 
 	issuer := runtime.Config.JWT.Issuer
 	validity := runtime.Config.JWT.ValidityPeriod

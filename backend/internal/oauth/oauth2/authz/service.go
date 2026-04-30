@@ -509,7 +509,7 @@ func (as *authorizeService) HandleAuthorizationCallback(ctx context.Context, aut
 		// Construct the redirect URI with the authorization code.
 		queryParams := map[string]string{
 			"code":                      authzCode.Code,
-			oauth2const.RequestParamIss: config.GetThunderRuntime().Config.JWT.Issuer,
+			oauth2const.RequestParamIss: config.GetServerRuntime().Config.JWT.Issuer,
 		}
 		if authRequestCtx.OAuthParameters.State != "" {
 			queryParams[oauth2const.RequestParamState] = authRequestCtx.OAuthParameters.State
@@ -658,7 +658,7 @@ func createAuthorizationCode(
 	allScopes := append(append([]string{}, standardScopes...), permissionScopes...)
 	resources := authRequestCtx.OAuthParameters.Resources
 
-	oauthConfig := config.GetThunderRuntime().Config.OAuth
+	oauthConfig := config.GetServerRuntime().Config.OAuth
 	validityPeriod := oauthConfig.AuthorizationCode.ValidityPeriod
 	expiryTime := authTime.Add(time.Duration(validityPeriod) * time.Second)
 
@@ -902,6 +902,6 @@ func resolveUserAttributesCacheTTL(app *inboundmodel.OAuthClient) int64 {
 			maxTTL = refreshTTL
 		}
 	}
-	authCodeTTL := config.GetThunderRuntime().Config.OAuth.AuthorizationCode.ValidityPeriod
+	authCodeTTL := config.GetServerRuntime().Config.OAuth.AuthorizationCode.ValidityPeriod
 	return maxTTL + authCodeTTL + oauth2const.AttributeCacheTTLBufferSeconds
 }

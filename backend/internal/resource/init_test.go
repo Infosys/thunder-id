@@ -478,7 +478,7 @@ func (suite *InitTestSuite) TestRegisterRoutes_CORSConfiguration() {
 // TestInitializeStore_MutableMode tests store initialization in mutable mode
 func (suite *InitTestSuite) TestInitializeStore_MutableMode() {
 	// Setup: Configure mutable store mode
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Resource.Store = "mutable"
 	runtime.Config.DeclarativeResources.Enabled = false
 
@@ -497,7 +497,7 @@ func (suite *InitTestSuite) TestInitializeStore_MutableMode() {
 // TestInitializeStore_DeclarativeMode tests store initialization in declarative mode
 func (suite *InitTestSuite) TestInitializeStore_DeclarativeMode() {
 	// Setup: Configure declarative store mode
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Resource.Store = "declarative"
 
 	// Execute
@@ -515,7 +515,7 @@ func (suite *InitTestSuite) TestInitializeStore_DeclarativeMode() {
 // TestInitializeStore_CompositeMode tests store initialization in composite mode
 func (suite *InitTestSuite) TestInitializeStore_CompositeMode() {
 	// Setup: Configure composite store mode
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Resource.Store = testStoreModeComposite
 
 	// Execute
@@ -547,7 +547,7 @@ func (suite *InitTestSuite) TestInitializeStore_CompositeMode_FileStoreInitializ
 	// This test verifies that errors during file store initialization are properly propagated
 	// In a normal scenario, newFileBasedResourceStore() should not fail, but we document the behavior
 
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Resource.Store = testStoreModeComposite
 
 	// Execute (in normal conditions, this should succeed)
@@ -567,7 +567,7 @@ func (suite *InitTestSuite) TestInitializeStore_InvalidMode_ReturnedFromInitiali
 	// For now, we document that invalid modes are handled by fallback in getResourceStoreMode()
 
 	// Setup with explicit invalid mode that bypasses the fallback
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Resource.Store = "invalid-mode"
 	runtime.Config.DeclarativeResources.Enabled = false
 
@@ -598,7 +598,7 @@ func (suite *InitTestSuite) TestInitializeStore_CaseInsensitiveMode() {
 
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.Resource.Store = tc.storeMode
 
 			store, _, err := initializeStore()
@@ -636,7 +636,7 @@ func (suite *InitTestSuite) TestInitializeStore_WithWhitespace() {
 
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.Resource.Store = tc.storeMode
 
 			store, _, err := initializeStore()
@@ -654,7 +654,7 @@ func (suite *InitTestSuite) TestInitializeStore_WithWhitespace() {
 
 // TestInitializeStore_FallbackToGlobalConfig tests fallback to global configuration
 func (suite *InitTestSuite) TestInitializeStore_FallbackToGlobalConfig() {
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 
 	testCases := []struct {
 		name              string

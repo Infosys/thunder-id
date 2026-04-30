@@ -53,7 +53,7 @@ func (suite *ConfigTestSuite) TearDownSuite() {
 // SetupTest sets up the test environment before each test.
 func (suite *ConfigTestSuite) SetupTest() {
 	// Reset config before each test
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Theme.Store = ""
 	runtime.Config.DeclarativeResources.Enabled = false
 }
@@ -163,7 +163,7 @@ func (suite *ConfigTestSuite) TestGetThemeStoreMode() {
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			// Setup
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.Theme.Store = tc.themeStore
 			runtime.Config.DeclarativeResources.Enabled = tc.declEnabled
 
@@ -225,7 +225,7 @@ func (suite *ConfigTestSuite) TestIsDeclarativeModeEnabled() {
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			// Setup
-			runtime := config.GetThunderRuntime()
+			runtime := config.GetServerRuntime()
 			runtime.Config.Theme.Store = tc.themeStore
 			runtime.Config.DeclarativeResources.Enabled = tc.declEnabled
 

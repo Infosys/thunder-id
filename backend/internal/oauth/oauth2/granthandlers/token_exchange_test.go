@@ -115,7 +115,7 @@ func (suite *TokenExchangeGrantHandlerTestSuite) SetupTest() {
 
 // getDefaultAudience is a helper function to get the configured default audience from runtime.
 func (suite *TokenExchangeGrantHandlerTestSuite) getDefaultAudience() string {
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	if runtime == nil {
 		suite.T().Skip("ThunderRuntime not initialized")
 		return ""

@@ -73,7 +73,7 @@ func (cm *CacheManager) Init() {
 	logger := log.GetLogger().With(log.String(log.LoggerKeyComponentName, "CacheManager"))
 	logger.Debug("Initializing Cache Manager")
 
-	cacheConfig := config.GetThunderRuntime().Config.Cache
+	cacheConfig := config.GetServerRuntime().Config.Cache
 	if cacheConfig.Disabled {
 		cm.enabled = false
 		logger.Debug("Caching is disabled. Skipping initialization")
@@ -214,7 +214,7 @@ func (cm *CacheManager) reset() {
 
 // buildRedisKeyPrefix composes the Redis key prefix with deployment ID for per-deployment isolation.
 func buildRedisKeyPrefix(basePrefix string) string {
-	deploymentID := config.GetThunderRuntime().Config.Server.Identifier
+	deploymentID := config.GetServerRuntime().Config.Server.Identifier
 	if deploymentID == "" {
 		return basePrefix
 	}
@@ -231,7 +231,7 @@ func newCache[T any](cacheName string) CacheInterface[T] {
 	logger := log.GetLogger().With(log.String(log.LoggerKeyComponentName, "CacheManager"),
 		log.String("cacheName", cacheName))
 
-	cacheConfig := config.GetThunderRuntime().Config.Cache
+	cacheConfig := config.GetServerRuntime().Config.Cache
 	if cacheConfig.Disabled {
 		logger.Debug("Caching is disabled, returning empty")
 		return &Cache[T]{
@@ -333,7 +333,7 @@ func GetInMemoryCache[T any](cacheName string) CacheInterface[T] {
 
 	logger.Debug("Creating new in-memory cache", log.String("cacheName", cacheName), log.String("type", typeName))
 
-	cacheConfig := config.GetThunderRuntime().Config.Cache
+	cacheConfig := config.GetServerRuntime().Config.Cache
 	cacheProperty := getCacheProperty(cacheConfig, cacheName)
 
 	var internalCache CacheInterface[T]

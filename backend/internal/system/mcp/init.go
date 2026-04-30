@@ -36,7 +36,7 @@ func Initialize(
 	mux *http.ServeMux,
 	jwtService jwt.JWTServiceInterface,
 ) *mcpsdk.Server {
-	cfg := config.GetThunderRuntime().Config
+	cfg := config.GetServerRuntime().Config
 	baseURL := config.GetServerURL(&cfg.Server)
 
 	mcpURL := baseURL + MCPEndpointPath

@@ -206,7 +206,7 @@ func (suite *ThemeServiceTestSuite) TestCreateTheme_DuplicateHandle() {
 
 // Test CreateTheme - Declarative mode enabled
 func (suite *ThemeServiceTestSuite) TestCreateTheme_DeclarativeModeEnabled() {
-	runtime := config.GetThunderRuntime()
+	runtime := config.GetServerRuntime()
 	runtime.Config.Theme.Store = "declarative"
 
 	themeRequest := CreateThemeRequestWithID{
