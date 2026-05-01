@@ -72,7 +72,7 @@ type testDTO struct {
 // but cannot be run in the same test suite due to the os.Exit(1) call.
 type ResourceLoaderTestSuite struct {
 	suite.Suite
-	serverHome  string
+	serverHome   string
 	resourcesDir string
 }
 

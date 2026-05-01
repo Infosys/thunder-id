@@ -25,7 +25,7 @@ import (
 // Server runtime holds the runtime configuration for the server.
 type ServerRuntime struct {
 	ServerHome string `yaml:"server_home"`
-	Config      Config `yaml:"config"`
+	Config     Config `yaml:"config"`
 }
 
 var (
@@ -38,7 +38,7 @@ func InitializeServerRuntime(serverHome string, config *Config) error {
 	once.Do(func() {
 		runtimeConfig = &ServerRuntime{
 			ServerHome: serverHome,
-			Config:      *config,
+			Config:     *config,
 		}
 	})
 
