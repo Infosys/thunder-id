@@ -207,6 +207,8 @@ paths:
                           - given_name
                           - family_name
                     userInfo:
+                      responseType: JWS
+                      signingAlg: RS256
                       userAttributes:
                         - email
                         - name
@@ -298,6 +300,8 @@ paths:
                             - given_name
                             - family_name
                       userInfo:
+                        responseType: JWS
+                        signingAlg: RS256
                         userAttributes:
                           - email
                           - name
@@ -454,6 +458,8 @@ paths:
                             - given_name
                             - family_name
                       userInfo:
+                        responseType: JWS
+                        signingAlg: RS256
                         userAttributes:
                           - email
                           - name
@@ -598,6 +604,8 @@ paths:
                           - given_name
                           - family_name
                     userInfo:
+                      responseType: JWS
+                      signingAlg: RS256
                       userAttributes:
                         - email
                         - name
@@ -691,6 +699,8 @@ paths:
                             - given_name
                             - family_name
                       userInfo:
+                        responseType: JWS
+                        signingAlg: RS256
                         userAttributes:
                           - email
                           - name
@@ -6231,13 +6241,15 @@ paths:
                   - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                     name: Booking System
                     description: Handles all booking operations
-                    identifier: booking-system
+                    handle: booking-system
+                    identifier: https://api.example.com/booking
                     ouId: a839f4bd-39dc-4eaa-b5cc-210d8ecaee87
                     delimiter: ":"
                   - id: 257e528f-eb24-48b6-884d-20460e190957
                     name: Property Management
                     description: Property and facility management
-                    identifier: property-mgmt
+                    handle: property-mgmt
+                    identifier: https://api.example.com/property
                     ouId: a839f4bd-39dc-4eaa-b5cc-210d8ecaee87
                     delimiter: ":"
                 links:
@@ -6298,7 +6310,8 @@ paths:
             example:
               name: Booking System
               description: Handles all booking operations
-              identifier: booking-system
+              handle: booking-system
+              identifier: https://api.example.com/booking
               ouId: a839f4bd-39dc-4eaa-b5cc-210d8ecaee87
       responses:
         "201":
@@ -6311,7 +6324,8 @@ paths:
                 id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 name: Booking System
                 description: Handles all booking operations
-                identifier: booking-system
+                handle: booking-system
+                identifier: https://api.example.com/booking
                 ouId: a839f4bd-39dc-4eaa-b5cc-210d8ecaee87
                 delimiter: ":"
         "400":
@@ -6416,7 +6430,8 @@ paths:
                 id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 name: Booking System
                 description: Handles all booking operations
-                identifier: booking-system
+                handle: booking-system
+                identifier: https://api.example.com/booking
                 ouId: a839f4bd-39dc-4eaa-b5cc-210d8ecaee87
                 delimiter: ":"
         "400":
@@ -6483,7 +6498,7 @@ paths:
             example:
               name: Booking System Updated
               description: Updated description for booking operations
-              identifier: booking-system-v2
+              identifier: https://api.example.com/booking/v2
               ouId: a839f4bd-39dc-4eaa-b5cc-210d8ecaee87
       responses:
         "200":
@@ -6496,7 +6511,8 @@ paths:
                 id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 name: Booking System Updated
                 description: Updated description for booking operations
-                identifier: booking-system-v2
+                handle: booking-system
+                identifier: https://api.example.com/booking/v2
                 ouId: a839f4bd-39dc-4eaa-b5cc-210d8ecaee87
                 delimiter: ":"
         "400":
@@ -11038,12 +11054,32 @@ components:
       type: object
       description: UserInfo endpoint configuration for the OAuth application
       properties:
+        responseType:
+          type: string
+          description: >
+            The format of the UserInfo response.
+
+            JSON returns a plain JSON object.
+
+            JWS returns a signed JWT — requires signingAlg.
+
+            JWE returns an encrypted JWT — requires encryptionAlg,
+            encryptionEnc, and a client certificate.
+
+            NESTED_JWT returns a sign-then-encrypt JWT — requires signingAlg,
+            encryptionAlg, encryptionEnc, and a client certificate.
+          enum:
+            - JSON
+            - JWS
+            - JWE
+            - NESTED_JWT
+          example: JWS
         userAttributes:
           type: array
           items:
             type: string
           description: |
-            The user attributes to include in the userinfo response. 
+            The user attributes to include in the userinfo response.
             If not specified, falls back to ID token user attributes.
           example:
             - email
@@ -11051,6 +11087,55 @@ components:
             - given_name
             - family_name
             - picture
+        signingAlg:
+          type: string
+          description: >
+            JWS algorithm used to sign the UserInfo response JWT.
+
+            When set (without encryptionAlg), the response is a signed JWT
+            (JWS).
+
+            When set together with encryptionAlg, the response is a Nested JWT
+            (sign-then-encrypt).
+
+            Omit to return a plain JSON response.
+          enum:
+            - RS256
+            - RS512
+            - PS256
+            - ES256
+            - ES384
+            - ES512
+            - EdDSA
+          example: RS256
+        encryptionAlg:
+          type: string
+          description: >
+            JWE key-management algorithm used to encrypt the UserInfo response.
+
+            Must be set together with encryptionEnc and a client certificate
+            (JWKS).
+
+            When set without signingAlg, the response is a JWE over the plain
+            JSON payload.
+
+            When set together with signingAlg, the response is a Nested JWT
+            (sign-then-encrypt).
+          enum:
+            - RSA-OAEP
+            - RSA-OAEP-256
+          example: RSA-OAEP-256
+        encryptionEnc:
+          type: string
+          description: >
+            JWE content-encryption algorithm used to encrypt the UserInfo
+            response payload.
+
+            Required when encryptionAlg is set.
+          enum:
+            - A128CBC-HS256
+            - A256GCM
+          example: A256GCM
     Certificate:
       type: object
       properties:
@@ -14657,6 +14742,7 @@ components:
       required:
         - id
         - name
+        - handle
         - ouId
         - delimiter
       properties:
@@ -14671,11 +14757,17 @@ components:
           type: string
           nullable: true
           description: Optional description of the resource server
+        handle:
+          type: string
+          description: Immutable handle that prefixes all permission strings derived from
+            this resource server. Must be unique.
         identifier:
           type: string
           nullable: true
-          description: Optional identifier for authorization requests (Unique in the
-            system if provided)
+          description: Optional identifier for this resource server. Must be unique in the
+            system if provided. When set to an absolute URI, the resource server
+            is used in RFC 8707 resource indicator flows and the identifier is
+            used as the access token audience claim value.
         ouId:
           type: string
           format: uuid
@@ -14684,6 +14776,9 @@ components:
           type: string
           description: Character used to separate permission hierarchy levels (immutable
             after creation)
+        isReadOnly:
+          type: boolean
+          description: Whether the resource server is read-only (system-managed)
     CreateResourceServerRequest:
       type: object
       required:
@@ -14696,10 +14791,18 @@ components:
         description:
           type: string
           description: Optional description of the resource server
+        handle:
+          type: string
+          description: Immutable handle that prefixes all permission strings derived from
+            this resource server. Must be unique. Use lowercase with hyphens
+            (e.g., "booking-api").
         identifier:
           type: string
-          description: Optional identifier for authorization requests (Unique in the
-            system if provided)
+          description: Optional identifier for this resource server. Must be unique in the
+            system if provided. When set to an absolute URI, the resource server
+            is used in RFC 8707 resource indicator flows and clients can use
+            this value in the resource parameter to request audience-restricted
+            access tokens.
         ouId:
           type: string
           format: uuid
@@ -14722,8 +14825,9 @@ components:
           description: Optional description of the resource server
         identifier:
           type: string
-          description: Optional identifier for authorization requests (Unique in the
-            system if provided)
+          description: Optional identifier for this resource server. Must be unique in the
+            system if provided. When set to an absolute URI, the resource server
+            is used in RFC 8707 resource indicator flows.
         ouId:
           type: string
           format: uuid
