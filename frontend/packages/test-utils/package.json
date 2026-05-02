@@ -10,7 +10,7 @@
     "testing-library",
     "wso2"
   ],
-  "homepage": "https://github.com/asgardeo/thunder/tree/main/frontend/packages/thunder-test-utils#readme",
+  "homepage": "https://github.com/asgardeo/thunder/tree/main/frontend/packages/test-utils#readme",
   "bugs": {
     "url": "https://github.com/asgardeo/thunder/issues"
   },
@@ -46,7 +46,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/asgardeo/thunder",
-    "directory": "frontend/packages/thunder-test-utils"
+    "directory": "frontend/packages/test-utils"
   },
   "scripts": {
     "build": "pnpm clean:dist && rolldown -c rolldown.config.js && tsc -p tsconfig.lib.json --emitDeclarationOnly --outDir dist",
