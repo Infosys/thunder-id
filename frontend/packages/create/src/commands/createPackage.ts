@@ -38,7 +38,7 @@ async function createPackage(): Promise<void> {
   const packageType = await select({
     message: 'Package type:',
     options: [
-      {value: 'javascript', label: 'JavaScript package (like thunder-logger)'},
+      {value: 'javascript', label: 'JavaScript package (like logger)'},
       {value: 'react', label: 'React package (like contexts)'},
     ],
   });
