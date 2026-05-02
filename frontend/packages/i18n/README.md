@@ -336,7 +336,7 @@ const translations = {
 ### 2. Rebuild the package
 
 ```bash
-cd packages/thunder-i18n
+cd packages/i18n
 pnpm build
 ```
 
