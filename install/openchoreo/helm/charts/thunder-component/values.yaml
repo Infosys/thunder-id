@@ -99,7 +99,7 @@ cache:
 
 cors:
   allowed_origins:
-    - "https://thunder-gate.your-domain.com"
+    - "https://gate.your-domain.com"
     - "https://localhost:3000"
 
 # ── Gate and Console ──────────────────────────────────────────────────────────

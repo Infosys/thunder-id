@@ -8,7 +8,7 @@ React/TypeScript frontend guidelines for the Thunder project.
 - pnpm workspace managed by Nx.
 - Testing: Vitest with `@testing-library/react`.
 - Linting: ESLint. Each package may include its own lint configuration extending the shared base.
-- Two apps: `thunder-gate` (auth UI), `thunder-develop` (console).
+- Two apps: `gate` (auth UI), `thunder-develop` (console).
 
 ## Conventions
 

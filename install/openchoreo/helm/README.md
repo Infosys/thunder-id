@@ -265,7 +265,7 @@ To promote Thunder to `staging` or `production`:
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `thunder-component.cors.allowed_origins` | Allowed CORS origins for the development environment | `["https://thunder-gate.your-domain.com", "https://localhost:3000"]` |
+| `thunder-component.cors.allowed_origins` | Allowed CORS origins for the development environment | `["https://gate.your-domain.com", "https://localhost:3000"]` |
 
 ### Resource Controls
 
