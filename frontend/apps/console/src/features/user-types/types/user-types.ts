@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {ApiPaginationLink} from '@thunder/types';
+import type {ApiPaginationLink} from '@thunderid/types';
 
 /**
  * TypeScript types and interfaces for User Types (User Schemas) feature

@@ -57,7 +57,7 @@
     "@thunderid/configure-organization-units": "workspace:^",
     "@thunder/prettier-config": "workspace:^",
     "@thunder/test-utils": "workspace:^",
-    "@thunder/types": "workspace:^",
+    "@thunderid/types": "workspace:^",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "eslint": "catalog:",

@@ -17,7 +17,7 @@
  */
 
 import {render, screen, waitFor, within, userEvent} from '@thunder/test-utils';
-import type {User} from '@thunder/types';
+import type {User} from '@thunderid/types';
 import type {ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type {ApiUserSchema, UserSchemaListResponse} from '../../models/users';

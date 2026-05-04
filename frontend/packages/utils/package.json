@@ -54,7 +54,7 @@
     "human-id": "4.1.2"
   },
   "devDependencies": {
-    "@thunder/types": "workspace:^",
+    "@thunderid/types": "workspace:^",
     "@thunderid/eslint-plugin-thunder": "workspace:^",
     "@thunder/prettier-config": "workspace:^",
     "@thunder/test-utils": "workspace:^",

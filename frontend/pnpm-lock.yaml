@@ -437,7 +437,7 @@ importers:
       '@thunder/test-utils':
         specifier: workspace:^
         version: link:../../packages/test-utils
-      '@thunder/types':
+      '@thunderid/types':
         specifier: workspace:^
         version: link:../../packages/types
       '@types/lodash-es':
@@ -767,7 +767,7 @@ importers:
       '@thunder/test-utils':
         specifier: workspace:^
         version: link:../test-utils
-      '@thunder/types':
+      '@thunderid/types':
         specifier: workspace:^
         version: link:../types
       '@types/node':
@@ -964,7 +964,7 @@ importers:
       '@thunder/test-utils':
         specifier: workspace:^
         version: link:../test-utils
-      '@thunder/types':
+      '@thunderid/types':
         specifier: workspace:^
         version: link:../types
       '@types/node':
@@ -1168,7 +1168,7 @@ importers:
       '@thunder/test-utils':
         specifier: workspace:^
         version: link:../test-utils
-      '@thunder/types':
+      '@thunderid/types':
         specifier: workspace:^
         version: link:../types
       '@types/node':
@@ -1610,7 +1610,7 @@ importers:
       '@thunder/test-utils':
         specifier: workspace:^
         version: link:../test-utils
-      '@thunder/types':
+      '@thunderid/types':
         specifier: workspace:^
         version: link:../types
       '@types/node':

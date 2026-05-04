@@ -17,7 +17,7 @@
  */
 
 import {waitFor, act, renderHook} from '@thunder/test-utils';
-import type {User} from '@thunder/types';
+import type {User} from '@thunderid/types';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import UserQueryKeys from '../../constants/user-query-keys';
 import type {CreateUserRequest} from '../../models/users';

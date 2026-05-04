@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {ApiError} from '@thunder/types';
+import type {ApiError} from '@thunderid/types';
 
 /**
  * A minimal subset of the i18next TFunction interface used by {@link getErrorMessage}.

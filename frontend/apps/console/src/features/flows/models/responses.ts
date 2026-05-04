@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {ApiPaginationLink} from '@thunder/types';
+import type {ApiPaginationLink} from '@thunderid/types';
 import type {FlowNodeType, FlowType} from './flows';
 
 /**

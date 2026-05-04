@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {ApiPaginationLink, User} from '@thunder/types';
+import type {ApiPaginationLink, User} from '@thunderid/types';
 import type {OrganizationUnit} from './organization-unit';
 
 /**

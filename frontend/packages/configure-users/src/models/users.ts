@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import type {User, ApiPaginationLink} from '@thunder/types';
+import type {User, ApiPaginationLink} from '@thunderid/types';
 
 /**
  * Error response structure

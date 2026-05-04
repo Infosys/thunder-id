@@ -18,7 +18,7 @@
 
 import {useGetUsers} from '@thunder/configure-users';
 import {useDataGridLocaleText} from '@thunder/hooks';
-import type {User} from '@thunder/types';
+import type {User} from '@thunderid/types';
 import {
   Dialog,
   DialogTitle,

@@ -18,7 +18,7 @@
 
 import {render, screen} from '@testing-library/react';
 import type {Theme} from '@thunder/design';
-import {type RecursivePartial} from '@thunder/types';
+import {type RecursivePartial} from '@thunderid/types';
 import type {ReactNode} from 'react';
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 import Preview, {type PreviewProps} from '../Preview';

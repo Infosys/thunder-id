@@ -92,7 +92,7 @@
     "@thunderid/eslint-plugin-thunder": "workspace:^",
     "@thunder/prettier-config": "workspace:^",
     "@thunder/test-utils": "workspace:^",
-    "@thunder/types": "workspace:^",
+    "@thunderid/types": "workspace:^",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/prismjs": "^1.26.5",
