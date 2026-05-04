@@ -42,6 +42,6 @@ Clone the SDK repository only if you are developing or debugging the SDK itself,
 
 ## Contributing Guidelines
 
-- [`docs/contributing/backend-guidelines.md`](docs/contributing/backend-guidelines.md) — Go backend: package structure, database patterns, error handling, service initialization, transactions, testing
-- [`docs/contributing/frontend-guidelines.md`](docs/contributing/frontend-guidelines.md) — React/TypeScript: component patterns, testing, linting
+- [`docs/content/community/contributing/contributing-code/backend-development/overview.mdx`](docs/content/community/contributing/contributing-code/backend-development/overview.mdx) — Go backend: package structure, database patterns, error handling, service initialization, transactions, testing
+- [`docs/content/community/contributing/contributing-code/frontend-development/overview.mdx`](docs/content/community/contributing/contributing-code/frontend-development/overview.mdx) — React/TypeScript: component patterns, testing, linting
 - [`docs/AGENTS.md`](/docs/AGENTS.md) — Documentation authoring standards

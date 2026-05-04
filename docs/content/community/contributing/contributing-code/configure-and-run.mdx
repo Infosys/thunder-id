@@ -9,7 +9,7 @@ hide_table_of_contents: false
 
 ## Build from Source
 
-Building from source produces a distributable `.zip` file at `THUNDER_ROOT/target/dist/`.
+Building from source produces a distributable `.zip` file at `PROJECT_ROOT/target/dist/`.
 
 <CodeGroup>
   <CodeBlock lang="bash" label="Linux/macOS">
@@ -122,13 +122,13 @@ Use this approach when you need to debug the backend and frontend independently.
 
 <CodeGroup>
   <CodeBlock lang="bash" label="Linux/macOS">
-    {`SKIP_SECURITY=true THUNDER_API_BASE="https://localhost:8090" \\
+    {`SKIP_SECURITY=true API_BASE="https://localhost:8090" \\
   backend/cmd/server/bootstrap/01-default-resources.sh \\
   --console-redirect-uris "https://localhost:5191/console"`}
   </CodeBlock>
   <CodeBlock lang="powershell" label="Windows">
     {`$env:SKIP_SECURITY = "true"
-$env:THUNDER_API_BASE = "https://localhost:8090"
+$env:API_BASE = "https://localhost:8090"
 & backend\\cmd\\server\\bootstrap\\01-default-resources.ps1 \`
   --console-redirect-uris "https://localhost:5191/console"`}
   </CodeBlock>
@@ -220,7 +220,7 @@ pnpm build
 If you have not already created the `Console` application and the default admin user, you can do so by running the following command:
 
 ```bash
-THUNDER_API_BASE="https://localhost:8090" \
+API_BASE="https://localhost:8090" \
   backend/cmd/server/bootstrap/01-default-resources.sh \
   --console-redirect-uris "https://localhost:5191/console"
 ```

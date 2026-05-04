@@ -63,6 +63,7 @@ vi.mock('@thunder/contexts', async (importOriginal) => {
   return {
     ...actual,
     useConfig: () => ({
+      config: {brand: {product_name: 'Thunder'}, client: {client_id: 'CONSOLE'}},
       isTrustedIssuerGenericOidc: () => mockIsTrustedIssuerGenericOidc,
       getTrustedIssuerClientId: () => 'test-client-id',
       getClientUrl: () => 'https://localhost:5191/console',

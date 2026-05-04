@@ -16,8 +16,8 @@
  * under the License.
  */
 
-import React, {JSX} from 'react';
 import {Box, Card, Container, Grid, Typography} from '@wso2/oxygen-ui';
+import React, {JSX} from 'react';
 import useIsDarkMode from '../../hooks/useIsDarkMode';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 
@@ -220,7 +220,7 @@ function UserProfileMockup() {
             Mathew Asgardi
           </Typography>
           <Typography variant="caption" sx={{fontSize: '0.65rem', opacity: 0.6}}>
-            mathew@thunder.dev
+            mathew@example.com
           </Typography>
         </Box>
       </Box>
@@ -330,7 +330,7 @@ function UserProfileTableMockup() {
       </Box>
       {[
         {label: 'Name', value: 'Mathew Asgardi'},
-        {label: 'Email Address', value: 'mathew@thunder.dev'},
+        {label: 'Email Address', value: 'mathew@example.com'},
         {label: 'Country', value: 'United States'},
         {label: 'Phone Number', value: '+1 000 000 000'},
         {label: 'Phone Number', value: '+1 000 000 000'},
@@ -470,7 +470,8 @@ export default function UIComponentsSection(): JSX.Element {
               position: 'relative',
               opacity: cardsVisible ? 1 : 0,
               transform: cardsVisible ? 'translateX(0)' : 'translateX(32px)',
-              transition: 'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s',
+              transition:
+                'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s',
             }}
           >
             {/* Card layout: 2 columns stacked */}

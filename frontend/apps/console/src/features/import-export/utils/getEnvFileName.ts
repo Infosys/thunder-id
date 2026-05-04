@@ -16,13 +16,12 @@
  * under the License.
  */
 
-/**
- * File name template constants for import/export.
- * The {{productName}} placeholder is replaced at runtime via the utility functions.
- */
-const ImportExportFileNames = {
-  CONFIG: '{{productName}}-config.yml',
-  ENV: '{{productName}}-environment.env',
-} as const;
+import ImportExportFileNames from '../constants/file-names';
 
-export default ImportExportFileNames;
+/**
+ * Returns the default environment variables file name for the given product name.
+ * e.g. "Awesome Product" → "awesome-product-environment.env"
+ */
+export default function getEnvFileName(productName: string): string {
+  return ImportExportFileNames.ENV.replace('{{productName}}', productName.toLowerCase().replace(/\s+/g, '-'));
+}

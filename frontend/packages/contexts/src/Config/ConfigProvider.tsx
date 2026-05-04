@@ -18,7 +18,7 @@
 
 import {useMemo, PropsWithChildren} from 'react';
 import ConfigContext, {ConfigContextType} from './ConfigContext';
-import {ThunderConfig} from './types';
+import {ProductConfig} from './types';
 
 /**
  * Props for the ConfigProvider component.
@@ -38,7 +38,7 @@ export type ConfigProviderProps = PropsWithChildren;
  *
  * @internal
  */
-function loadConfig(): ThunderConfig {
+function loadConfig(): ProductConfig {
   if (typeof window !== 'undefined' && window.__THUNDER_RUNTIME_CONFIG__) {
     return window.__THUNDER_RUNTIME_CONFIG__;
   }

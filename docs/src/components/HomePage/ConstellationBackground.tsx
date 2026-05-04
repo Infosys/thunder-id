@@ -36,7 +36,7 @@ const BOLT_VERTICES: [number, number][] = [
 const BOLT_CX = 12;
 const BOLT_CY = 16;
 
-/** Generate SVG path `d` for a thunder bolt at given position and scale. */
+/** Generate SVG path `d` for a bolt at given position and scale. */
 function boltPath(cx: number, cy: number, scale: number): string {
   return (
     BOLT_VERTICES.map(([px, py], i) => {
@@ -48,7 +48,7 @@ function boltPath(cx: number, cy: number, scale: number): string {
   );
 }
 
-/** Get all vertices of the thunder bolt for drawing nodes. */
+/** Get all vertices of the bolt for drawing nodes. */
 function boltVertices(cx: number, cy: number, scale: number): {x: number; y: number}[] {
   return BOLT_VERTICES.map(([px, py]) => ({
     x: (px - BOLT_CX) * scale + cx,
@@ -57,13 +57,13 @@ function boltVertices(cx: number, cy: number, scale: number): {x: number; y: num
 }
 
 /**
- * Single large thunder bolt outline as the hero background,
+ * Single large bolt outline as the hero background,
  * rendered with dashed lines and nodes at vertices.
  */
 const ConstellationBackground = React.memo(function ConstellationBackground(): JSX.Element {
   const isDark = useIsDarkMode();
 
-  // One large thunder bolt positioned to the right side
+  // One large bolt positioned to the right side
   const shapeCx = 1050;
   const shapeCy = 400;
   const shapeScale = 22;
@@ -108,7 +108,7 @@ const ConstellationBackground = React.memo(function ConstellationBackground(): J
       <rect width="1440" height="900" fill="url(#hero-orange-glow)" />
       <rect width="1440" height="900" fill="url(#hero-orange-glow-2)" />
 
-      {/* Single large thunder bolt outline — dashed stroke with slow float */}
+      {/* Single large bolt outline — dashed stroke with slow float */}
       <g
         style={{transformOrigin: `${shapeCx}px ${shapeCy}px`, animation: 'constellationFloat 20s ease-in-out infinite'}}
       >

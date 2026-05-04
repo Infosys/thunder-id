@@ -17,7 +17,7 @@
  */
 
 import {Context, createContext} from 'react';
-import {ThunderConfig} from './types';
+import {ProductConfig} from './types';
 
 /**
  * Configuration context interface that provides access to runtime configuration
@@ -30,7 +30,7 @@ export interface ConfigContextType {
    * The complete configuration object loaded from window object
    * or default values if not available
    */
-  config: ThunderConfig;
+  config: ProductConfig;
 
   /**
    * Gets the complete server URL including protocol, hostname, and port

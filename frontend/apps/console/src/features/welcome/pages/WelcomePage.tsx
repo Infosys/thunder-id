@@ -23,7 +23,7 @@ import {motion} from 'framer-motion';
 import type {JSX} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router';
-import {WELCOME_DISMISSED_STORAGE_KEY} from '../constants/storage-keys';
+import getWelcomeDismissedStorageKey from '../utils/getWelcomeDismissedStorageKey';
 
 const MotionBox = motion.create(Box);
 
@@ -32,15 +32,15 @@ export default function WelcomePage(): JSX.Element {
   const navigate = useNavigate();
   const theme = useTheme();
   const {config} = useConfig();
-  const productName = config?.brand?.product_name ?? 'Thunder';
+  const productName = config.brand.product_name;
 
   const handleClose = (): void => {
-    sessionStorage.setItem(WELCOME_DISMISSED_STORAGE_KEY, 'true');
+    sessionStorage.setItem(getWelcomeDismissedStorageKey(productName), 'true');
     void navigate('/home');
   };
 
   const handleCreateNewProject = (): void => {
-    sessionStorage.setItem(WELCOME_DISMISSED_STORAGE_KEY, 'true');
+    sessionStorage.setItem(getWelcomeDismissedStorageKey(productName), 'true');
     void navigate('/welcome/create-project');
   };
 
@@ -58,7 +58,7 @@ export default function WelcomePage(): JSX.Element {
       label: t('common:welcome.start.openImport'),
       description: t('common:welcome.start.openImportDesc', {productName}),
       action: () => {
-        sessionStorage.setItem(WELCOME_DISMISSED_STORAGE_KEY, 'true');
+        sessionStorage.setItem(getWelcomeDismissedStorageKey(productName), 'true');
         void navigate('/welcome/open-project');
       },
     },

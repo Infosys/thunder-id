@@ -20,7 +20,7 @@
 
 import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 import reactSdkSidebar from './content/sdks/react/sidebar';
-import thunderConfig from './docusaurus.product.config';
+import productConfig from './docusaurus.product.config';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -55,12 +55,12 @@ const sidebars: SidebarsConfig = {
         {
           type: 'doc',
           id: 'guides/getting-started/what-is-thunder',
-          label: `What is ${thunderConfig.project.name}?`,
+          label: `What is ${productConfig.project.name}?`,
         },
         {
           type: 'doc',
           id: 'guides/getting-started/get-thunder',
-          label: `Get ${thunderConfig.project.name}`,
+          label: `Get ${productConfig.project.name}`,
         },
         {
           type: 'doc',

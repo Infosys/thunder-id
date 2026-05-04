@@ -20,10 +20,10 @@ import {act} from 'react';
 import {createRoot, type Root} from 'react-dom/client';
 import {describe, it, expect, beforeEach, afterEach} from 'vitest';
 import ConfigProvider from '../ConfigProvider';
-import type {ThunderConfig} from '../types';
+import type {ProductConfig} from '../types';
 import useConfig from '../useConfig';
 
-function buildConfig(overrides?: Partial<ThunderConfig>): ThunderConfig {
+function buildConfig(overrides?: Partial<ProductConfig>): ProductConfig {
   return {
     brand: {product_name: 'Thunder'},
     client: {base: '/console', client_id: 'CONSOLE'},
@@ -35,7 +35,7 @@ function buildConfig(overrides?: Partial<ThunderConfig>): ThunderConfig {
 let container: HTMLDivElement;
 let root: Root;
 
-function renderWithConfig(config: ThunderConfig | undefined, Consumer: React.ComponentType) {
+function renderWithConfig(config: ProductConfig | undefined, Consumer: React.ComponentType) {
   window.__THUNDER_RUNTIME_CONFIG__ = config;
   act(() => {
     root.render(
@@ -68,7 +68,7 @@ function getTestId(id: string): string {
 }
 
 describe('ConfigProvider', () => {
-  let originalConfig: ThunderConfig | undefined;
+  let originalConfig: ProductConfig | undefined;
 
   beforeEach(() => {
     originalConfig = window.__THUNDER_RUNTIME_CONFIG__;

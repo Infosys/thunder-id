@@ -16,6 +16,7 @@
  * under the License.
  */
 
+import {useConfig} from '@thunder/contexts';
 import {useLogger} from '@thunder/logger/react';
 import {Box, Breadcrumbs, Button, IconButton, LinearProgress, Stack, Typography, Alert} from '@wso2/oxygen-ui';
 import {ChevronRight, Upload, X} from '@wso2/oxygen-ui-icons-react';
@@ -24,11 +25,16 @@ import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router';
 import yaml from 'yaml';
 import {ALLOWED_RESOURCE_TYPES, type ResourceType} from '../constants/resource-types';
+import getConfigFileName from '../utils/getConfigFileName';
+import getEnvFileName from '../utils/getEnvFileName';
 
 export default function ImportConfigurationUploadPage(): JSX.Element {
   const {t} = useTranslation('importExport');
   const navigate = useNavigate();
   const logger = useLogger('ImportConfigurationUploadPage');
+  const {config} = useConfig();
+  const configFileName = getConfigFileName(config.brand.product_name);
+  const envFileName = getEnvFileName(config.brand.product_name);
   const [dragActive, setDragActive] = useState(false);
   const [envDragActive, setEnvDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -65,11 +71,11 @@ export default function ImportConfigurationUploadPage(): JSX.Element {
         if (file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
           setSelectedFile(file);
         } else {
-          setError(t('upload.errors.uploadYaml'));
+          setError(t('upload.errors.uploadYaml', {configFileName}));
         }
       }
     },
-    [t],
+    [t, configFileName],
   );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -79,7 +85,7 @@ export default function ImportConfigurationUploadPage(): JSX.Element {
       if (file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
         setSelectedFile(file);
       } else {
-        setError(t('upload.errors.uploadYaml'));
+        setError(t('upload.errors.uploadYaml', {configFileName}));
       }
     }
   };
@@ -367,7 +373,7 @@ export default function ImportConfigurationUploadPage(): JSX.Element {
               {t('upload.title')}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {t('upload.subtitle')}
+              {t('upload.subtitle', {configFileName})}
             </Typography>
           </Stack>
 
@@ -437,7 +443,7 @@ export default function ImportConfigurationUploadPage(): JSX.Element {
                       {t('upload.orClickBrowse')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {t('upload.supportsYaml')}
+                      {t('upload.supportsYaml', {configFileName})}
                     </Typography>
                   </>
                 )}
@@ -450,7 +456,7 @@ export default function ImportConfigurationUploadPage(): JSX.Element {
                 {t('upload.env.title')}
               </Typography>
               <Typography variant="body2" color="text.secondary" mb={1}>
-                {t('upload.env.subtitle')}
+                {t('upload.env.subtitle', {envFileName})}
               </Typography>
               <Box
                 onDragEnter={handleEnvDrag}
@@ -505,7 +511,7 @@ export default function ImportConfigurationUploadPage(): JSX.Element {
                   ) : (
                     <>
                       <Typography variant="body2" fontWeight={600}>
-                        {t('upload.env.dropFile')}
+                        {t('upload.env.dropFile', {envFileName})}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
                         {t('upload.orClickBrowse')}

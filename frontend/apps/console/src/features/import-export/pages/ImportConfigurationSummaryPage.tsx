@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {useToast} from '@thunder/contexts';
+import {useToast, useConfig} from '@thunder/contexts';
 import {useLogger} from '@thunder/logger/react';
 import {
   Alert,
@@ -55,7 +55,8 @@ import useImportConfiguration from '../api/useImportConfiguration';
 import EnvVariablesViewer from '../components/EnvVariablesViewer';
 import ResourceSummaryTable from '../components/ResourceSummaryTable';
 import TemplateVariableDisplay from '../components/TemplateVariableDisplay';
-import type {ConfigSummaryItem, ImportItemOutcome, ThunderConfig} from '../models/import-configuration';
+import type {ConfigSummaryItem, ImportItemOutcome, ProductConfig} from '../models/import-configuration';
+import getEnvFileName from '../utils/getEnvFileName';
 
 function parseEnvData(envData: string | null): Map<string, string> {
   const entries = new Map<string, string>();
@@ -147,17 +148,19 @@ export default function ImportConfigurationSummaryPage(): JSX.Element {
   const location = useLocation();
   const logger = useLogger('ImportConfigurationSummaryPage');
   const {showToast} = useToast();
+  const {config} = useConfig();
+  const productName = config.brand.product_name;
   const dryRunMutation = useImportConfiguration();
   const importMutation = useImportConfiguration();
 
   const configData = useMemo(() => {
-    const state = location.state as {configData?: ThunderConfig; envData?: string} | null;
+    const state = location.state as {configData?: ProductConfig; envData?: string} | null;
     return state?.configData ?? null;
   }, [location.state]);
 
   // Use state for envData to allow editing
   const initialEnvData = useMemo(() => {
-    const state = location.state as {configData?: ThunderConfig; envData?: string} | null;
+    const state = location.state as {configData?: ProductConfig; envData?: string} | null;
     return state?.envData ?? null;
   }, [location.state]);
 
@@ -1113,6 +1116,7 @@ export default function ImportConfigurationSummaryPage(): JSX.Element {
                       onChange={setEnvData}
                       showDownload={false}
                       maxHeight={300}
+                      fileName={getEnvFileName(productName)}
                     />
                   </Stack>
                 )}

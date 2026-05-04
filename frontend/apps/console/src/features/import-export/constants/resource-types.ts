@@ -17,7 +17,7 @@
  */
 
 /**
- * Allowed resource types for Thunder configuration import/export
+ * Allowed resource types for product configuration import/export
  */
 export const ALLOWED_RESOURCE_TYPES = [
   'application',

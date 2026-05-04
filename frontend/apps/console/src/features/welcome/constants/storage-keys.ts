@@ -17,6 +17,12 @@
  */
 
 /**
- * Storage keys for Thunder welcome page
+ * Storage key suffix constants for the welcome feature.
+ * The product name prefix is prepended at runtime via the utility functions.
  */
-export const WELCOME_DISMISSED_STORAGE_KEY = 'thunder:welcome:dismissed';
+const WelcomeStorageKeys = {
+  DISMISSED: '{{productName}}:welcome:dismissed',
+  SESSION_CHECKED: '{{productName}}:welcome:session-checked',
+} as const;
+
+export default WelcomeStorageKeys;

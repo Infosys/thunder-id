@@ -25,9 +25,9 @@ import {createLogger} from '@thunder/logger';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const THUNDER_CONFIG_PATH = join(__dirname, '..', 'docusaurus.product.config.ts');
+const PRODUCT_CONFIG_PATH = join(__dirname, '..', 'docusaurus.product.config.ts');
 
-function readThunderConfig(configPath) {
+function readProductConfig(configPath) {
   const content = readFileSync(configPath, 'utf8');
   const nameMatch = content.match(/project\s*:\s*\{[^}]*?name\s*:\s*['"]([^'"]+)['"]/s);
   const projectName = nameMatch ? nameMatch[1] : 'Unknown Project';
@@ -36,7 +36,7 @@ function readThunderConfig(configPath) {
   return {projectName, projectEmoji};
 }
 
-const {projectName, projectEmoji} = readThunderConfig(THUNDER_CONFIG_PATH);
+const {projectName, projectEmoji} = readProductConfig(PRODUCT_CONFIG_PATH);
 
 const logger = createLogger('prebuild');
 

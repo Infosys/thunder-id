@@ -211,7 +211,7 @@ export interface TrustedIssuerConfig {
  *
  * @public
  */
-export interface ThunderConfig {
+export interface ProductConfig {
   /** Branding configuration such as product name and logo */
   brand: BrandConfig;
 
@@ -256,6 +256,6 @@ export interface ThunderConfig {
 declare global {
   interface Window {
     /** Runtime configuration loaded from config.js */
-    __THUNDER_RUNTIME_CONFIG__?: ThunderConfig;
+    __THUNDER_RUNTIME_CONFIG__?: ProductConfig;
   }
 }

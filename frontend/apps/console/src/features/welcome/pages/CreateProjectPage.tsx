@@ -16,6 +16,7 @@
  * under the License.
  */
 
+import {useConfig} from '@thunder/contexts';
 import {
   Box,
   Button,
@@ -32,13 +33,15 @@ import {motion} from 'framer-motion';
 import type {JSX} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router';
-import HowThunderIDWorksIllustration from '@/assets/images/illustrations/how-thunder-id-solution-works.svg?react';
+import HowSolutionWorksIllustration from '@/assets/images/illustrations/how-solution-works.svg?react';
 
 const MotionBox = motion.create(Box);
 
 export default function CreateProjectPage(): JSX.Element {
   const {t} = useTranslation(['common']);
   const navigate = useNavigate();
+  const {config} = useConfig();
+  const productName = config.brand.product_name;
 
   const handleContinue = (): void => {
     void navigate('/home');
@@ -163,7 +166,7 @@ export default function CreateProjectPage(): JSX.Element {
               }}
             >
               <ColorSchemeSVG
-                svg={HowThunderIDWorksIllustration}
+                svg={HowSolutionWorksIllustration}
                 sx={{
                   width: '100%',
                   maxWidth: '1000px',
@@ -235,7 +238,7 @@ export default function CreateProjectPage(): JSX.Element {
                       </Typography>
                     </Stack>
                     <Typography variant="body2" color="text.secondary">
-                      {t('common:welcome.createProject.cards.runServer.description')}
+                      {t('common:welcome.createProject.cards.runServer.description', {productName})}
                     </Typography>
                   </Stack>
                 </Card>

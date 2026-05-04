@@ -56,9 +56,9 @@ export interface ConfigSummaryItem {
 }
 
 /**
- * Thunder configuration structure
+ * Product configuration structure
  */
-export interface ThunderConfig {
+export interface ProductConfig {
   application?: unknown[];
   identity_provider?: unknown[];
   notification_sender?: unknown[];

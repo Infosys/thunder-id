@@ -22,7 +22,7 @@ import {useConfig} from '@thunder/contexts';
 import type {ExportRequest, JSONExportResponse} from '../models/export-configuration';
 
 /**
- * Custom React hook to export Thunder resource configurations as JSON.
+ * Custom React hook to export Product resource configurations as JSON.
  *
  * This hook uses TanStack Query's useMutation to handle the export operation.
  * The export API returns a JSON response containing an array of files along with

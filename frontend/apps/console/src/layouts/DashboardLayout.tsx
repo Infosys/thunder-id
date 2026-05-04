@@ -50,9 +50,8 @@ import {useEffect, useMemo, useState, type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link as NavigateLink, Outlet, useNavigate} from 'react-router';
 import useGetApplications from '../features/applications/api/useGetApplications';
-import {WELCOME_DISMISSED_STORAGE_KEY} from '../features/welcome/constants/storage-keys';
-
-const WELCOME_SESSION_CHECKED_STORAGE_KEY = 'thunder:welcome:session-checked';
+import getWelcomeDismissedStorageKey from '../features/welcome/utils/getWelcomeDismissedStorageKey';
+import getWelcomeSessionCheckedStorageKey from '../features/welcome/utils/getWelcomeSessionCheckedStorageKey';
 
 function ExportConfigButton(): ReactNode {
   const {t} = useTranslation();
@@ -97,13 +96,14 @@ export default function DashboardLayout(): ReactNode {
     // Skip check while loading
     if (isLoadingApplications) return;
 
-    const hasCheckedThisSession = sessionStorage.getItem(WELCOME_SESSION_CHECKED_STORAGE_KEY) === 'true';
+    const productName = config.brand.product_name;
+    const hasCheckedThisSession = sessionStorage.getItem(getWelcomeSessionCheckedStorageKey(productName)) === 'true';
     if (hasCheckedThisSession) {
       setWelcomeCheckComplete(true);
       return;
     }
 
-    const dismissed = sessionStorage.getItem(WELCOME_DISMISSED_STORAGE_KEY) === 'true';
+    const dismissed = sessionStorage.getItem(getWelcomeDismissedStorageKey(productName)) === 'true';
     const applications = applicationsData?.applications ?? [];
     const consoleClientId = (config?.client?.client_id ?? 'CONSOLE').toUpperCase();
 
@@ -113,17 +113,17 @@ export default function DashboardLayout(): ReactNode {
         applications[0]?.name?.toUpperCase() === consoleClientId ||
         applications[0]?.template?.toUpperCase() === consoleClientId);
 
-    sessionStorage.setItem(WELCOME_SESSION_CHECKED_STORAGE_KEY, 'true');
+    sessionStorage.setItem(getWelcomeSessionCheckedStorageKey(productName), 'true');
 
     // Show welcome only once per session when the org has only the system CONSOLE app.
     if (isOnlyConsoleApp && !dismissed) {
-      sessionStorage.setItem(WELCOME_DISMISSED_STORAGE_KEY, 'true');
+      sessionStorage.setItem(getWelcomeDismissedStorageKey(productName), 'true');
       void navigate('/welcome', {replace: true});
     } else {
       // Mark check as complete so we can render the page
       setWelcomeCheckComplete(true);
     }
-  }, [isLoadingApplications, applicationsData, config?.client?.client_id, navigate]);
+  }, [isLoadingApplications, applicationsData, config?.client?.client_id, navigate, config.brand.product_name]);
 
   const handleSignOut = (signOut: () => Promise<void>): void => {
     if (isTrustedIssuerGenericOidc()) {

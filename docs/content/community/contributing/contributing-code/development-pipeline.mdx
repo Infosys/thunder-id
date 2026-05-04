@@ -284,7 +284,7 @@ pnpm build
 If you have not already created the `Console` application and the default admin user, you can do so by running the following command:
 
 ```bash
-THUNDER_API_BASE="https://localhost:8090" \
+API_BASE="https://localhost:8090" \
   backend/cmd/server/bootstrap/01-default-resources.sh \
   --console-redirect-uris "https://localhost:5191/console"
 ```
@@ -432,7 +432,7 @@ Push your changes to your forked repository:
 git push origin <branch-name>
 ```
 
-Then create a Pull Request to the `thunder/main` branch on GitHub:
+Then create a Pull Request to the `upstream/main` branch on GitHub:
 
 1. Go to your fork on GitHub
 2. Click **"Compare & pull request"**

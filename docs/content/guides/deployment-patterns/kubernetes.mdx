@@ -73,8 +73,8 @@ kubectl get ingress
 ### Step 3: Access <ProductName />
 
 1. Get the external IP address of your NGINX Ingress Controller.
-2. Add an entry to your `/etc/hosts` file that maps the IP address to `thunder.local`.
-3. Open <ProductName /> at `http://thunder.local`.
+2. Add an entry to your `/etc/hosts` file that maps the IP address to `{{productSlug}}.local`.
+3. Open <ProductName /> at `http://{{productSlug}}.local`.
 
 If you are using a cloud provider, the load balancer assigns the external IP automatically.
 
@@ -108,7 +108,7 @@ For production deployments, use a values file to manage configuration:
           memory: 1Gi
 
     ingress:
-      hostname: thunder.example.com
+      hostname: {{productSlug}}.example.com
 
     configuration:
       database:
@@ -242,7 +242,7 @@ helm upgrade thunder oci://ghcr.io/asgardeo/helm-charts/thunder \
 To roll back to a previous release:
 
 ```bash
-helm rollback thunder 1
+helm rollback {{productSlug}} 1
 ```
 
 ## Next Steps

@@ -21,9 +21,31 @@ import type {Config} from '@docusaurus/types';
 import {themes as prismThemes} from 'prism-react-renderer';
 import productConfig from './docusaurus.product.config';
 import personaPlugin from './plugins/personaPlugin';
+import rehypeProductName from './plugins/rehypeProductName';
 import webpackPlugin from './plugins/webpackPlugin';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
+/**
+ * Recursively replaces `{{ProductName}}` and `{{productSlug}}` in every string
+ * value inside a frontmatter object so authors can use these placeholders in
+ * frontmatter fields (e.g. `title`, `description`) without hard-coding the
+ * product name or slug.
+ */
+function replaceProductNameInObject(value: unknown, productName: string, productSlug: string): unknown {
+  if (typeof value === 'string') {
+    return value.replaceAll('{{ProductName}}', productName).replaceAll('{{productSlug}}', productSlug);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => replaceProductNameInObject(item, productName, productSlug));
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, replaceProductNameInObject(v, productName, productSlug)]),
+    );
+  }
+  return value;
+}
 
 const baseUrl = `/${productConfig.documentation.deployment.production.baseUrl}/`;
 
@@ -51,6 +73,21 @@ const config: Config = {
   projectName: productConfig.project.source.github.name, // Usually your repo name.
 
   onBrokenLinks: 'throw',
+
+  markdown: {
+    // Replace {{ProductName}} placeholders in frontmatter values at build time.
+    // This applies globally to all content (docs, pages, etc.).
+    // See: https://docusaurus.io/docs/api/docusaurus-config#markdown
+    parseFrontMatter: async (params) => {
+      const result = await params.defaultParseFrontMatter(params);
+      result.frontMatter = replaceProductNameInObject(
+        result.frontMatter,
+        productConfig.project.name as string,
+        (productConfig.project.name as string).toLowerCase(),
+      ) as Record<string, unknown>;
+      return result;
+    },
+  },
 
   // Internationalization (i18n) configuration.
   // See: https://docusaurus.io/docs/i18n/introduction
@@ -86,6 +123,8 @@ const config: Config = {
               path: 'next',
             },
           },
+          // Replace {{ProductName}} and {{productSlug}} placeholders inside fenced code blocks at build time.
+          rehypePlugins: [[rehypeProductName, {productName: productConfig.project.name, productSlug: (productConfig.project.name as string).toLowerCase()}]],
         },
         blog: false,
         theme: {

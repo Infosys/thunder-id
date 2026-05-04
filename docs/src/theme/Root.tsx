@@ -16,13 +16,13 @@
  * under the License.
  */
 
-import React, {PropsWithChildren, useEffect} from 'react';
-import {OxygenUIThemeProvider, AcrylicOrangeTheme} from '@wso2/oxygen-ui';
-import {LoggerProvider, LogLevel} from '@thunder/logger/react';
 import { useLocation } from '@docusaurus/router';
+import {LoggerProvider, LogLevel} from '@thunder/logger/react';
+import {OxygenUIThemeProvider, AcrylicOrangeTheme} from '@wso2/oxygen-ui';
+import React, {PropsWithChildren, useEffect} from 'react';
 import {applyPersona, PERSONAS, type Persona} from './NavbarItem/PersonaDropdown';
 
-const PERSONA_STORAGE_KEY = 'thunder-docs-persona';
+const PERSONA_STORAGE_KEY = 'product-docs-persona';
 
 export default function Root({children = null}: PropsWithChildren<Record<string, unknown>>) {
   const location = useLocation();

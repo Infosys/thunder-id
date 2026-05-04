@@ -75,7 +75,7 @@ export default function Footer(): JSX.Element {
   const {withBaseUrl} = useBaseUrlUtils();
   const {siteConfig} = useDocusaurusContext();
   const isDark = useIsDarkMode();
-  const thunderConfig = siteConfig.customFields?.product as DocusaurusProductConfig;
+  const productConfig = siteConfig.customFields?.product as DocusaurusProductConfig;
 
   return (
     <Box
@@ -104,7 +104,7 @@ export default function Footer(): JSX.Element {
                   light: withBaseUrl('/assets/images/logo.svg'),
                   dark: withBaseUrl('/assets/images/logo-inverted.svg'),
                 }}
-                alt={`${thunderConfig.project.name} Logo`}
+                alt={`${productConfig.project.name} Logo`}
                 style={{height: 32}}
               />
             </Box>
@@ -147,9 +147,9 @@ export default function Footer(): JSX.Element {
             title="Resources"
             links={[
               {label: 'Community', href: '/docs/next/community/overview'},
-              {label: 'Releases', href: thunderConfig.project.source.github.releasesUrl},
-              {label: 'Discussions', href: thunderConfig.project.source.github.discussionsUrl},
-              {label: 'Report an Issue', href: thunderConfig.project.source.github.issuesUrl},
+              {label: 'Releases', href: productConfig.project.source.github.releasesUrl},
+              {label: 'Discussions', href: productConfig.project.source.github.discussionsUrl},
+              {label: 'Report an Issue', href: productConfig.project.source.github.issuesUrl},
             ]}
           />
         </Box>

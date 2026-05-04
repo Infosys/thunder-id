@@ -69,7 +69,7 @@ export interface FileContentViewerProps {
 /**
  * Shared file content viewer component for displaying configuration files.
  * Uses Monaco editor for syntax highlighting and better readability.
- * Used for thunder.yml and other YAML/config files in readonly mode.
+ * Used for product yml and other YAML/config files in readonly mode.
  *
  * @public
  */

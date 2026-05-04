@@ -48,7 +48,7 @@ vi.mock('@wso2/oxygen-ui-icons-react', async (importOriginal) => {
   };
 });
 
-vi.mock('@/assets/images/illustrations/how-thunder-id-solution-works.svg?react', () => ({
+vi.mock('@/assets/images/illustrations/how-solution-works.svg?react', () => ({
   default: () => <svg data-testid="illustration" />,
 }));
 

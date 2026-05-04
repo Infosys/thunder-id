@@ -42,9 +42,10 @@ import EnvVariablesViewer from './EnvVariablesViewer';
 import FileContentViewer from './FileContentViewer';
 import ResourceSummaryTable from './ResourceSummaryTable';
 import TemplateVariableDisplay from './TemplateVariableDisplay';
-import {DEFAULT_CONFIG_FILE_NAME, DEFAULT_ENV_FILE_NAME} from '../constants/file-names';
 import type {ConfigSummaryItem} from '../models/import-configuration';
-import HowThunderIDWorksInHostedIllustration from '@/assets/images/illustrations/how-thunder-id-run-in-hosted.svg?react';
+import getConfigFileName from '../utils/getConfigFileName';
+import getEnvFileName from '../utils/getEnvFileName';
+import HowProductWorksInHostedIllustration from '@/assets/images/illustrations/how-product-run-in-hosted.svg?react';
 
 /**
  * Props for the {@link ConfigureExport} component.
@@ -76,7 +77,7 @@ export interface ConfigureExportProps {
 
 /**
  * Organization Export Summary step component showing a two-column layout
- * with resources table and downloads on the left and run Thunder instructions on the right.
+ * with resources table and downloads on the left and run product instructions on the right.
  *
  * @public
  */
@@ -90,7 +91,9 @@ export default function ConfigureExport({
   const {t} = useTranslation(['applications', 'importExport']);
   const logger = useLogger('ConfigureExport');
   const {config} = useConfig();
-  const productName = config?.brand?.product_name ?? 'Thunder';
+  const productName = config.brand.product_name;
+  const configFileName = getConfigFileName(productName);
+  const envFileName = getEnvFileName(productName);
   const systemConsoleClientId = (config?.client?.client_id ?? 'CONSOLE').toUpperCase();
 
   // Expand/collapse state for each resource type
@@ -133,7 +136,7 @@ export default function ConfigureExport({
             }>;
           }
         ).showSaveFilePicker({
-          suggestedName: DEFAULT_CONFIG_FILE_NAME,
+          suggestedName: configFileName,
           types: [
             {
               description: 'YAML Configuration',
@@ -150,7 +153,7 @@ export default function ConfigureExport({
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = DEFAULT_CONFIG_FILE_NAME;
+        link.download = configFileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -277,7 +280,7 @@ export default function ConfigureExport({
     return appClientId ?? 'unknown-org';
   }, [configData, orgNameProp, systemConsoleClientId]);
 
-  const command = `./start.sh ${orgName}.yml --env ${DEFAULT_ENV_FILE_NAME}`;
+  const command = `./start.sh ${orgName}.yml --env ${envFileName}`;
 
   // Use resourceCounts from API if available, otherwise fall back to parsing
   const applicationsCount =
@@ -930,7 +933,7 @@ export default function ConfigureExport({
             {/* Environment Variables Section */}
             {environmentVariables && (
               <Box>
-                <EnvVariablesViewer content={environmentVariables} showDownload />
+                <EnvVariablesViewer content={environmentVariables} showDownload fileName={envFileName} />
               </Box>
             )}
 
@@ -939,10 +942,10 @@ export default function ConfigureExport({
               <Box>
                 <FileContentViewer
                   content={resources}
-                  fileName={DEFAULT_CONFIG_FILE_NAME}
+                  fileName={configFileName}
                   title={t('importExport:configureExport.labels.configurationResources')}
                   subtitle={t('importExport:configureExport.labels.downloadConfig', {
-                    fileName: DEFAULT_CONFIG_FILE_NAME,
+                    fileName: configFileName,
                   })}
                   icon={<FileDown size={18} />}
                   iconBgColor="primary.lighter"
@@ -966,7 +969,7 @@ export default function ConfigureExport({
           </Stack>
         </Box>
 
-        {/* Right: Run Thunder Locally */}
+        {/* Right: Run Product Locally */}
         <Box sx={{flex: '1 1 0', minWidth: 0}}>
           <Paper variant="outlined" sx={{p: 3}}>
             <Stack spacing={3}>
@@ -989,17 +992,17 @@ export default function ConfigureExport({
                       <Terminal size={18} />
                     </Box>
                     <Typography variant="h6" fontWeight={600}>
-                      {t('importExport:configureExport.runThunder.title', {productName})}
+                      {t('importExport:configureExport.runProduct.title', {productName})}
                     </Typography>
                   </Stack>
                   <Typography variant="body2" color="text.secondary" mb={2}>
-                    {t('importExport:configureExport.runThunder.subtitle', {productName})}
+                    {t('importExport:configureExport.runProduct.subtitle', {productName})}
                   </Typography>
 
                   {/* Illustration */}
                   <Box sx={{mt: 5, mb: 6, display: 'flex', justifyContent: 'center'}}>
                     <ColorSchemeSVG
-                      svg={HowThunderIDWorksInHostedIllustration}
+                      svg={HowProductWorksInHostedIllustration}
                       sx={{
                         width: '100%',
                         maxWidth: '300px',
@@ -1039,7 +1042,7 @@ export default function ConfigureExport({
 
               <Stack spacing={1.5}>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  {t('importExport:configureExport.runThunder.nextStepsTitle')}
+                  {t('importExport:configureExport.runProduct.nextStepsTitle')}
                 </Typography>
                 <Stack spacing={1} sx={{pl: 2}}>
                   {nextSteps.map((step) => (

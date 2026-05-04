@@ -159,7 +159,7 @@ export default function HeroSection(): JSX.Element {
             INTRODUCING
           </Typography>
 
-          {/* [ THUNDER ] title */}
+          {/* title */}
           <Typography
             variant="h2"
             sx={{

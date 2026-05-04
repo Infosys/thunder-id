@@ -22,7 +22,7 @@ import {useConfig} from '@thunder/contexts';
 import type {ImportRequest, ImportResponse} from '../models/import-configuration';
 
 /**
- * Custom React hook to import Thunder resource configurations.
+ * Custom React hook to import Product resource configurations.
  *
  * Supports both dry-run and actual import through the same endpoint.
  *

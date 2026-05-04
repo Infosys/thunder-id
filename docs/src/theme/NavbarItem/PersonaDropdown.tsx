@@ -16,12 +16,12 @@
  * under the License.
  */
 
-import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useActiveDocContext} from '@docusaurus/plugin-content-docs/client';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 export type Persona = 'all' | 'app' | 'iam' | 'devops';
 
-const STORAGE_KEY = 'thunder-docs-persona';
+const STORAGE_KEY = 'product-docs-persona';
 
 interface PersonaOption {
   value: Persona;
@@ -55,7 +55,7 @@ export default function PersonaDropdown(): React.ReactElement | null {
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY) as Persona | null;
-    if (saved && PERSONAS.some(p => p.value === saved)) {
+    if (saved && PERSONAS.some((p) => p.value === saved)) {
       setPersona(saved);
       applyPersona(saved);
     }
@@ -86,20 +86,17 @@ export default function PersonaDropdown(): React.ReactElement | null {
     return null;
   }
 
-  const current = PERSONAS.find(p => p.value === persona) ?? PERSONAS[0];
+  const current = PERSONAS.find((p) => p.value === persona) ?? PERSONAS[0];
 
   return (
-    <div
-      ref={containerRef}
-      className={`persona-dropdown${isOpen ? ' persona-dropdown--open' : ''}`}
-    >
+    <div ref={containerRef} className={`persona-dropdown${isOpen ? ' persona-dropdown--open' : ''}`}>
       <button
         type="button"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={`Viewing as: ${current.label}`}
         className="persona-dropdown__trigger"
-        onClick={() => setIsOpen(prev => !prev)}
+        onClick={() => setIsOpen((prev) => !prev)}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -138,7 +135,7 @@ export default function PersonaDropdown(): React.ReactElement | null {
 
       {isOpen && (
         <ul className="persona-dropdown__menu" role="listbox" aria-label="Select your role">
-          {PERSONAS.map(option => (
+          {PERSONAS.map((option) => (
             <li key={option.value} role="none">
               <button
                 type="button"

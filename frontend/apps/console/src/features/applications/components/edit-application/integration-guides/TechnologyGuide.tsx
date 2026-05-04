@@ -83,7 +83,7 @@ export default function TechnologyGuide({
   const logger = useLogger('TechnologyGuide');
   const {t} = useTranslation();
   const {config} = useConfig();
-  const productName = config?.brand?.product_name ?? '';
+  const productName = config.brand.product_name;
 
   const [copiedStep, setCopiedStep] = useState<number | null>(null);
   const [copiedPrompt, setCopiedPrompt] = useState<boolean>(false);

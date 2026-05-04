@@ -21,7 +21,6 @@ import {Alert, Box, Button, Collapse, IconButton, Paper, Stack, Typography, useC
 import {ChevronDown, ChevronUp, FileCode, FileDown} from '@wso2/oxygen-ui-icons-react';
 import {useEffect, useRef, useState, type JSX} from 'react';
 import {useTranslation} from 'react-i18next';
-import {DEFAULT_ENV_FILE_NAME} from '../constants/file-names';
 
 /**
  * Props for the {@link EnvVariablesViewer} component.
@@ -49,6 +48,10 @@ export interface EnvVariablesViewerProps {
    * Callback when content changes (only used when editable=true)
    */
   onChange?: (newContent: string) => void;
+  /**
+   * File name used for the download
+   */
+  fileName: string;
 }
 
 /**
@@ -64,6 +67,7 @@ export default function EnvVariablesViewer({
   maxHeight = 400,
   editable = false,
   onChange = undefined,
+  fileName,
 }: EnvVariablesViewerProps): JSX.Element {
   const {t} = useTranslation('importExport');
   const [expanded, setExpanded] = useState(false);
@@ -112,7 +116,7 @@ export default function EnvVariablesViewer({
             }>;
           }
         ).showSaveFilePicker({
-          suggestedName: DEFAULT_ENV_FILE_NAME,
+          suggestedName: fileName,
           types: [
             {
               description: 'Environment Variables',
@@ -129,7 +133,7 @@ export default function EnvVariablesViewer({
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = DEFAULT_ENV_FILE_NAME;
+        link.download = fileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

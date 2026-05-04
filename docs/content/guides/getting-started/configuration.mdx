@@ -148,7 +148,7 @@ Stores runtime data like sessions, tokens, and temporary data. The runtime datab
 | `database.runtime.redis.username` | `""` | Redis ACL username — leave empty if ACLs are not configured |
 | `database.runtime.redis.password` | `""` | Redis password or ACL user password |
 | `database.runtime.redis.db` | `0` | Redis logical database index (0–15) |
-| `database.runtime.redis.key_prefix` | `""` | Prefix applied to all Redis keys written by <ProductName />, for example `thunder:` |
+| `database.runtime.redis.key_prefix` | `""` | Prefix applied to all Redis keys written by <ProductName />, for example `{{productSlug}}:` |
 | `database.runtime.redis.max_retries` | `5` | Maximum retry attempts for transient Redis network and timeout issues |
 | `database.runtime.redis.min_retry_backoff_ms` | `10` | Minimum delay before Redis retries in milliseconds |
 | `database.runtime.redis.max_retry_backoff_ms` | `100` | Maximum delay before Redis retries in milliseconds |
@@ -172,7 +172,7 @@ Stores runtime data like sessions, tokens, and temporary data. The runtime datab
 - Retryable classes include transient connectivity errors (`ErrBadConn`, `ErrConnDone`, connection reset/refused), timeouts, deadlocks (`40P01`), and PostgreSQL resource/availability states (`53xxx`, `57P01`, `57P02`, `57P03`, too-many-connections).
 - Non-retryable conditions include no-row outcomes (`ErrNoRows`), syntax/validation issues, and other permanent SQL conditions.
 - Write operations executed via `Execute` are not retried automatically to avoid accidental duplicate writes. If your write path is explicitly idempotent, add idempotency at the business layer (for example with deterministic IDs or upsert semantics).
-- Retry metrics are emitted through OpenTelemetry metric instruments (`thunder_db_retry_attempts_total`, `thunder_db_retry_backoff_seconds`, `thunder_db_operation_seconds`), which can be exported to Prometheus via your OpenTelemetry collector pipeline.
+- Retry metrics are emitted through OpenTelemetry metric instruments (`{{productSlug}}_db_retry_attempts_total`, `{{productSlug}}_db_retry_backoff_seconds`, `{{productSlug}}_db_operation_seconds`), which can be exported to Prometheus via your OpenTelemetry collector pipeline.
 
 ### User Database
 
@@ -229,7 +229,7 @@ Stores user profiles and credentials.
 | `cache.redis.username` | `""` | Redis username |
 | `cache.redis.password` | `""` | Redis password |
 | `cache.redis.db` | `0` | Redis database index |
-| `cache.redis.key_prefix` | `thunder` | Prefix added to all Redis cache keys |
+| `cache.redis.key_prefix` | `{{productSlug}}` | Prefix added to all Redis cache keys |
 | `cache.redis.max_retries` | `5` | Maximum retry attempts for transient Redis network and timeout issues |
 | `cache.redis.min_retry_backoff_ms` | `10` | Minimum delay before Redis retries in milliseconds |
 | `cache.redis.max_retry_backoff_ms` | `100` | Maximum delay before Redis retries in milliseconds |
@@ -367,7 +367,7 @@ Example Helm values:
 ```yaml
 declarativeResources:
   enabled: true
-  # Base mount path inside the Thunder container (default: /opt/thunder/repository/resources)
+  # Base mount path inside the {{ProductName}} container (default: /opt/thunder/repository/resources)
   mountPath: /opt/thunder/repository/resources
   # Mount as read-only (recommended)
   readOnly: true

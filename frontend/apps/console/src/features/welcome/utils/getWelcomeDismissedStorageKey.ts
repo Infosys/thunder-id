@@ -16,13 +16,8 @@
  * under the License.
  */
 
-/**
- * File name template constants for import/export.
- * The {{productName}} placeholder is replaced at runtime via the utility functions.
- */
-const ImportExportFileNames = {
-  CONFIG: '{{productName}}-config.yml',
-  ENV: '{{productName}}-environment.env',
-} as const;
+import WelcomeStorageKeys from '../constants/storage-keys';
 
-export default ImportExportFileNames;
+export default function getWelcomeDismissedStorageKey(productName: string): string {
+  return WelcomeStorageKeys.DISMISSED.replace('{{productName}}', productName.toLowerCase());
+}
