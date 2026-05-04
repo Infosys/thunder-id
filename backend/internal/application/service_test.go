@@ -2647,6 +2647,58 @@ func (suite *ServiceTestSuite) TestValidateApplication_ErrorFromProcessInboundAu
 	assert.Equal(suite.T(), &ErrorInvalidInboundAuthConfig, svcErr)
 }
 
+// TestTranslateUserInfoValidationError_IDTokenUnsupportedEncryptionAlg tests the translation of
+// ErrOAuthIDTokenUnsupportedEncryptionAlg to a ServiceError.
+func (suite *ServiceTestSuite) TestTranslateUserInfoValidationError_IDTokenUnsupportedEncryptionAlg() {
+	svcErr := translateUserInfoValidationError(inboundclient.ErrOAuthIDTokenUnsupportedEncryptionAlg)
+	assert.NotNil(suite.T(), svcErr)
+	assert.Equal(suite.T(), ErrorInvalidOAuthConfiguration.Code, svcErr.Code)
+}
+
+// TestTranslateUserInfoValidationError_IDTokenUnsupportedEncryptionEnc tests the translation of
+// ErrOAuthIDTokenUnsupportedEncryptionEnc to a ServiceError.
+func (suite *ServiceTestSuite) TestTranslateUserInfoValidationError_IDTokenUnsupportedEncryptionEnc() {
+	svcErr := translateUserInfoValidationError(inboundclient.ErrOAuthIDTokenUnsupportedEncryptionEnc)
+	assert.NotNil(suite.T(), svcErr)
+	assert.Equal(suite.T(), ErrorInvalidOAuthConfiguration.Code, svcErr.Code)
+}
+
+// TestTranslateUserInfoValidationError_IDTokenEncryptionAlgRequiresEnc tests the translation of
+// ErrOAuthIDTokenEncryptionAlgRequiresEnc to a ServiceError.
+func (suite *ServiceTestSuite) TestTranslateUserInfoValidationError_IDTokenEncryptionAlgRequiresEnc() {
+	svcErr := translateUserInfoValidationError(inboundclient.ErrOAuthIDTokenEncryptionAlgRequiresEnc)
+	assert.NotNil(suite.T(), svcErr)
+	assert.Equal(suite.T(), ErrorInvalidOAuthConfiguration.Code, svcErr.Code)
+}
+
+// TestTranslateUserInfoValidationError_IDTokenEncryptionEncRequiresAlg tests the translation of
+// ErrOAuthIDTokenEncryptionEncRequiresAlg to a ServiceError.
+func (suite *ServiceTestSuite) TestTranslateUserInfoValidationError_IDTokenEncryptionEncRequiresAlg() {
+	svcErr := translateUserInfoValidationError(inboundclient.ErrOAuthIDTokenEncryptionEncRequiresAlg)
+	assert.NotNil(suite.T(), svcErr)
+	assert.Equal(suite.T(), ErrorInvalidOAuthConfiguration.Code, svcErr.Code)
+}
+
+// TestTranslateUserInfoValidationError_IDTokenEncryptionRequiresCertificate tests the translation of
+// ErrOAuthIDTokenEncryptionRequiresCertificate to a ServiceError.
+func (suite *ServiceTestSuite) TestTranslateUserInfoValidationError_IDTokenEncryptionRequiresCertificate() {
+	svcErr := translateUserInfoValidationError(inboundclient.ErrOAuthIDTokenEncryptionRequiresCertificate)
+	assert.NotNil(suite.T(), svcErr)
+	assert.Equal(suite.T(), ErrorInvalidOAuthConfiguration.Code, svcErr.Code)
+}
+
+// TestTranslateUserInfoValidationError_IDTokenJWKSURINotSSRFSafe tests the translation of
+// ErrOAuthIDTokenJWKSURINotSSRFSafe to a ServiceError.
+func (suite *ServiceTestSuite) TestTranslateUserInfoValidationError_IDTokenJWKSURINotSSRFSafe() {
+	svcErr := translateUserInfoValidationError(inboundclient.ErrOAuthIDTokenJWKSURINotSSRFSafe)
+	assert.NotNil(suite.T(), svcErr)
+	assert.Equal(suite.T(), ErrorInvalidOAuthConfiguration.Code, svcErr.Code)
+	assert.Equal(suite.T(),
+		"error.applicationservice.idtoken_jwks_uri_not_ssrf_safe_description",
+		svcErr.ErrorDescription.Key,
+	)
+}
+
 var validAcrMapping = config.AuthClassConfig{
 	Amrs: []string{"PWD", "OTP"},
 	AcrAMR: map[string][]string{

@@ -800,6 +800,166 @@ func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_AllAlgs
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoAlgRequiresResponseType)
 }
 
+// validateIDTokenConfig — happy paths
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_NilToken() {
+	assert.NoError(suite.T(), validateIDTokenConfig(&inboundmodel.OAuthProfileData{}))
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_NilIDToken() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{},
+	}
+	assert.NoError(suite.T(), validateIDTokenConfig(p))
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_NoEncryption() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{ValidityPeriod: 3600}},
+	}
+	assert.NoError(suite.T(), validateIDTokenConfig(p))
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_ValidAlgEncWithCert() {
+	p := &inboundmodel.OAuthProfileData{
+		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWE,
+			EncryptionAlg: "RSA-OAEP-256",
+			EncryptionEnc: "A256GCM",
+		}},
+	}
+	assert.NoError(suite.T(), validateIDTokenConfig(p))
+}
+
+// validateIDTokenConfig — error paths
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_EncryptionEncWithoutAlg() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWE,
+			EncryptionEnc: "A256GCM",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenEncryptionAlgRequiresEnc)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_EncryptionAlgWithoutEnc() {
+	p := &inboundmodel.OAuthProfileData{
+		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWE,
+			EncryptionAlg: "RSA-OAEP-256",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenEncryptionAlgRequiresEnc)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_UnsupportedEncryptionAlg() {
+	p := &inboundmodel.OAuthProfileData{
+		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWE,
+			EncryptionAlg: "BOGUS",
+			EncryptionEnc: "A256GCM",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenUnsupportedEncryptionAlg)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_UnsupportedEncryptionEnc() {
+	p := &inboundmodel.OAuthProfileData{
+		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWE,
+			EncryptionAlg: "RSA-OAEP-256",
+			EncryptionEnc: "BOGUS",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenUnsupportedEncryptionEnc)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_EncryptionRequiresCertificate() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWE,
+			EncryptionAlg: "RSA-OAEP-256",
+			EncryptionEnc: "A256GCM",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenEncryptionRequiresCertificate)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_JWKSURISSRFRejection() {
+	p := &inboundmodel.OAuthProfileData{
+		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKSURI, Value: "http://127.0.0.1/jwks"},
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWE,
+			EncryptionAlg: "RSA-OAEP-256",
+			EncryptionEnc: "A256GCM",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenJWKSURINotSSRFSafe)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_EmptyResponseType_DefaultsToJWT() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{ValidityPeriod: 3600}},
+	}
+	assert.NoError(suite.T(), validateIDTokenConfig(p))
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_JWTResponseType_NoEncryption() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType: inboundmodel.IDTokenResponseTypeJWT,
+		}},
+	}
+	assert.NoError(suite.T(), validateIDTokenConfig(p))
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_JWTResponseType_WithEncryptionAlg() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeJWT,
+			EncryptionAlg: "RSA-OAEP-256",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenEncryptionFieldsNotAllowed)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_NESTEDJWTResponseType_ValidFullConfig() {
+	p := &inboundmodel.OAuthProfileData{
+		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeNESTEDJWT,
+			EncryptionAlg: "RSA-OAEP-256",
+			EncryptionEnc: "A256GCM",
+		}},
+	}
+	assert.NoError(suite.T(), validateIDTokenConfig(p))
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_NESTEDJWTResponseType_MissingAlg() {
+	p := &inboundmodel.OAuthProfileData{
+		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType:  inboundmodel.IDTokenResponseTypeNESTEDJWT,
+			EncryptionEnc: "A256GCM",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenEncryptionAlgRequiresEnc)
+}
+
+func (suite *InboundClientServiceTestSuite) TestValidateIDTokenConfig_UnsupportedResponseType() {
+	p := &inboundmodel.OAuthProfileData{
+		Token: &inboundmodel.OAuthTokenConfig{IDToken: &inboundmodel.IDTokenConfig{
+			ResponseType: "INVALID",
+		}},
+	}
+	assert.ErrorIs(suite.T(), validateIDTokenConfig(p), ErrOAuthIDTokenUnsupportedResponseType)
+}
+
 func (suite *InboundClientServiceTestSuite) TestResolveUserInfo_DefaultsResponseTypeToJSON() {
 	out := resolveUserInfo(nil, nil)
 	assert.Equal(suite.T(), inboundmodel.UserInfoResponseTypeJSON, out.ResponseType)

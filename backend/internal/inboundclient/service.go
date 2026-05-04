@@ -610,6 +610,9 @@ func validateOAuthProfile(p *inboundmodel.OAuthProfileData, hasClientSecret bool
 	if err := validateUserInfoConfig(p); err != nil {
 		return err
 	}
+	if err := validateIDTokenConfig(p); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -672,6 +675,48 @@ func validateUserInfoConfig(p *inboundmodel.OAuthProfileData) error {
 		default:
 			return ErrOAuthUserInfoUnsupportedResponseType
 		}
+	}
+	return nil
+}
+
+// validateIDTokenConfig validates the ID token configuration.
+// responseType is the authoritative field; empty defaults to JWT.
+func validateIDTokenConfig(p *inboundmodel.OAuthProfileData) error {
+	if p.Token == nil || p.Token.IDToken == nil {
+		return nil
+	}
+	cfg := p.Token.IDToken
+
+	if cfg.ResponseType == "" {
+		cfg.ResponseType = inboundmodel.IDTokenResponseTypeJWT
+	}
+
+	switch cfg.ResponseType {
+	case inboundmodel.IDTokenResponseTypeJWT:
+		if cfg.EncryptionAlg != "" || cfg.EncryptionEnc != "" {
+			return ErrOAuthIDTokenEncryptionFieldsNotAllowed
+		}
+	case inboundmodel.IDTokenResponseTypeJWE, inboundmodel.IDTokenResponseTypeNESTEDJWT:
+		if cfg.EncryptionAlg == "" || cfg.EncryptionEnc == "" {
+			return ErrOAuthIDTokenEncryptionAlgRequiresEnc
+		}
+		if !slices.Contains(inboundmodel.SupportedIDTokenEncryptionAlgs, cfg.EncryptionAlg) {
+			return ErrOAuthIDTokenUnsupportedEncryptionAlg
+		}
+		if !slices.Contains(inboundmodel.SupportedIDTokenEncryptionEncs, cfg.EncryptionEnc) {
+			return ErrOAuthIDTokenUnsupportedEncryptionEnc
+		}
+		hasCert := p.Certificate != nil && p.Certificate.Type != ""
+		if !hasCert {
+			return ErrOAuthIDTokenEncryptionRequiresCertificate
+		}
+		if p.Certificate.Type == cert.CertificateTypeJWKSURI {
+			if err := syshttp.IsSSRFSafeURL(p.Certificate.Value); err != nil {
+				return ErrOAuthIDTokenJWKSURINotSSRFSafe
+			}
+		}
+	default:
+		return ErrOAuthIDTokenUnsupportedResponseType
 	}
 	return nil
 }
@@ -776,6 +821,10 @@ func validateTokenEndpointAuthMethod(p *inboundmodel.OAuthProfileData, hasClient
 	}
 	hasCert := p.Certificate != nil && p.Certificate.Type != ""
 	userInfoNeedsCert := p.UserInfo != nil && p.UserInfo.EncryptionAlg != ""
+	idTokenNeedsCert := p.Token != nil && p.Token.IDToken != nil &&
+		(p.Token.IDToken.ResponseType == inboundmodel.IDTokenResponseTypeJWE ||
+			p.Token.IDToken.ResponseType == inboundmodel.IDTokenResponseTypeNESTEDJWT)
+	needsCert := userInfoNeedsCert || idTokenNeedsCert
 
 	switch method {
 	case oauth2const.TokenEndpointAuthMethodPrivateKeyJWT:
@@ -786,14 +835,14 @@ func validateTokenEndpointAuthMethod(p *inboundmodel.OAuthProfileData, hasClient
 			return ErrOAuthPrivateKeyJWTCannotHaveClientSecret
 		}
 	case oauth2const.TokenEndpointAuthMethodClientSecretBasic, oauth2const.TokenEndpointAuthMethodClientSecretPost:
-		if hasCert && !userInfoNeedsCert {
+		if hasCert && !needsCert {
 			return ErrOAuthClientSecretCannotHaveCertificate
 		}
 	case oauth2const.TokenEndpointAuthMethodNone:
 		if !p.PublicClient {
 			return ErrOAuthNoneAuthRequiresPublicClient
 		}
-		if (hasCert && !userInfoNeedsCert) || hasClientSecret {
+		if (hasCert && !needsCert) || hasClientSecret {
 			return ErrOAuthNoneAuthCannotHaveCertOrSecret
 		}
 		if slices.Contains(p.GrantTypes, string(oauth2const.GrantTypeClientCredentials)) {
@@ -1010,6 +1059,9 @@ func resolveOAuthTokens(in *inboundmodel.OAuthTokenConfig,
 		idToken = &inboundmodel.IDTokenConfig{
 			ValidityPeriod: in.IDToken.ValidityPeriod,
 			UserAttributes: in.IDToken.UserAttributes,
+			ResponseType:   in.IDToken.ResponseType,
+			EncryptionAlg:  in.IDToken.EncryptionAlg,
+			EncryptionEnc:  in.IDToken.EncryptionEnc,
 		}
 	}
 	if idToken != nil {

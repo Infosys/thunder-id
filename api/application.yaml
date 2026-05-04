@@ -151,6 +151,9 @@ paths:
                       idToken:
                         validityPeriod: 3600
                         userAttributes: ["email", "name", "given_name", "family_name"]
+                        responseType: "JWE"
+                        encryptionAlg: "RSA-OAEP-256"
+                        encryptionEnc: "A256GCM"
                     userInfo:
                       responseType: "JWS"
                       signingAlg: "RS256"
@@ -221,6 +224,9 @@ paths:
                         idToken:
                           validityPeriod: 1800
                           userAttributes: ["email", "email_verified", "name", "given_name", "family_name"]
+                          responseType: "JWE"
+                          encryptionAlg: "RSA-OAEP-256"
+                          encryptionEnc: "A256GCM"
                       userInfo:
                         responseType: "JWS"
                         signingAlg: "RS256"
@@ -357,6 +363,9 @@ paths:
                         idToken:
                           validityPeriod: 1800
                           userAttributes: ["email", "email_verified", "name", "given_name", "family_name"]
+                          responseType: "JWE"
+                          encryptionAlg: "RSA-OAEP-256"
+                          encryptionEnc: "A256GCM"
                       userInfo:
                         responseType: "JWS"
                         signingAlg: "RS256"
@@ -481,6 +490,9 @@ paths:
                       idToken:
                         validityPeriod: 1800
                         userAttributes: ["email", "email_verified", "name", "given_name", "family_name"]
+                        responseType: "JWE"
+                        encryptionAlg: "RSA-OAEP-256"
+                        encryptionEnc: "A256GCM"
                     userInfo:
                       responseType: "JWS"
                       signingAlg: "RS256"
@@ -553,6 +565,9 @@ paths:
                         idToken:
                           validityPeriod: 1800
                           userAttributes: ["email", "email_verified", "name", "given_name", "family_name"]
+                          responseType: "JWE"
+                          encryptionAlg: "RSA-OAEP-256"
+                          encryptionEnc: "A256GCM"
                       userInfo:
                         responseType: "JWS"
                         signingAlg: "RS256"
@@ -1122,6 +1137,25 @@ components:
             type: string
           description: The user attributes to include in the ID token. Only claims requested by scopes AND listed here will be included.
           example: ["email", "name", "given_name", "family_name"]
+        responseType:
+          type: string
+          description: |
+            The format of the ID token response.
+            JWT returns a standard signed JWT (default).
+            JWE returns an encrypted JWT — requires encryptionAlg, encryptionEnc, and a client certificate.
+            NESTED_JWT returns a sign-then-encrypt JWT — requires encryptionAlg, encryptionEnc, and a client certificate.
+          enum: ["JWT", "JWE", "NESTED_JWT"]
+          example: "JWE"
+        encryptionAlg:
+          type: string
+          description: JWE key-management algorithm for encrypted ID token responses (e.g. RSA-OAEP-256). Required when responseType is JWE or NESTED_JWT.
+          enum: ["RSA-OAEP", "RSA-OAEP-256"]
+          example: "RSA-OAEP-256"
+        encryptionEnc:
+          type: string
+          description: JWE content-encryption algorithm (e.g. A256GCM). Required when responseType is JWE or NESTED_JWT.
+          enum: ["A128CBC-HS256", "A256GCM"]
+          example: "A256GCM"
 
     UserInfoConfig:
       type: object
