@@ -17,7 +17,7 @@
  */
 
 import type {EmbeddedFlowComponent} from '@asgardeo/react';
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {Stack} from '@wso2/oxygen-ui';
 import type {JSX} from 'react';
 import type {FlowComponent} from '../../../models/flow';

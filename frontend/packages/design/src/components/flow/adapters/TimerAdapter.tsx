@@ -17,7 +17,7 @@
  */
 
 import {FlowTimer, type FlowTimerRenderProps} from '@asgardeo/react';
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {Alert, Typography} from '@wso2/oxygen-ui';
 import type {JSX} from 'react';
 

@@ -22,9 +22,9 @@ import {describe, it, expect, beforeEach, vi} from 'vitest';
 import ConfigureName, {type ConfigureNameProps} from '../ConfigureName';
 
 // Mock the utility library
-vi.mock('@thunder/utils');
+vi.mock('@thunderid/utils');
 
-const {generateRandomHumanReadableIdentifiers} = await import('@thunder/utils');
+const {generateRandomHumanReadableIdentifiers} = await import('@thunderid/utils');
 
 describe('ConfigureName', () => {
   const mockOnAppNameChange = vi.fn();

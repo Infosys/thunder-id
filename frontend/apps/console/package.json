@@ -60,7 +60,7 @@
     "@thunder/configure-users": "workspace:^",
     "@thunderid/configure-organization-units": "workspace:^",
     "@thunderid/configure-translations": "workspace:^",
-    "@thunder/utils": "workspace:^",
+    "@thunderid/utils": "workspace:^",
     "@wso2/oxygen-ui": "catalog:",
     "@wso2/oxygen-ui-icons-react": "catalog:",
     "@xyflow/react": "12.9.2",

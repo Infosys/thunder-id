@@ -24,7 +24,7 @@ import {
   NamespaceConstants,
   I18nDefaultConstants,
 } from '@thunder/i18n';
-import {isI18nTemplatePattern, I18N_KEY_PATTERN} from '@thunder/utils';
+import {isI18nTemplatePattern, I18N_KEY_PATTERN} from '@thunderid/utils';
 import {
   Alert,
   Autocomplete,

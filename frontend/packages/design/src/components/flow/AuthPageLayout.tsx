@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {CircularProgress, Stack} from '@wso2/oxygen-ui';
 import type {JSX, PropsWithChildren} from 'react';
 

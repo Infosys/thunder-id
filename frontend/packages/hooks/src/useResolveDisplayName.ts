@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {isI18nTemplatePattern, type TemplateLiteralHandlers} from '@thunder/utils';
+import {isI18nTemplatePattern, type TemplateLiteralHandlers} from '@thunderid/utils';
 import {useCallback} from 'react';
 import useTemplateLiteralResolver from './useTemplateLiteralResolver';
 

@@ -64,7 +64,7 @@ vi.mock('../../contexts/useOrganizationUnit', () => ({
 }));
 
 // Mock name suggestions utility
-vi.mock('@thunder/utils', () => ({
+vi.mock('@thunderid/utils', () => ({
   generateRandomHumanReadableIdentifiers: () => ['Suggested Name One', 'Suggested Name Two', 'Suggested Name Three'],
 }));
 

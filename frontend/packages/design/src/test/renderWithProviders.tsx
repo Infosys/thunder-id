@@ -18,7 +18,7 @@
 
 import {render, type RenderOptions} from '@testing-library/react';
 import {TEST_CN_PREFIX} from '@thunder/test-utils';
-import {setCnPrefix} from '@thunder/utils';
+import {setCnPrefix} from '@thunderid/utils';
 import i18n from 'i18next';
 import type {ReactNode} from 'react';
 import {I18nextProvider, initReactI18next} from 'react-i18next';

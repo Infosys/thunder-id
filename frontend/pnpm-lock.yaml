@@ -346,7 +346,7 @@ importers:
       '@thunderid/logger':
         specifier: workspace:^
         version: link:../../packages/logger
-      '@thunder/utils':
+      '@thunderid/utils':
         specifier: workspace:^
         version: link:../../packages/utils
       '@wso2/oxygen-ui':
@@ -530,7 +530,7 @@ importers:
       '@thunderid/logger':
         specifier: workspace:^
         version: link:../../packages/logger
-      '@thunder/utils':
+      '@thunderid/utils':
         specifier: workspace:^
         version: link:../../packages/utils
       '@wso2/oxygen-ui':
@@ -727,7 +727,7 @@ importers:
       '@thunderid/logger':
         specifier: workspace:^
         version: link:../logger
-      '@thunder/utils':
+      '@thunderid/utils':
         specifier: workspace:^
         version: link:../utils
       '@wso2/oxygen-ui':
@@ -1125,7 +1125,7 @@ importers:
       '@thunderid/logger':
         specifier: workspace:^
         version: link:../logger
-      '@thunder/utils':
+      '@thunderid/utils':
         specifier: workspace:^
         version: link:../utils
       '@wso2/oxygen-ui':
@@ -1301,7 +1301,7 @@ importers:
       '@thunderid/logger':
         specifier: workspace:^
         version: link:../logger
-      '@thunder/utils':
+      '@thunderid/utils':
         specifier: workspace:^
         version: link:../utils
       '@wso2/oxygen-ui':

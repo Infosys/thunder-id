@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {ColorSchemeImage, Paper, Stack, styled} from '@wso2/oxygen-ui';
 import type {JSX, ReactNode} from 'react';
 

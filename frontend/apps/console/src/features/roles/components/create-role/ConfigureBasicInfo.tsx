@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {generateRandomHumanReadableIdentifiers} from '@thunder/utils';
+import {generateRandomHumanReadableIdentifiers} from '@thunderid/utils';
 import {Box, Typography, Stack, TextField, Chip, FormControl, FormLabel, useTheme} from '@wso2/oxygen-ui';
 import {Lightbulb} from '@wso2/oxygen-ui-icons-react';
 import type {ChangeEvent, JSX} from 'react';

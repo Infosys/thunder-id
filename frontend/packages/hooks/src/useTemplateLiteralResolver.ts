@@ -21,7 +21,7 @@ import {
   TemplateLiteralHandlers,
   TemplateLiteralResult,
   parseTemplateLiteral,
-} from '@thunder/utils';
+} from '@thunderid/utils';
 import {useMemo} from 'react';
 
 /**

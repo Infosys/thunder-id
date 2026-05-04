@@ -79,7 +79,7 @@
     "@tanstack/react-query": "catalog:",
     "@thunderid/logger": "workspace:^",
     "@thunder/contexts": "workspace:^",
-    "@thunder/utils": "workspace:^",
+    "@thunderid/utils": "workspace:^",
     "@wso2/oxygen-ui": "catalog:",
     "@wso2/oxygen-ui-icons-react": "catalog:",
     "dompurify": "catalog:",

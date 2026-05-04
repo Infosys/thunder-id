@@ -74,8 +74,8 @@ vi.mock('@thunderid/configure-organization-units', () => ({
   ),
 }));
 
-vi.mock('@thunder/utils', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@thunder/utils')>();
+vi.mock('@thunderid/utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@thunderid/utils')>();
   return {
     ...actual,
     generateRandomHumanReadableIdentifiers: () => ['Alpha Users', 'Beta Users', 'Gamma Users'],

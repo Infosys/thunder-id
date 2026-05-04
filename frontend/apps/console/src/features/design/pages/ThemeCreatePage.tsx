@@ -17,7 +17,7 @@
  */
 
 import {useCreateTheme, useGetTheme, useGetThemes, type Theme} from '@thunder/design';
-import {kebabCase} from '@thunder/utils';
+import {kebabCase} from '@thunderid/utils';
 import {
   Alert,
   Box,

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {cn, containsMetaTemplate, replaceMetaTemplate} from '@thunder/utils';
+import {cn, containsMetaTemplate, replaceMetaTemplate} from '@thunderid/utils';
 import {Box} from '@wso2/oxygen-ui';
 import DOMPurify from 'dompurify';
 import type {JSX} from 'react';

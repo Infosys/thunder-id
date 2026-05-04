@@ -17,7 +17,7 @@
  */
 
 import {EmbeddedFlowComponentType, EmbeddedFlowEventType, type EmbeddedFlowComponent} from '@asgardeo/react';
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {Box, Button} from '@wso2/oxygen-ui';
 import type {JSX} from 'react';
 import {useTranslation} from 'react-i18next';

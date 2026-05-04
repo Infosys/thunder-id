@@ -44,7 +44,7 @@
     "@thunder/design": "workspace:^",
     "@thunder/i18n": "workspace:^",
     "@thunder/hooks": "workspace:^",
-    "@thunder/utils": "workspace:^",
+    "@thunderid/utils": "workspace:^",
     "@wso2/oxygen-ui": "catalog:",
     "@wso2/oxygen-ui-icons-react": "catalog:",
     "dompurify": "catalog:",

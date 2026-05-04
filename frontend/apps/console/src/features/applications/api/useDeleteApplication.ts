@@ -19,7 +19,7 @@
 import {useAsgardeo} from '@asgardeo/react';
 import {useMutation, useQueryClient, type UseMutationResult} from '@tanstack/react-query';
 import {useConfig, useToast} from '@thunder/contexts';
-import {getErrorMessage} from '@thunder/utils';
+import {getErrorMessage} from '@thunderid/utils';
 import {useTranslation} from 'react-i18next';
 import ApplicationQueryKeys from '../constants/application-query-keys';
 

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {FormControl, FormLabel, IconButton, InputAdornment, TextField} from '@wso2/oxygen-ui';
 import {Eye, EyeClosed} from '@wso2/oxygen-ui-icons-react';
 import type {JSX} from 'react';

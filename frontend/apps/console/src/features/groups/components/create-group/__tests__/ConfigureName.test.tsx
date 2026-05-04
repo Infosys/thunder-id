@@ -21,9 +21,9 @@ import userEvent from '@testing-library/user-event';
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 import ConfigureName, {type ConfigureNameProps} from '../ConfigureName';
 
-vi.mock('@thunder/utils');
+vi.mock('@thunderid/utils');
 
-const {generateRandomHumanReadableIdentifiers} = await import('@thunder/utils');
+const {generateRandomHumanReadableIdentifiers} = await import('@thunderid/utils');
 
 describe('ConfigureName', () => {
   const mockOnNameChange = vi.fn();

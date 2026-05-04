@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {isAbsoluteUrl} from '@thunder/utils';
+import {isAbsoluteUrl} from '@thunderid/utils';
 
 const resolveStaticResourcePath = (path: string): string =>
   isAbsoluteUrl(path) ? path : `${import.meta.env.BASE_URL}/${path}`;

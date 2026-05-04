@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {Divider} from '@wso2/oxygen-ui';
 import type {JSX} from 'react';
 import {useTranslation} from 'react-i18next';

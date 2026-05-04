@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {I18N_KEY_PATTERN, META_KEY_PATTERN, isMetaTemplatePattern} from '@thunder/utils';
+import {I18N_KEY_PATTERN, META_KEY_PATTERN, isMetaTemplatePattern} from '@thunderid/utils';
 import {Box, Card, CardContent, CardHeader, IconButton, Popover, Tab, Tabs} from '@wso2/oxygen-ui';
 import {XIcon} from '@wso2/oxygen-ui-icons-react';
 import lowerCase from 'lodash-es/lowerCase';

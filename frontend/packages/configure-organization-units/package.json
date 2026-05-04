@@ -85,7 +85,7 @@
     "@thunder/hooks": "workspace:^",
     "@thunder/i18n": "workspace:^",
     "@thunderid/logger": "workspace:^",
-    "@thunder/utils": "workspace:^",
+    "@thunderid/utils": "workspace:^",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-hook-form": "catalog:",

@@ -30,7 +30,7 @@ vi.mock('react-i18next', () => ({
 // Mock generateRandomHumanReadableIdentifiers
 const mockSuggestions = ['Cosmic Gateway', 'Lunar Portal', 'Solar Bridge'];
 
-vi.mock('@thunder/utils', () => ({
+vi.mock('@thunderid/utils', () => ({
   generateRandomHumanReadableIdentifiers: () => mockSuggestions,
 }));
 

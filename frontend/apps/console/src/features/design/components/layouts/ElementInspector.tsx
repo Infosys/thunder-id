@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {getCnPrefix} from '@thunder/utils';
+import {getCnPrefix} from '@thunderid/utils';
 import {Box, Typography} from '@wso2/oxygen-ui';
 import {useEffect, useRef, useState, type JSX, type ReactNode} from 'react';
 

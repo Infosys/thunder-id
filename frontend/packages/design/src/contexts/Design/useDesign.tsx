@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {isEmpty, merge} from '@thunder/utils';
+import {isEmpty, merge} from '@thunderid/utils';
 import {CssVarsThemeOptions, extendTheme} from '@wso2/oxygen-ui';
 import {useContext, useMemo} from 'react';
 import DesignContext, {DesignContextType} from './DesignContext';

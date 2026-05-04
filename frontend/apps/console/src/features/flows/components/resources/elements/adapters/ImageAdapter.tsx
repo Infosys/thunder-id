@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {isI18nTemplatePattern, isMetaTemplatePattern} from '@thunder/utils';
+import {isI18nTemplatePattern, isMetaTemplatePattern} from '@thunderid/utils';
 import {Box, Typography} from '@wso2/oxygen-ui';
 import {ImageIcon} from '@wso2/oxygen-ui-icons-react';
 import {useCallback, useState, type CSSProperties, type ReactElement} from 'react';

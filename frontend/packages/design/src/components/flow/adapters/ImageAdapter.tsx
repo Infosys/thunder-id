@@ -17,7 +17,7 @@
  */
 
 import {isEmojiUri, extractEmojiFromUri} from '@asgardeo/react';
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {Box} from '@wso2/oxygen-ui';
 import type {JSX} from 'react';
 import type {FlowComponent} from '../../../models/flow';

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {cn} from '@thunder/utils';
+import {cn} from '@thunderid/utils';
 import {Box} from '@wso2/oxygen-ui';
 import * as OxygenIcons from '@wso2/oxygen-ui-icons-react';
 import type {JSX} from 'react';
