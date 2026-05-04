@@ -18,7 +18,7 @@
 
 import {useAsgardeo} from '@asgardeo/react';
 import {useConfig} from '@thunder/contexts';
-import {waitFor, act, renderHook} from '@thunder/test-utils';
+import {waitFor, act, renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import ApplicationQueryKeys from '../../constants/application-query-keys';
 import type {Application} from '../../models/application';

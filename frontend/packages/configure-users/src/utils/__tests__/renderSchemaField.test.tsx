@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen, waitFor, userEvent} from '@thunder/test-utils';
+import {render, screen, waitFor, userEvent} from '@thunderid/test-utils';
 import {useForm} from 'react-hook-form';
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 import type {PropertyDefinition} from '../../models/users';

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import React from 'react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import ApplicationCreateProvider from '../ApplicationCreateProvider';

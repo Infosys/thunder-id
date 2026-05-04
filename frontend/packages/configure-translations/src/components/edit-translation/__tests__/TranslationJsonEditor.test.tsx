@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen, act, fireEvent} from '@thunder/test-utils';
+import {render, screen, act, fireEvent} from '@thunderid/test-utils';
 import {describe, expect, it, vi, beforeEach, afterEach} from 'vitest';
 import TranslationJsonEditor from '@/components/edit-translation/TranslationJsonEditor';
 

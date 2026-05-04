@@ -18,7 +18,7 @@
 
 import userEvent from '@testing-library/user-event';
 import {DesignContext, type DesignContextType} from '@thunder/design';
-import {render as testRender, screen, fireEvent, waitFor} from '@thunder/test-utils';
+import {render as testRender, screen, fireEvent, waitFor} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import SignInBox from '../SignInBox';
 // Mock useDesign

@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
 import ConfigureBasicInfo from '../ConfigureBasicInfo';
 import type {ConfigureBasicInfoProps} from '../ConfigureBasicInfo';

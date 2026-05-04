@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import {describe, it, expect, vi, afterEach} from 'vitest';
 import ConfigureOrganizationUnit from '../ConfigureOrganizationUnit';
 import type {ConfigureOrganizationUnitProps} from '../ConfigureOrganizationUnit';

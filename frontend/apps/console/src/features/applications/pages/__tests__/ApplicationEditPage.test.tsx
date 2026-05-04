@@ -18,7 +18,7 @@
 
 import type {UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor, fireEvent, within} from '@thunder/test-utils';
+import {render, screen, waitFor, fireEvent, within} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
 import useGetApplication from '../../api/useGetApplication';
 import useUpdateApplication from '../../api/useUpdateApplication';

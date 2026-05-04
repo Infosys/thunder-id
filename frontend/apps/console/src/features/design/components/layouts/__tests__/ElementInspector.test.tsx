@@ -17,7 +17,7 @@
  */
 
 import {render, screen, cleanup, fireEvent, act} from '@testing-library/react';
-import {TEST_CN_PREFIX} from '@thunder/test-utils';
+import {TEST_CN_PREFIX} from '@thunderid/test-utils';
 import {setCnPrefix} from '@thunderid/utils';
 import {describe, it, expect, vi, afterEach, beforeEach} from 'vitest';
 import ElementInspector from '../ElementInspector';

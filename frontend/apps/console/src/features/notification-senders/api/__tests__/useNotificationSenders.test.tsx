@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {renderHook, waitFor} from '@thunder/test-utils';
+import {renderHook, waitFor} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import NotificationSenderQueryKeys from '../../constants/query-keys';
 import type {NotificationSenderListResponse} from '../../models/notification-sender';

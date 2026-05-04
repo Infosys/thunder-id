@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {screen, waitFor, renderWithProviders} from '@thunder/test-utils';
+import {screen, waitFor, renderWithProviders} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type {OrganizationUnitListResponse} from '../../models/responses';
 import OrganizationUnitsListPage from '../OrganizationUnitsListPage';

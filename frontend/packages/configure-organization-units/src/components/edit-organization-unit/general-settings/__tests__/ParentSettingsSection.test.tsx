@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {screen, renderWithProviders} from '@thunder/test-utils';
+import {screen, renderWithProviders} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type {OrganizationUnit} from '../../../../models/organization-unit';
 import ParentSettingsSection from '../ParentSettingsSection';

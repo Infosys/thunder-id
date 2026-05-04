@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor, within} from '@thunder/test-utils';
+import {render, screen, waitFor, within} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type {SchemaInterface} from '../../../models/users';
 import ConfigureUserType, {type ConfigureUserTypeProps} from '../ConfigureUserType';

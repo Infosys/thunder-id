@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {renderHook} from '@thunder/test-utils';
+import {renderHook} from '@thunderid/test-utils';
 import {describe, it, expect} from 'vitest';
 import useThemeBuilder from '../useThemeBuilder';
 

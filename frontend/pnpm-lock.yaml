@@ -434,7 +434,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../../packages/prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../../packages/test-utils
       '@thunderid/types':
@@ -573,7 +573,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../../packages/prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../../packages/test-utils
       '@types/node':
@@ -661,7 +661,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@types/node':
@@ -764,7 +764,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@thunderid/types':
@@ -858,7 +858,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@types/node':
@@ -961,7 +961,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@thunderid/types':
@@ -1086,7 +1086,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@types/lodash-es':
@@ -1165,7 +1165,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@thunderid/types':
@@ -1317,7 +1317,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@types/node':
@@ -1570,7 +1570,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@types/node':
@@ -1607,7 +1607,7 @@ importers:
       '@thunder/prettier-config':
         specifier: workspace:^
         version: link:../prettier-config
-      '@thunder/test-utils':
+      '@thunderid/test-utils':
         specifier: workspace:^
         version: link:../test-utils
       '@thunderid/types':

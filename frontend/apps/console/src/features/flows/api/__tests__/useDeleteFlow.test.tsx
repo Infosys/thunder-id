@@ -18,7 +18,7 @@
 
 import {useAsgardeo} from '@asgardeo/react';
 import {useConfig} from '@thunder/contexts';
-import {renderHook, waitFor, act} from '@thunder/test-utils';
+import {renderHook, waitFor, act} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import FlowQueryKeys from '../../constants/flow-query-keys';
 import useDeleteFlow from '../useDeleteFlow';

@@ -17,7 +17,7 @@
  */
 
 import type {UseMutationResult} from '@tanstack/react-query';
-import {render, screen, userEvent} from '@thunder/test-utils';
+import {render, screen, userEvent} from '@thunderid/test-utils';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import type {ExportRequest, JSONExportResponse} from '../../models/export-configuration';
 

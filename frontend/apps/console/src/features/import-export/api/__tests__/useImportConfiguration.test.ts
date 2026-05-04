@@ -17,7 +17,7 @@
  */
 
 import {waitFor} from '@testing-library/react';
-import {renderHook} from '@thunder/test-utils';
+import {renderHook} from '@thunderid/test-utils';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import type {ImportRequest, ImportResponse} from '../../models/import-configuration';
 

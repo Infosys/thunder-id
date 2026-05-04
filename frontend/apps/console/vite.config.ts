@@ -95,7 +95,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['@thunder/test-utils/setup'],
+    setupFiles: ['@thunderid/test-utils/setup'],
     reporters: process.env.CI ? ['dot'] : ['default'],
     restoreMocks: true,
     testTimeout: 30000,

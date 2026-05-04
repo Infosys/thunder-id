@@ -17,7 +17,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return */
-import {render, screen, waitFor, userEvent} from '@thunder/test-utils';
+import {render, screen, waitFor, userEvent} from '@thunderid/test-utils';
 import type * as OxygenUI from '@wso2/oxygen-ui';
 import {type ReactElement, type ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';

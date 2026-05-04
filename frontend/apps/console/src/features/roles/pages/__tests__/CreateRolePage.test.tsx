@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import type {NavigateFunction} from 'react-router';
 import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
 import {RoleCreateFlowStep} from '../../models/role-create-flow';

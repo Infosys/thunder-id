@@ -18,7 +18,7 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {screen} from '@testing-library/react';
-import {TEST_CN_PREFIX} from '@thunder/test-utils';
+import {TEST_CN_PREFIX} from '@thunderid/test-utils';
 import {describe, it, expect} from 'vitest';
 import type {FlowComponent} from '../../../../models/flow';
 import renderWithProviders from '../../../../test/renderWithProviders';

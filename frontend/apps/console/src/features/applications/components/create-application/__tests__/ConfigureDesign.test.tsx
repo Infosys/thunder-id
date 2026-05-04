@@ -18,7 +18,7 @@
 
 import userEvent from '@testing-library/user-event';
 import {generateIconSuggestions} from '@thunderid/components';
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import type {ReactNode} from 'react';
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 import ConfigureDesign, {type ConfigureDesignProps} from '../ConfigureDesign';

@@ -19,7 +19,7 @@
 import {useAsgardeo} from '@asgardeo/react';
 import {QueryClient} from '@tanstack/react-query';
 import {useConfig} from '@thunder/contexts';
-import {waitFor, act, renderHook} from '@thunder/test-utils';
+import {waitFor, act, renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import IntegrationQueryKeys from '../../constants/query-keys';
 import {IdentityProviderTypes} from '../../models/identity-provider';

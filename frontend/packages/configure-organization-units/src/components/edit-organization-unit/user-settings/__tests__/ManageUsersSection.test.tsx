@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {screen, renderWithProviders} from '@thunder/test-utils';
+import {screen, renderWithProviders} from '@thunderid/test-utils';
 import type {User} from '@thunderid/types';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import ManageUsersSection from '../ManageUsersSection';

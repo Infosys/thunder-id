@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {waitFor, renderHook} from '@thunder/test-utils';
+import {waitFor, renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import ApplicationQueryKeys from '../../constants/application-query-keys';
 import type {ApplicationListResponse} from '../../models/responses';

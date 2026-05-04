@@ -18,7 +18,7 @@
 
 /* eslint-disable react/require-default-props */
 
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import {describe, it, expect, vi} from 'vitest';
 import FullScreenLayout from '../FullScreenLayout';
 

@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {renderHook} from '@thunder/test-utils';
+import {renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, vi} from 'vitest';
 import useResolveDisplayName from '../useResolveDisplayName';
 

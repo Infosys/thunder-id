@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {screen, fireEvent, renderWithProviders} from '@thunder/test-utils';
+import {screen, fireEvent, renderWithProviders} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
 import DangerZoneSection from '../DangerZoneSection';
 

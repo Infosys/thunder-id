@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {render, screen, fireEvent} from '@thunder/test-utils';
+import {render, screen, fireEvent} from '@thunderid/test-utils';
 import {describe, expect, it, vi, beforeEach} from 'vitest';
 import TranslationsList from '@/components/TranslationsList';
 

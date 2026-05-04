@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen, fireEvent} from '@thunder/test-utils';
+import {render, screen, fireEvent} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import HomeNextStepCard from '../HomeNextStepCard';
 

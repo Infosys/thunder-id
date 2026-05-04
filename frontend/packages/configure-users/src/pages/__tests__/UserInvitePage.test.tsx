@@ -17,7 +17,7 @@
  */
 
 import type {EmbeddedFlowComponent} from '@asgardeo/react';
-import {render, screen, waitFor, userEvent} from '@thunder/test-utils';
+import {render, screen, waitFor, userEvent} from '@thunderid/test-utils';
 import type {JSX} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import UserInvitePage from '../UserInvitePage';

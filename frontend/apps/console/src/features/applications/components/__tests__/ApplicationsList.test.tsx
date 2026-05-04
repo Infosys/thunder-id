@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor} from '@thunder/test-utils';
+import {render, screen, waitFor} from '@thunderid/test-utils';
 import type {NavigateFunction} from 'react-router';
 import {describe, it, expect, beforeEach, vi} from 'vitest';
 import type {ApplicationListResponse} from '../../models/responses';

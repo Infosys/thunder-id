@@ -17,7 +17,7 @@
  */
 
 import {waitFor} from '@testing-library/react';
-import {renderHook} from '@thunder/test-utils';
+import {renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import type {MemberListResponse} from '../../models/group';
 

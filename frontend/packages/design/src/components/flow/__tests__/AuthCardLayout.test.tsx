@@ -17,7 +17,7 @@
  */
 
 import {screen, cleanup} from '@testing-library/react';
-import {TEST_CN_PREFIX} from '@thunder/test-utils';
+import {TEST_CN_PREFIX} from '@thunderid/test-utils';
 import {describe, it, expect, afterEach} from 'vitest';
 import renderWithProviders from '../../../test/renderWithProviders';
 import AuthCardLayout from '../AuthCardLayout';

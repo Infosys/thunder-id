@@ -18,7 +18,7 @@
 
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders} from '@thunder/test-utils';
+import {renderWithProviders} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import type {Group} from '../../models/group';
 import EditMembersSettings from '../edit-group/members-settings/EditMembersSettings';

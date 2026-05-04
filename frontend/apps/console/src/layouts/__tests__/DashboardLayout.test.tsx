@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen, userEvent, waitFor} from '@thunder/test-utils';
+import {render, screen, userEvent, waitFor} from '@thunderid/test-utils';
 import {afterEach, describe, it, expect, vi, beforeEach} from 'vitest';
 import DashboardLayout from '../DashboardLayout';
 

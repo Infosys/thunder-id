@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import {describe, expect, it, vi, beforeEach} from 'vitest';
 import type {TranslationCreateContextType} from '@/contexts/TranslationCreate/TranslationCreateContext';
 import {TranslationCreateFlowStep} from '@/models/translation-create-flow';

@@ -18,7 +18,7 @@
 
 import userEvent from '@testing-library/user-event';
 import {useGetLanguages} from '@thunder/i18n';
-import {render, screen, fireEvent} from '@thunder/test-utils';
+import {render, screen, fireEvent} from '@thunderid/test-utils';
 import {describe, expect, it, vi, beforeEach} from 'vitest';
 import TranslationsListPage from '@/pages/TranslationsListPage';
 

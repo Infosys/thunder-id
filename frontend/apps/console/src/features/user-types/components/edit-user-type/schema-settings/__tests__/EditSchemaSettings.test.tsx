@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen, waitFor, within, userEvent} from '@thunder/test-utils';
+import {render, screen, waitFor, within, userEvent} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type {SchemaPropertyInput} from '../../../../types/user-types';
 import EditSchemaSettings from '../EditSchemaSettings';

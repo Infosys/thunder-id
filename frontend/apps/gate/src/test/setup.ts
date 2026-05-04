@@ -17,8 +17,8 @@
  */
 
 // Import shared test setup from test-utils
-import '@thunder/test-utils/setup';
-import {configureTestUtils} from '@thunder/test-utils';
+import '@thunderid/test-utils/setup';
+import {configureTestUtils} from '@thunderid/test-utils';
 
 configureTestUtils({
   base: '/gate',

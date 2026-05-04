@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import {Palette} from '@wso2/oxygen-ui-icons-react';
 import {describe, it, expect, vi} from 'vitest';
 import SectionHeader from '../SectionHeader';

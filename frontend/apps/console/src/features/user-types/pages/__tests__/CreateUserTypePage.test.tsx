@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen, waitFor, userEvent, within} from '@thunder/test-utils';
+import {render, screen, waitFor, userEvent, within} from '@thunderid/test-utils';
 import type {ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type useCreateUserTypeHook from '../../api/useCreateUserType';

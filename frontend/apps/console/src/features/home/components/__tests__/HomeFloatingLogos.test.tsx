@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render} from '@thunder/test-utils';
+import {render} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import HomeFloatingLogos from '../HomeFloatingLogos';
 

@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import {Palette} from '@wso2/oxygen-ui-icons-react';
 import {describe, it, expect, vi} from 'vitest';
 import SectionCard from '../SectionCard';

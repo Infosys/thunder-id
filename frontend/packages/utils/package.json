@@ -57,7 +57,7 @@
     "@thunderid/types": "workspace:^",
     "@thunderid/eslint-plugin-thunder": "workspace:^",
     "@thunder/prettier-config": "workspace:^",
-    "@thunder/test-utils": "workspace:^",
+    "@thunderid/test-utils": "workspace:^",
     "@types/node": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",

@@ -51,7 +51,7 @@
   "devDependencies": {
     "@thunderid/eslint-plugin-thunder": "workspace:^",
     "@thunder/prettier-config": "workspace:^",
-    "@thunder/test-utils": "workspace:^",
+    "@thunderid/test-utils": "workspace:^",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@vitest/browser-playwright": "catalog:",
@@ -73,7 +73,7 @@
   "peerDependencies": {
     "@wso2/oxygen-ui": "catalog:",
     "@thunderid/logger": "workspace:^",
-    "@thunder/test-utils": "workspace:^",
+    "@thunderid/test-utils": "workspace:^",
     "@thunderid/utils": "workspace:^",
     "react": "catalog:",
     "react-dom": "catalog:",

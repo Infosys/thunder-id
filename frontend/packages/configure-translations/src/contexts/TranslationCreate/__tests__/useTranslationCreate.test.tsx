@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen} from '@thunder/test-utils';
+import {render, screen} from '@thunderid/test-utils';
 import React from 'react';
 import {describe, expect, it, vi, beforeEach} from 'vitest';
 import TranslationCreateProvider from '@/contexts/TranslationCreate/TranslationCreateProvider';

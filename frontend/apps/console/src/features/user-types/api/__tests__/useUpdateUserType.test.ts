@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {waitFor, act, renderHook} from '@thunder/test-utils';
+import {waitFor, act, renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import UserTypeQueryKeys from '../../constants/userTypeQueryKeys';
 import type {ApiUserSchema, UpdateUserSchemaRequest} from '../../types/user-types';

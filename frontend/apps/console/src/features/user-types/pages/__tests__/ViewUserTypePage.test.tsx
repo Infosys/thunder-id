@@ -17,7 +17,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any */
-import {render, screen, waitFor, within, userEvent} from '@thunder/test-utils';
+import {render, screen, waitFor, within, userEvent} from '@thunderid/test-utils';
 import type {ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type {ApiUserSchema, ApiError} from '../../types/user-types';

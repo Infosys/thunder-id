@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {render, screen, waitFor, fireEvent} from '@thunder/test-utils';
+import {render, screen, waitFor, fireEvent} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';
 import type {Role} from '../../../../models/role';
 import EditGeneralSettings from '../EditGeneralSettings';

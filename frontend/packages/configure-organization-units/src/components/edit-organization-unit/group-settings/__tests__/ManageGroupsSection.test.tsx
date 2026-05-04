@@ -16,7 +16,7 @@
  * under the License.
  */
 
-import {screen, renderWithProviders} from '@thunder/test-utils';
+import {screen, renderWithProviders} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type {Group} from '../../../../models/group';
 import ManageGroupsSection from '../ManageGroupsSection';

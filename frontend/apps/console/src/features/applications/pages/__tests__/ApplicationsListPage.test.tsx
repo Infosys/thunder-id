@@ -17,7 +17,7 @@
  */
 
 import userEvent from '@testing-library/user-event';
-import {fireEvent, render, screen} from '@thunder/test-utils';
+import {fireEvent, render, screen} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import ApplicationsListPage from '../ApplicationsListPage';
 

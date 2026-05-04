@@ -18,7 +18,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment, react/require-default-props */
 
-import {render, screen, fireEvent, waitFor, cleanup} from '@thunder/test-utils';
+import {render, screen, fireEvent, waitFor, cleanup} from '@thunderid/test-utils';
 import type {Node, Edge} from '@xyflow/react';
 import React from 'react';
 import {describe, it, expect, vi, beforeEach, afterEach} from 'vitest';

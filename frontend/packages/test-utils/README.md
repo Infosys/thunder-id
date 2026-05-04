@@ -1,4 +1,4 @@
-# @thunder/test-utils
+# @thunderid/test-utils
 
 Shared testing utilities for ⚡️ Thunder applications. Provides common test setup, render helpers, and mocks for
 consistent testing across all apps.
@@ -19,7 +19,7 @@ Since this is a workspace package, add it to your app's `package.json`:
 ```json
 {
   "devDependencies": {
-    "@thunder/test-utils": "workspace:^"
+    "@thunderid/test-utils": "workspace:^"
   }
 }
 ```
@@ -53,9 +53,9 @@ export default defineConfig({
 Create `src/test/setup.ts` in your app:
 
 ```typescript
-// Import shared test setup from @thunder/test-utils
-import '@thunder/test-utils/setup';
-import {configureTestUtils} from '@thunder/test-utils';
+// Import shared test setup from @thunderid/test-utils
+import '@thunderid/test-utils/setup';
+import {configureTestUtils} from '@thunderid/test-utils';
 
 // Configure for your app (example for gate)
 configureTestUtils({
@@ -68,14 +68,14 @@ For `console`, you can skip `configureTestUtils` as it uses the default configur
 
 ```typescript
 // Import shared test setup (defaults to '/console' and 'CONSOLE')
-import '@thunder/test-utils/setup';
+import '@thunderid/test-utils/setup';
 ```
 
 ### 3. Write Tests
 
 ```tsx
 import {describe, it, expect} from 'vitest';
-import {renderWithProviders, screen} from '@thunder/test-utils';
+import {renderWithProviders, screen} from '@thunderid/test-utils';
 import {MyComponent} from './MyComponent';
 
 describe('MyComponent', () => {
@@ -92,18 +92,18 @@ describe('MyComponent', () => {
 
 The package exposes three entry points:
 
-- **`@thunder/test-utils`** - Main entry with render functions and re-exports
-- **`@thunder/test-utils/setup`** - Test setup (import in setup file)
-- **`@thunder/test-utils/mocks`** - Mock implementations
+- **`@thunderid/test-utils`** - Main entry with render functions and re-exports
+- **`@thunderid/test-utils/setup`** - Test setup (import in setup file)
+- **`@thunderid/test-utils/mocks`** - Mock implementations
 
-### Main Exports (`@thunder/test-utils`)
+### Main Exports (`@thunderid/test-utils`)
 
 #### `render`
 
 Default custom render function that wraps components with all providers.
 
 ```tsx
-import {render} from '@thunder/test-utils';
+import {render} from '@thunderid/test-utils';
 
 const {container} = render(<MyComponent />);
 ```
@@ -113,7 +113,7 @@ const {container} = render(<MyComponent />);
 Alias for `render` with explicit naming.
 
 ```tsx
-import {renderWithProviders} from '@thunder/test-utils';
+import {renderWithProviders} from '@thunderid/test-utils';
 
 renderWithProviders(<MyComponent />);
 ```
@@ -123,7 +123,7 @@ renderWithProviders(<MyComponent />);
 Custom renderHook function with providers. Returns the QueryClient instance for direct cache manipulation.
 
 ```tsx
-import {renderHook} from '@thunder/test-utils';
+import {renderHook} from '@thunderid/test-utils';
 
 const {result, queryClient} = renderHook(() => useMyHook());
 
@@ -136,7 +136,7 @@ queryClient.setQueryData(['key'], mockData);
 Configure test utilities with app-specific settings. Call this in your test setup file.
 
 ```typescript
-import {configureTestUtils} from '@thunder/test-utils';
+import {configureTestUtils} from '@thunderid/test-utils';
 
 configureTestUtils({
   base: '/gate', // Base path for the app
@@ -152,7 +152,7 @@ configureTestUtils({
 Helper to find elements by translation key when using mocked translations.
 
 ```tsx
-import {getByTranslationKey} from '@thunder/test-utils';
+import {getByTranslationKey} from '@thunderid/test-utils';
 
 const element = getByTranslationKey(container, 'users.title');
 ```
@@ -162,19 +162,19 @@ const element = getByTranslationKey(container, 'users.title');
 All exports from `@testing-library/react` are re-exported for convenience:
 
 ```tsx
-import {screen, waitFor, within, fireEvent} from '@thunder/test-utils';
+import {screen, waitFor, within, fireEvent} from '@thunderid/test-utils';
 ```
 
 Additionally, `userEvent` from `@testing-library/user-event`:
 
 ```tsx
-import {userEvent} from '@thunder/test-utils';
+import {userEvent} from '@thunderid/test-utils';
 
 const user = userEvent.setup();
 await user.click(button);
 ```
 
-### Setup (`@thunder/test-utils/setup`)
+### Setup (`@thunderid/test-utils/setup`)
 
 Import this in your test setup file. It provides:
 
@@ -190,10 +190,10 @@ Import this in your test setup file. It provides:
 
 ```typescript
 // In your test setup file
-import '@thunder/test-utils/setup';
+import '@thunderid/test-utils/setup';
 ```
 
-### Mocks (`@thunder/test-utils/mocks`)
+### Mocks (`@thunderid/test-utils/mocks`)
 
 #### `mockUseTranslation`
 
@@ -201,7 +201,7 @@ Mock implementation of `useTranslation` hook that returns translation keys.
 
 ```typescript
 import {vi} from 'vitest';
-import {mockUseTranslation} from '@thunder/test-utils/mocks';
+import {mockUseTranslation} from '@thunderid/test-utils/mocks';
 
 vi.mock('react-i18next', () => ({
   useTranslation: mockUseTranslation,
@@ -213,7 +213,7 @@ vi.mock('react-i18next', () => ({
 Mock implementation of `useLanguage` hook.
 
 ```typescript
-import {mockUseLanguage} from '@thunder/test-utils/mocks';
+import {mockUseLanguage} from '@thunderid/test-utils/mocks';
 ```
 
 #### `mockUseDataGridLocaleText`
@@ -221,7 +221,7 @@ import {mockUseLanguage} from '@thunder/test-utils/mocks';
 Mock implementation of `useDataGridLocaleText` hook for DataGrid components.
 
 ```typescript
-import {mockUseDataGridLocaleText} from '@thunder/test-utils/mocks';
+import {mockUseDataGridLocaleText} from '@thunderid/test-utils/mocks';
 ```
 
 ## Configuration Options
@@ -242,7 +242,7 @@ import {mockUseDataGridLocaleText} from '@thunder/test-utils/mocks';
 
 ```tsx
 import {describe, it, expect} from 'vitest';
-import {renderWithProviders, screen, waitFor} from '@thunder/test-utils';
+import {renderWithProviders, screen, waitFor} from '@thunderid/test-utils';
 import {UserList} from './UserList';
 
 describe('UserList', () => {
@@ -260,7 +260,7 @@ describe('UserList', () => {
 
 ```tsx
 import {describe, it, expect} from 'vitest';
-import {renderHook, waitFor} from '@thunder/test-utils';
+import {renderHook, waitFor} from '@thunderid/test-utils';
 import {useUsers} from './useUsers';
 
 describe('useUsers', () => {
@@ -281,7 +281,7 @@ describe('useUsers', () => {
 
 ```tsx
 import {describe, it, expect, vi} from 'vitest';
-import {renderWithProviders, screen, userEvent} from '@thunder/test-utils';
+import {renderWithProviders, screen, userEvent} from '@thunderid/test-utils';
 import {LoginForm} from './LoginForm';
 
 describe('LoginForm', () => {
@@ -307,7 +307,7 @@ to avoid router nesting:
 
 ```tsx
 import {describe, it, expect, vi} from 'vitest';
-import {render} from '@testing-library/react'; // Use raw render, not @thunder/test-utils
+import {render} from '@testing-library/react'; // Use raw render, not @thunderid/test-utils
 import App from './App';
 
 // Mock app routes
@@ -318,14 +318,14 @@ vi.mock('./config/appRoutes', () => ({
 describe('App', () => {
   it('renders without crashing', () => {
     // App includes its own BrowserRouter, so we use the raw render
-    // from @testing-library/react instead of @thunder/test-utils
+    // from @testing-library/react instead of @thunderid/test-utils
     const {container} = render(<App />);
     expect(container).toBeInTheDocument();
   });
 });
 ```
 
-> **Note:** The `render` export from `@thunder/test-utils` wraps components with `MemoryRouter`. For components that
+> **Note:** The `render` export from `@thunderid/test-utils` wraps components with `MemoryRouter`. For components that
 > include their own router (like the main `App` component), you must import `render` directly from
 > `@testing-library/react`.
 
@@ -345,7 +345,7 @@ The custom render functions wrap components with the following providers:
 
 ```typescript
 // src/test/setup.ts
-import '@thunder/test-utils/setup';
+import '@thunderid/test-utils/setup';
 // Uses default config: base='/console', clientId='CONSOLE'
 ```
 
@@ -353,8 +353,8 @@ import '@thunder/test-utils/setup';
 
 ```typescript
 // src/test/setup.ts
-import '@thunder/test-utils/setup';
-import {configureTestUtils} from '@thunder/test-utils';
+import '@thunderid/test-utils/setup';
+import {configureTestUtils} from '@thunderid/test-utils';
 
 configureTestUtils({
   base: '/gate',
@@ -366,12 +366,12 @@ configureTestUtils({
 
 ### Tests Failing with Provider Errors
 
-Make sure you're using `renderWithProviders` or the default `render` from `@thunder/test-utils`, not the raw render from
+Make sure you're using `renderWithProviders` or the default `render` from `@thunderid/test-utils`, not the raw render from
 `@testing-library/react`:
 
 ```tsx
 // ✅ Good
-import {render} from '@thunder/test-utils';
+import {render} from '@thunderid/test-utils';
 
 // ❌ Avoid (unless you have a specific reason)
 import {render} from '@testing-library/react';
@@ -382,7 +382,7 @@ import {render} from '@testing-library/react';
 Ensure your test setup file imports the shared setup:
 
 ```typescript
-import '@thunder/test-utils/setup';
+import '@thunderid/test-utils/setup';
 ```
 
 ### QueryClient State Leaking Between Tests
