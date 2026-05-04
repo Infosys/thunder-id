@@ -426,7 +426,7 @@ jobs:
           name: Frontend Console App Unit Tests
           fail_ci_if_error: false
 
-      - name: 📊 Upload `@thunder/gate` Unit Test Coverage Report to Codecov
+      - name: 📊 Upload `@thunderid/gate` Unit Test Coverage Report to Codecov
         uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

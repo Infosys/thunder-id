@@ -1164,7 +1164,7 @@ function run_frontend() {
     
     echo "Starting frontend applications in the background..."
     # Start frontend processes in background
-    pnpm -r --parallel --filter "@thunderid/console" --filter "@thunder/gate" dev &
+    pnpm -r --parallel --filter "@thunderid/console" --filter "@thunderid/gate" dev &
     FRONTEND_PID=$!
     
     # Return to script directory
