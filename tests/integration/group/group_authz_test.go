@@ -212,7 +212,7 @@ func (ts *GroupAuthzTestSuite) SetupSuite() {
 	ts.targetGroupOU2ID = targetOU2ID
 
 	// ---- 5. Look up the system resource server seeded by bootstrap ----
-	systemRSID, err := testutils.GetResourceServerByIdentifier("system")
+	systemRSID, err := testutils.GetResourceServerByName("System")
 	ts.Require().NoError(err, "look up system resource server")
 
 	// ---- 6. Create a role with system:group permission and assign to the user-manager ----

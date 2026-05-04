@@ -363,6 +363,12 @@ type UserConfig struct {
 	Store string `yaml:"store" json:"store"`
 }
 
+// SystemResourceServerConfig holds configuration for the built-in system resource server.
+type SystemResourceServerConfig struct {
+	Handle     string `yaml:"handle" json:"handle"`
+	Identifier string `yaml:"identifier" json:"identifier"`
+}
+
 // ResourceConfig holds the resource management configuration details.
 type ResourceConfig struct {
 	DefaultDelimiter string `yaml:"default_delimiter" json:"default_delimiter"`
@@ -371,7 +377,8 @@ type ResourceConfig struct {
 	// If not specified, falls back to global DeclarativeResources.Enabled setting:
 	//   - If DeclarativeResources.Enabled = true: behaves as "declarative"
 	//   - If DeclarativeResources.Enabled = false: behaves as "mutable"
-	Store string `yaml:"store" json:"store"`
+	Store                string                     `yaml:"store" json:"store"`
+	SystemResourceServer SystemResourceServerConfig `yaml:"system_resource_server" json:"system_resource_server"`
 }
 
 // OrganizationUnitConfig holds the organization unit service configuration.
@@ -635,6 +642,11 @@ func LoadConfig(configPath string, defaultPath string, serverHome string) (*Conf
 	// Derive JWT issuer from server config if not set
 	if cfg.JWT.Issuer == "" {
 		cfg.JWT.Issuer = GetServerURL(&cfg.Server)
+	}
+
+	// Default system resource server identifier to "system" if not set.
+	if cfg.Resource.SystemResourceServer.Identifier == "" {
+		cfg.Resource.SystemResourceServer.Identifier = "system"
 	}
 
 	if err := cfg.Server.SecurityConfig.Validate(); err != nil {

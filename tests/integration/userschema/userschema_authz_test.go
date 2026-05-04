@@ -36,7 +36,7 @@ import (
 // The bootstrap script seeds the following hierarchical permission structure
 // under the "system" resource server:
 //
-//	system RS  (identifier: "system")
+//	system RS  (name: "System")
 //	└── Resource  "system"           → permission "system"
 //	    └── Resource  "userschema"   → permission "system:userschema"
 //	        └── Action "view"        → permission "system:userschema:view"
@@ -178,7 +178,7 @@ func (ts *UserSchemaAuthzTestSuite) SetupSuite() {
 	ts.schemaAdminUserID = userID
 
 	// ---- 4. Look up the system resource server seeded by bootstrap ----
-	systemRSID, err := testutils.GetResourceServerByIdentifier("system")
+	systemRSID, err := testutils.GetResourceServerByName("System")
 	ts.Require().NoError(err, "look up system resource server")
 
 	// ---- 5. Create a role with system:userschema permission ----

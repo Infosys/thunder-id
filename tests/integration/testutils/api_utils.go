@@ -982,6 +982,47 @@ func GetResourceServerByIdentifier(identifier string) (string, error) {
 	return "", fmt.Errorf("resource server with identifier %q not found", identifier)
 }
 
+// GetResourceServerByName lists all resource servers and returns the ID of
+// the first one whose name field matches the given name string.
+func GetResourceServerByName(name string) (string, error) {
+	client := GetHTTPClient()
+
+	req, err := http.NewRequest("GET", TestServerURL+"/resource-servers", nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to build list-resource-servers request: %w", err)
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to list resource servers: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("list resource servers returned status %d: %s", resp.StatusCode, string(body))
+	}
+
+	// Minimal struct to extract from the paginated response
+	var listResp struct {
+		ResourceServers []struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"resourceServers"`
+	}
+	if err := json.Unmarshal(body, &listResp); err != nil {
+		return "", fmt.Errorf("failed to unmarshal resource servers response: %w", err)
+	}
+
+	for _, rs := range listResp.ResourceServers {
+		if rs.Name == name {
+			return rs.ID, nil
+		}
+	}
+
+	return "", fmt.Errorf("resource server with name %q not found", name)
+}
+
 func DeleteResourceServer(rsID string) error {
 	client := GetHTTPClient()
 

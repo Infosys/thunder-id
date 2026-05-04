@@ -74,6 +74,9 @@ func main() {
 	// Initialize the cache manager.
 	initCacheManager(logger)
 
+	// Initialize system permission strings before any service or middleware uses them.
+	security.InitSystemPermissions(cfg.Resource.SystemResourceServer.Handle)
+
 	// Create a new HTTP multiplexer.
 	mux := http.NewServeMux()
 	if mux == nil {

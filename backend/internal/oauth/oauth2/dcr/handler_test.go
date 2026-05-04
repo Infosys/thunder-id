@@ -350,6 +350,8 @@ func TestHandleDCRRegistration_ClosedDCR_InsufficientPermissions(t *testing.T) {
 func TestHandleDCRRegistration_ClosedDCR_WithSystemPermission(t *testing.T) {
 	_ = config.InitializeServerRuntime("test", &config.Config{})
 	defer config.ResetServerRuntime()
+	security.InitSystemPermissions("")
+	defer security.InitSystemPermissions("")
 
 	mockService := NewDCRServiceInterfaceMock(t)
 	handler := newDCRHandler(mockService)

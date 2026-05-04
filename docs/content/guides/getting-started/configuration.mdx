@@ -409,6 +409,67 @@ Authorization resource settings.
 |---------|---------|-------------|
 | `resource.default_delimiter` | `:` | Default delimiter for resource hierarchies |
 
+### System Resource Server
+
+The system resource server controls administrative permissions for Thunder Console operations such as managing users, groups, organization units, and user schemas. You can customize the handle and identifier to fit your deployment requirements.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `resource.system_resource_server.handle` | `""` (empty) | Prefix added before all system permission strings. When empty, permissions use their base names (for example, `system`, `system:ou`). When set, the handle is added before every permission (for example, `mgmt:system`, `mgmt:system:ou`) |
+| `resource.system_resource_server.identifier` | `system` | Identifier for the system resource server. Can be set to a URI for [RFC 8707](https://datatracker.ietf.org/doc/html/rfc8707) resource indicator flows (for example, `https://api.example.com`) |
+
+**Example:**
+```yaml
+resource:
+  system_resource_server:
+    handle: "mgmt"
+    identifier: "https://api.example.com"
+```
+
+With the handle set to `mgmt`, all system permissions change as follows:
+
+| Default Permission | Custom Permission |
+|-------------------|-------------------|
+| `system` | `mgmt:system` |
+| `system:ou` | `mgmt:system:ou` |
+| `system:ou:view` | `mgmt:system:ou:view` |
+| `system:user` | `mgmt:system:user` |
+| `system:user:view` | `mgmt:system:user:view` |
+| `system:group` | `mgmt:system:group` |
+| `system:group:view` | `mgmt:system:group:view` |
+| `system:userschema` | `mgmt:system:userschema` |
+| `system:userschema:view` | `mgmt:system:userschema:view` |
+
+#### Update Console Scopes
+
+When you change the system resource server handle, you must also update the Thunder Console scopes to match the new permission strings. The scopes tell the Console which permissions to request during sign-in.
+
+Update the `scopes` array in the Console configuration file for your deployment mode:
+
+- **Local development** (`pnpm dev`): Update `frontend/apps/thunder-console/public/config.js`.
+- **Packaged build** (`build.sh` / `setup.sh` / `setup.ps1`): The setup scripts read the handle from `deployment.yaml` and pass the value to the bootstrap process automatically. Update `frontend/apps/thunder-console/public/config.js` for the Console scopes.
+- **Helm deployment**: Update `configuration.consoleClient.scopes` in your Helm values file (`install/helm/values.yaml`).
+
+For example, with the handle set to `mgmt`, update the Console `scopes` array to:
+
+```javascript
+scopes: [
+  'openid',
+  'profile',
+  'email',
+  'ou',
+  'mgmt:system',
+  'mgmt:system:user',
+  'mgmt:system:group',
+  'mgmt:system:ou:view',
+  'mgmt:system:userschema:view',
+],
+```
+
+:::warning
+If the Console scopes do not match the configured handle, the admin user token will lack the required `authorized_permissions` claim. All administrative API calls from the Console will then return `403 Forbidden`.
+:::
+
 ## Observability Configuration
 
 Monitoring and observability settings.

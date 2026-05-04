@@ -36,7 +36,7 @@ import (
 // The bootstrap script (01-default-resources.sh/.ps1) seeds the following
 // hierarchical permission structure under the "system" resource server:
 //
-//	system RS  (identifier: "system")
+//	system RS  (name: "System")
 //	└── Resource  "system"      → permission "system"
 //	    └── Resource  "ou"      → permission "system:ou"
 //	        └── Action "view"   → permission "system:ou:view"
@@ -155,7 +155,7 @@ func (ts *OUAuthzTestSuite) SetupSuite() {
 
 	// ---- 4. Look up the system resource server that was seeded by bootstrap ----
 	// We use the system RS ID to attach the correct permission to the test role.
-	systemRSID, err := testutils.GetResourceServerByIdentifier("system")
+	systemRSID, err := testutils.GetResourceServerByName("System")
 	ts.Require().NoError(err, "look up system resource server")
 
 	// ---- 5. Create a role with permission system:ou:view ----

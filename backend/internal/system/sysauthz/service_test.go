@@ -36,6 +36,7 @@ import (
 // every logger.IsDebugEnabled() branch in service.go is exercised.
 func TestMain(m *testing.M) {
 	_ = os.Setenv("LOG_LEVEL", "debug")
+	security.InitSystemPermissions("")
 	os.Exit(m.Run())
 }
 

@@ -20,9 +20,16 @@ package security
 
 import "strings"
 
-// maxPublicPathLength defines the maximum allowed length for a public path.
-// This prevents potential DoS attacks via excessively long paths (even with safe regex).
-const maxPublicPathLength = 4096
+const (
+	// maxPublicPathLength defines the maximum allowed length for a public path.
+	// This prevents potential DoS attacks via excessively long paths (even with safe regex).
+	maxPublicPathLength = 4096
+)
+
+// UninitializedPermissionSentinel is returned by permission-resolution functions when
+// InitSystemPermissions has not yet been called. It is intentionally unguessable so that
+// any permission check performed before initialization fails closed.
+const UninitializedPermissionSentinel = "__uninitialized__"
 
 // publicPaths defines the list of public paths using glob patterns.
 // - "*": Matches a single path segment (e.g., /a/*/b).
@@ -121,57 +128,144 @@ const (
 
 // ---- Permissions ----
 
-// SystemPermission is the root permission that implicitly covers all sub-permissions.
-// A caller holding "system" is a full admin and bypasses all fine-grained checks.
-const SystemPermission = "system"
+// SystemPermissions holds the runtime-resolved permission strings for the system resource server.
+// All values are set by InitSystemPermissions and must not be used before it is called.
+type SystemPermissions struct {
+	Root           string
+	OU             string
+	OUView         string
+	User           string
+	UserView       string
+	Group          string
+	GroupView      string
+	UserSchema     string
+	UserSchemaView string
+}
 
-// Fine-grained permissions. Each constant is a child scope of SystemPermission.
-// Hierarchy uses ":" as delimiter: "system:ou" covers "system:ou:view".
-const (
-	PermissionOU             = "system:ou"
-	PermissionOUView         = "system:ou:view"
-	PermissionUser           = "system:user"
-	PermissionUserView       = "system:user:view"
-	PermissionGroup          = "system:group"
-	PermissionGroupView      = "system:group:view"
-	PermissionUserSchema     = "system:userschema"
-	PermissionUserSchemaView = "system:userschema:view"
-)
+// sysPerms holds the active system permissions, initialized by InitSystemPermissions.
+var sysPerms *SystemPermissions
+
+// buildPermission constructs a permission string by joining non-empty parts with ":".
+func buildPermission(parts ...string) string {
+	var nonEmpty []string
+	for _, p := range parts {
+		if p != "" {
+			nonEmpty = append(nonEmpty, p)
+		}
+	}
+	return strings.Join(nonEmpty, ":")
+}
+
+// InitSystemPermissions initializes the system permission strings using the given handle prefix.
+// When handle is empty, permissions match the legacy values ("system", "system:ou", etc.).
+// When handle is non-empty (e.g. "mgmt"), permissions are prefixed ("mgmt:system", "mgmt:system:ou", etc.).
+// This function must be called once at startup before any service or middleware uses permissions.
+func InitSystemPermissions(handle string) {
+	p := &SystemPermissions{
+		Root:           buildPermission(handle, "system"),
+		OU:             buildPermission(handle, "system", "ou"),
+		OUView:         buildPermission(handle, "system", "ou", "view"),
+		User:           buildPermission(handle, "system", "user"),
+		UserView:       buildPermission(handle, "system", "user", "view"),
+		Group:          buildPermission(handle, "system", "group"),
+		GroupView:      buildPermission(handle, "system", "group", "view"),
+		UserSchema:     buildPermission(handle, "system", "userschema"),
+		UserSchemaView: buildPermission(handle, "system", "userschema", "view"),
+	}
+	sysPerms = p
+
+	actionPermissionMap = map[Action]string{
+		// Organization unit actions.
+		ActionCreateOU:     p.OU,
+		ActionReadOU:       p.OUView,
+		ActionUpdateOU:     p.OU,
+		ActionDeleteOU:     p.OU,
+		ActionListOUs:      p.OUView,
+		ActionListChildOUs: p.OU,
+
+		// User actions.
+		ActionCreateUser: p.User,
+		ActionReadUser:   p.UserView,
+		ActionUpdateUser: p.User,
+		ActionDeleteUser: p.User,
+		ActionListUsers:  p.UserView,
+
+		// Group actions.
+		ActionCreateGroup: p.Group,
+		ActionReadGroup:   p.GroupView,
+		ActionUpdateGroup: p.Group,
+		ActionDeleteGroup: p.Group,
+		ActionListGroups:  p.GroupView,
+
+		// User schema actions.
+		ActionCreateUserSchema: p.UserSchema,
+		ActionReadUserSchema:   p.UserSchemaView,
+		ActionUpdateUserSchema: p.UserSchema,
+		ActionDeleteUserSchema: p.UserSchema,
+		ActionListUserSchemas:  p.UserSchemaView,
+	}
+
+	apiPermissionEntries = []apiPermissionEntry{
+		// Self-service paths — accessible to any authenticated user (empty permission).
+		// Listed before their parent wildcards so they always win on first-match.
+		{"GET /users/me", ""},
+		{"PUT /users/me", ""},
+		{"GET /users/me/**", ""},
+		{"PUT /users/me/**", ""},
+		{"POST /users/me/update-credentials", ""},
+		{"GET /register/passkey/**", ""},
+		{"POST /register/passkey/**", ""},
+
+		// Organization unit APIs — exact named paths before wildcards.
+		{"GET /organization-units/tree", p.OUView},
+		{"PUT /organization-units/tree", p.OU},
+		{"DELETE /organization-units/tree", p.OU},
+		{"GET /organization-units", p.OUView},
+		{"POST /organization-units", p.OU},
+		{"GET /organization-units/**", p.OUView},
+		{"PUT /organization-units/**", p.OU},
+		{"DELETE /organization-units/**", p.OU},
+
+		// User APIs.
+		{"GET /users", p.UserView},
+		{"POST /users", p.User},
+		{"GET /users/**", p.UserView},
+		{"PUT /users/**", p.User},
+		{"DELETE /users/**", p.User},
+
+		// Group APIs.
+		{"GET /groups", p.GroupView},
+		{"POST /groups", p.Group},
+		{"GET /groups/**", p.GroupView},
+		{"POST /groups/**", p.Group},
+		{"PUT /groups/**", p.Group},
+		{"DELETE /groups/**", p.Group},
+
+		// User schema APIs.
+		{"GET /user-schemas", p.UserSchemaView},
+		{"POST /user-schemas", p.UserSchema},
+		{"GET /user-schemas/**", p.UserSchemaView},
+		{"PUT /user-schemas/**", p.UserSchema},
+		{"DELETE /user-schemas/**", p.UserSchema},
+
+		// Import APIs.
+		{"POST /import", p.Root},
+		{"POST /import/delete", p.Root},
+	}
+}
+
+// GetSystemPermissions returns the active system permissions.
+// Returns nil if InitSystemPermissions has not been called.
+func GetSystemPermissions() *SystemPermissions {
+	return sysPerms
+}
 
 // ---- Action → Permission map ----
 
 // actionPermissionMap maps each system action to the minimum permission required to perform it.
-// Actions not present in this map default to requiring SystemPermission.
-var actionPermissionMap = map[Action]string{
-	// Organization unit actions.
-	ActionCreateOU:     PermissionOU,
-	ActionReadOU:       PermissionOUView,
-	ActionUpdateOU:     PermissionOU,
-	ActionDeleteOU:     PermissionOU,
-	ActionListOUs:      PermissionOUView,
-	ActionListChildOUs: PermissionOU,
-
-	// User actions.
-	ActionCreateUser: PermissionUser,
-	ActionReadUser:   PermissionUserView,
-	ActionUpdateUser: PermissionUser,
-	ActionDeleteUser: PermissionUser,
-	ActionListUsers:  PermissionUserView,
-
-	// Group actions.
-	ActionCreateGroup: PermissionGroup,
-	ActionReadGroup:   PermissionGroupView,
-	ActionUpdateGroup: PermissionGroup,
-	ActionDeleteGroup: PermissionGroup,
-	ActionListGroups:  PermissionGroupView,
-
-	// User schema actions.
-	ActionCreateUserSchema: PermissionUserSchema,
-	ActionReadUserSchema:   PermissionUserSchemaView,
-	ActionUpdateUserSchema: PermissionUserSchema,
-	ActionDeleteUserSchema: PermissionUserSchema,
-	ActionListUserSchemas:  PermissionUserSchemaView,
-}
+// Actions not present in this map default to requiring the root system permission.
+// Rebuilt by InitSystemPermissions at startup.
+var actionPermissionMap map[Action]string
 
 // ---- API → Permission map ----
 
@@ -189,61 +283,20 @@ type apiPermissionEntry struct {
 //   - "*"  matches exactly one path segment (e.g., a resource ID).
 //   - "**" matches zero or more path segments; only valid as the final component
 //     after "/" (e.g., "GET /users/me/**" covers all sub-paths of /users/me).
-var apiPermissionEntries = []apiPermissionEntry{
-	// Self-service paths — accessible to any authenticated user (empty permission).
-	// Listed before their parent wildcards so they always win on first-match.
-	{"GET /users/me", ""},
-	{"PUT /users/me", ""},
-	{"GET /users/me/**", ""},
-	{"PUT /users/me/**", ""},
-	{"POST /users/me/update-credentials", ""},
-	{"GET /register/passkey/**", ""},
-	{"POST /register/passkey/**", ""},
-
-	// Organization unit APIs — exact named paths before wildcards.
-	{"GET /organization-units/tree", PermissionOUView},
-	{"PUT /organization-units/tree", PermissionOU},
-	{"DELETE /organization-units/tree", PermissionOU},
-	{"GET /organization-units", PermissionOUView},
-	{"POST /organization-units", PermissionOU},
-	{"GET /organization-units/**", PermissionOUView},
-	{"PUT /organization-units/**", PermissionOU},
-	{"DELETE /organization-units/**", PermissionOU},
-
-	// User APIs.
-	{"GET /users", PermissionUserView},
-	{"POST /users", PermissionUser},
-	{"GET /users/**", PermissionUserView},
-	{"PUT /users/**", PermissionUser},
-	{"DELETE /users/**", PermissionUser},
-
-	// Group APIs.
-	{"GET /groups", PermissionGroupView},
-	{"POST /groups", PermissionGroup},
-	{"GET /groups/**", PermissionGroupView},
-	{"POST /groups/**", PermissionGroup},
-	{"PUT /groups/**", PermissionGroup},
-	{"DELETE /groups/**", PermissionGroup},
-
-	// User schema APIs.
-	{"GET /user-schemas", PermissionUserSchemaView},
-	{"POST /user-schemas", PermissionUserSchema},
-	{"GET /user-schemas/**", PermissionUserSchemaView},
-	{"PUT /user-schemas/**", PermissionUserSchema},
-	{"DELETE /user-schemas/**", PermissionUserSchema},
-
-	// Import APIs.
-	{"POST /import", SystemPermission},
-	{"POST /import/delete", SystemPermission},
-}
+//
+// Rebuilt by InitSystemPermissions at startup.
+var apiPermissionEntries []apiPermissionEntry
 
 // ---- Helper functions ----
 
-// HasSystemPermission returns true if the caller holds the root "system" permission.
+// HasSystemPermission returns true if the caller holds the root system permission.
 // This is a fast-path check used to grant unconditional access (skipping policy evaluation).
 func HasSystemPermission(permissions []string) bool {
+	if sysPerms == nil {
+		return false
+	}
 	for _, p := range permissions {
-		if p == SystemPermission {
+		if p == sysPerms.Root {
 			return true
 		}
 	}
@@ -271,10 +324,13 @@ func HasSufficientPermission(userPermissions []string, required string) bool {
 }
 
 // ResolveActionPermission returns the minimum permission required to perform the given
-// action. Falls back to SystemPermission for actions not listed in the action permission map.
+// action. Falls back to the root system permission for actions not listed in the action permission map.
 func ResolveActionPermission(action Action) string {
 	if perm, ok := actionPermissionMap[action]; ok {
 		return perm
 	}
-	return SystemPermission
+	if sysPerms != nil {
+		return sysPerms.Root
+	}
+	return UninitializedPermissionSentinel
 }
