@@ -388,7 +388,7 @@ func (suite *TokenValidatorTestSuite) TestValidateSubjectToken_Error_NotYetValid
 	suite.mockJWTService.AssertExpectations(suite.T())
 }
 
-func (suite *TokenValidatorTestSuite) TestVerifyTokenSignatureByIssuer_Success_ThunderIssuer() {
+func (suite *TokenValidatorTestSuite) TestVerifyTokenSignatureByIssuer_Success_ServerIssuer() {
 	token := testJWTTokenString
 
 	suite.mockJWTService.On("VerifyJWTSignature", token).Return(nil)
@@ -494,7 +494,7 @@ func (suite *TokenValidatorTestSuite) TestFederationScenario_FailFastOnUntrusted
 	suite.mockJWTService.AssertNotCalled(suite.T(), "VerifyJWTSignature")
 }
 
-func (suite *TokenValidatorTestSuite) TestFederationScenario_OnlyThunderIssuerIsValid() {
+func (suite *TokenValidatorTestSuite) TestFederationScenario_OnlyServerIssuerIsValid() {
 	// Only the server-level issuer from config is accepted; app-level issuers are no longer supported
 	appWithTokenConfig := &inboundmodel.OAuthClient{
 		ClientID: "test-client",

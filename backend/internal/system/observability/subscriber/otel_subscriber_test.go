@@ -258,7 +258,7 @@ func (suite *OTelSubscriberTestSuite) TestOnEvent_WithSpanRecorder() {
 	sub := &OTelSubscriber{
 		id:             "test-sub",
 		tracerProvider: tracerProvider,
-		tracer:         tracerProvider.Tracer("thunder-observability"),
+		tracer:         tracerProvider.Tracer("thunderid-observability"),
 		categories:     []event.EventCategory{event.CategoryAll},
 		logger:         logger,
 	}
@@ -723,7 +723,7 @@ func setupTestConfig(t *testing.T) {
 	}
 
 	// Initialize server runtime with test config
-	err := config.InitializeServerRuntime("/tmp/thunder-test", testConfig)
+	err := config.InitializeServerRuntime("/tmp/test", testConfig)
 	if err != nil {
 		t.Fatalf("Failed to initialize server runtime: %v", err)
 	}

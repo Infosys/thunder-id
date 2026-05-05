@@ -466,7 +466,7 @@ export default function GetStartedSection(): JSX.Element {
         <Stack direction={{xs: 'column', sm: 'row'}} spacing={2} justifyContent="center" sx={{mt: 6}}>
           <Button
             component={Link}
-            href="/docs/next/guides/getting-started/what-is-thunder"
+            href="/docs/next/guides/getting-started/what-is-thunderid"
             variant="outlined"
             size="large"
             sx={{

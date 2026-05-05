@@ -53,7 +53,7 @@ func (suite *EncryptionTestSuite) TestEncryptionService() {
 		},
 	}
 	config.ResetServerRuntime()
-	_ = config.InitializeServerRuntime("/test/thunder/home", testConfig)
+	_ = config.InitializeServerRuntime("/test/thunderid/home", testConfig)
 
 	service := GetEncryptionService()
 
@@ -84,7 +84,7 @@ func (suite *EncryptionTestSuite) TestGetEncryptionService_Singleton() {
 		},
 	}
 	config.ResetServerRuntime()
-	_ = config.InitializeServerRuntime("/test/thunder/home", testConfig)
+	_ = config.InitializeServerRuntime("/test/thunderid/home", testConfig)
 
 	service1 := GetEncryptionService()
 	service2 := GetEncryptionService()
@@ -101,7 +101,7 @@ func (suite *EncryptionTestSuite) TestGetEncryptionService_PanicOnInvalidConfig(
 		},
 	}
 	config.ResetServerRuntime()
-	_ = config.InitializeServerRuntime("/test/thunder/home", testConfig)
+	_ = config.InitializeServerRuntime("/test/thunderid/home", testConfig)
 
 	assert.Panics(suite.T(), func() {
 		GetEncryptionService()
@@ -117,7 +117,7 @@ func (suite *EncryptionTestSuite) TestGetEncryptionService_PanicOnEmptyConfig() 
 		},
 	}
 	config.ResetServerRuntime()
-	_ = config.InitializeServerRuntime("/test/thunder/home", testConfig)
+	_ = config.InitializeServerRuntime("/test/thunderid/home", testConfig)
 
 	assert.Panics(suite.T(), func() {
 		GetEncryptionService()

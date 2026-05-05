@@ -20,14 +20,14 @@ kind: Component
 metadata:
   name: {{ .Values.componentName }}
   annotations:
-    openchoreo.dev/description: "Thunder Identity Management Service"
-    openchoreo.dev/display-name: "Thunder"
+    openchoreo.dev/description: "ThunderID Identity Management Service"
+    openchoreo.dev/display-name: "ThunderID"
 spec:
   owner:
     projectName: {{ .Values.project.name }}
   componentType:
     kind: {{ if .Values.componentType.cluster }}ClusterComponentType{{ else }}ComponentType{{ end }}
-    name: deployment/thunder
+    name: deployment/thunderid
   parameters:
     image: {{ printf "%s:%s" .Values.image.repository .Values.image.tag | quote }}
     runtime:
@@ -54,7 +54,7 @@ spec:
     image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
     env:
       - key: SERVER_PORT
-        value: {{ .Values.thunder.server.port | quote }}
+        value: {{ .Values.thunderid.server.port | quote }}
       - key: JWT_VALIDITY
         value: {{ .Values.jwt.validity | quote }}
       - key: OAUTH_REFRESH_TOKEN_VALIDITY
@@ -93,6 +93,6 @@ spec:
     api:
       type: HTTP
       port: {{ .Values.thunder.server.port }}
-      displayName: "Thunder API"
+      displayName: "ThunderID API"
       visibility:
         - external

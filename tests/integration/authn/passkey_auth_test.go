@@ -37,7 +37,7 @@ const (
 	passkeyAuthStartEndpoint      = "/auth/passkey/start"
 	passkeyAuthFinishEndpoint     = "/auth/passkey/finish"
 	testRelyingPartyID            = "localhost"
-	testRelyingPartyName          = "Thunder Test"
+	testRelyingPartyName          = "ThunderID Test"
 )
 
 var (
@@ -232,9 +232,9 @@ func (suite *PasskeyAuthTestSuite) SetupSuite() {
 	suite.Require().NoError(err, "Failed to marshal user attributes")
 
 	user := testutils.User{
-		Type:             "passkey_user",
-		OUID:             suite.ouID,
-		Attributes:       json.RawMessage(attributesJSON),
+		Type:       "passkey_user",
+		OUID:       suite.ouID,
+		Attributes: json.RawMessage(attributesJSON),
 	}
 
 	userID, err := testutils.CreateUser(user)

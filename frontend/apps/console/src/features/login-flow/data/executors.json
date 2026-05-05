@@ -202,7 +202,7 @@
       },
       "properties": {
         "relyingPartyId": "localhost",
-        "relyingPartyName": "Thunder"
+        "relyingPartyName": "ThunderID"
       }
     }
   },
@@ -252,7 +252,7 @@
       },
       "properties": {
         "relyingPartyId": "localhost",
-        "relyingPartyName": "Thunder"
+        "relyingPartyName": "ThunderID"
       }
     }
   },

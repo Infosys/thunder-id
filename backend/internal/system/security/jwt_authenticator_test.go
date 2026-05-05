@@ -282,7 +282,7 @@ func (suite *JWTAuthenticatorTestSuite) TestExtractPermissionsFromJWTClaims() {
 			expectedPermissions: []string{"users:read"},
 		},
 		{
-			name: "Thunder assertion authorized_permissions attribute",
+			name: "ThunderID assertion authorized_permissions attribute",
 			attributes: map[string]interface{}{
 				"authorized_permissions": "perm1 perm2 perm3",
 			},

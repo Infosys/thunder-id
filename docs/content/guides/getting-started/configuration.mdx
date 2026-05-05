@@ -289,7 +289,7 @@ cache:
     username: ""
     password: ""
     db: 0
-    key_prefix: "thunder"
+    key_prefix: "thunderid"
     max_retries: 5
     min_retry_backoff_ms: 10
     max_retry_backoff_ms: 100
@@ -372,7 +372,7 @@ declarativeResources:
   # Mount as read-only (recommended)
   readOnly: true
   configMap:
-    name: thunder-declarative-resources
+    name: declarative-resources
     items:
       # Format 1 — string shorthand: key and path are the same
       - "identity_providers/google.yaml"
@@ -393,7 +393,7 @@ declarativeResources:
   mountPath: /opt/thunder/repository/resources
   readOnly: true
   secret:
-    name: thunder-declarative-resources-secret
+    name: declarative-resources-secret
     items:
       - key: my-app-with-secrets
         path: applications/my-app.yaml
@@ -446,8 +446,8 @@ When you change the system resource server handle, you must also update the Thun
 
 Update the `scopes` array in the Console configuration file for your deployment mode:
 
-- **Local development** (`pnpm dev`): Update `frontend/apps/thunder-console/public/config.js`.
-- **Packaged build** (`build.sh` / `setup.sh` / `setup.ps1`): The setup scripts read the handle from `deployment.yaml` and pass the value to the bootstrap process automatically. Update `frontend/apps/thunder-console/public/config.js` for the Console scopes.
+- **Local development** (`pnpm dev`): Update `frontend/apps/console/public/config.js`.
+- **Packaged build** (`build.sh` / `setup.sh` / `setup.ps1`): The setup scripts read the handle from `deployment.yaml` and pass the value to the bootstrap process automatically. Update `frontend/apps/console/public/config.js` for the Console scopes.
 - **Helm deployment**: Update `configuration.consoleClient.scopes` in your Helm values file (`install/helm/values.yaml`).
 
 For example, with the handle set to `mgmt`, update the Console `scopes` array to:

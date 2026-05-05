@@ -1642,7 +1642,7 @@ func (suite *TokenExchangeGrantHandlerTestSuite) TestExtractUserAttributes() {
 	assert.NotContains(suite.T(), userAttrs, "scope")
 }
 
-func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAssertion_Success() {
+func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ServerAuthAssertion_Success() {
 	defaultAudience := suite.getDefaultAudience()
 	now := time.Now().Unix()
 	claims := map[string]interface{}{
@@ -1698,7 +1698,7 @@ func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAsse
 	suite.mockTokenBuilder.AssertExpectations(suite.T())
 }
 
-func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAssertion_AudienceMismatch() {
+func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ServerAuthAssertion_AudienceMismatch() {
 	now := time.Now().Unix()
 	claims := map[string]interface{}{
 		"sub":       testUserID,
@@ -1729,7 +1729,7 @@ func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAsse
 	suite.mockTokenValidator.AssertExpectations(suite.T())
 }
 
-func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAssertion_MissingAudience() {
+func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ServerAuthAssertion_MissingAudience() {
 	now := time.Now().Unix()
 	claims := map[string]interface{}{
 		"sub": testUserID,
@@ -1749,7 +1749,7 @@ func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAsse
 	}
 
 	suite.mockTokenValidator.On("ValidateSubjectToken", subjectToken, suite.oauthApp).
-		Return(nil, fmt.Errorf("thunder auth assertion is missing 'aud' claim"))
+		Return(nil, fmt.Errorf("server auth assertion is missing 'aud' claim"))
 
 	result, errResp := suite.handler.HandleGrant(context.Background(), tokenRequest, suite.oauthApp)
 
@@ -1760,7 +1760,7 @@ func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAsse
 	suite.mockTokenValidator.AssertExpectations(suite.T())
 }
 
-func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAssertion_ClientIDMatch() {
+func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ServerAuthAssertion_ClientIDMatch() {
 	defaultAudience := suite.getDefaultAudience()
 	now := time.Now().Unix()
 	claims := map[string]interface{}{
@@ -1808,7 +1808,7 @@ func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAsse
 	suite.mockTokenBuilder.AssertExpectations(suite.T())
 }
 
-func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ThunderAuthAssertion_WithClientAppID() {
+func (suite *TokenExchangeGrantHandlerTestSuite) TestHandleGrant_ServerAuthAssertion_WithClientAppID() {
 	now := time.Now().Unix()
 	claims := map[string]interface{}{
 		"sub":                    testUserID,

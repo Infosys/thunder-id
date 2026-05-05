@@ -96,7 +96,7 @@ func (suite *InitTestSuite) TestInitialize_DeclarativeMode() {
 
 func (suite *InitTestSuite) TestInitialize_DeclarativeMode_LoadError() {
 	// Setup temp dir for resources
-	tempDir, err := os.MkdirTemp("", "thunder_test_resources")
+	tempDir, err := os.MkdirTemp("", "test_resources")
 	suite.NoError(err)
 	defer func() {
 		_ = os.RemoveAll(tempDir)

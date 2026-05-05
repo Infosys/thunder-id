@@ -48,7 +48,7 @@ func (suite *InMemoryCacheTestSuite) SetupSuite() {
 		},
 	}
 	config.ResetServerRuntime()
-	err := config.InitializeServerRuntime("/test/thunder/home", mockConfig)
+	err := config.InitializeServerRuntime("/test/thunderid/home", mockConfig)
 	if err != nil {
 		suite.T().Fatal("Failed to initialize server runtime:", err)
 	}

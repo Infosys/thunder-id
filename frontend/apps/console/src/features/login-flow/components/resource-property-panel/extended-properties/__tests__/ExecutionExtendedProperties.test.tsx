@@ -782,7 +782,7 @@ describe('ExecutionExtendedProperties', () => {
         ...passkeyResource,
         data: {
           ...(passkeyResource as unknown as {data: object}).data,
-          properties: {relyingPartyId: 'localhost', relyingPartyName: 'Thunder'},
+          properties: {relyingPartyId: 'localhost', relyingPartyName: 'ThunderID'},
           display: {label: 'Old Label', icon: 'passkey-icon.png'},
         },
       } as unknown as Resource;
@@ -798,7 +798,7 @@ describe('ExecutionExtendedProperties', () => {
         expect.objectContaining({
           properties: expect.objectContaining({
             relyingPartyId: 'localhost',
-            relyingPartyName: 'Thunder',
+            relyingPartyName: 'ThunderID',
           }) as unknown,
           display: expect.objectContaining({
             label: 'Request Passkey',
@@ -889,7 +889,7 @@ describe('ExecutionExtendedProperties', () => {
         target: {value: 'localhost'},
       });
       fireEvent.change(screen.getByLabelText('Relying Party Name'), {
-        target: {value: 'Thunder'},
+        target: {value: 'ThunderID'},
       });
 
       expect(mockOnChange).toHaveBeenCalledWith(
@@ -900,7 +900,7 @@ describe('ExecutionExtendedProperties', () => {
       );
       expect(mockOnChange).toHaveBeenCalledWith(
         'data.properties.relyingPartyName',
-        'Thunder',
+        'ThunderID',
         resourceWithChallengeMode,
         true,
       );

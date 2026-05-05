@@ -92,7 +92,7 @@
       "username": "",
       "password": "",
       "db": 0,
-      "key_prefix": "thunder",
+      "key_prefix": "thunderid",
       "max_retries": 5,
       "min_retry_backoff_ms": 10,
       "max_retry_backoff_ms": 100,

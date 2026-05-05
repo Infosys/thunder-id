@@ -58,11 +58,11 @@ func (suite *InitTestSuite) SetupTest() {
 		Database: config.DatabaseConfig{
 			Config: config.DataSource{
 				Type:   "sqlite",
-				SQLite: config.SQLiteDataSource{Path: "thunder_test.db"},
+				SQLite: config.SQLiteDataSource{Path: "test.db"},
 			},
 			Runtime: config.DataSource{
 				Type:   "sqlite",
-				SQLite: config.SQLiteDataSource{Path: "thunder_test.db"},
+				SQLite: config.SQLiteDataSource{Path: "test.db"},
 			},
 		},
 		GateClient: config.GateClientConfig{

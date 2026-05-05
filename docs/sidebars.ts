@@ -54,12 +54,12 @@ const sidebars: SidebarsConfig = {
       items: [
         {
           type: 'doc',
-          id: 'guides/getting-started/what-is-thunder',
+          id: 'guides/getting-started/what-is-thunderid',
           label: `What is ${productConfig.project.name}?`,
         },
         {
           type: 'doc',
-          id: 'guides/getting-started/get-thunder',
+          id: 'guides/getting-started/get-thunderid',
           label: `Get ${productConfig.project.name}`,
         },
         {

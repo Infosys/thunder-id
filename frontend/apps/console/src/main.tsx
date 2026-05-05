@@ -27,7 +27,7 @@ import AppWithDecorators from './AppWithDecorators';
 
 // Initialize the class name prefix from runtime config (e.g., "<PRODUCT_NAME>" -> "<PRODUCT_NAME>SignIn--root")
 if (typeof window !== 'undefined') {
-  setCnPrefix(window.__THUNDER_RUNTIME_CONFIG__?.brand?.product_name ?? '');
+  setCnPrefix(window.__THUNDERID_RUNTIME_CONFIG__?.brand?.product_name ?? '');
 }
 
 const queryClient: QueryClient = new QueryClient({

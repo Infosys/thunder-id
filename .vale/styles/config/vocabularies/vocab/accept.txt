@@ -8,8 +8,8 @@ IAM
 [Ii][Aa][Mm]
 IdP
 PKCE
-Thunder
-@thunder
+ThunderID
+@thunderid
 npm
 pnpm
 [Vv]ite

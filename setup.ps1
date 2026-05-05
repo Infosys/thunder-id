@@ -17,7 +17,7 @@
 # under the License.
 # ----------------------------------------------------------------------------
 
-$PRODUCT_NAME = "Thunder"
+$PRODUCT_NAME = "ThunderID"
 $PRODUCT_NAME_LOWERCASE = $PRODUCT_NAME.ToLower()
 $BINARY_NAME = $PRODUCT_NAME_LOWERCASE
 
@@ -385,8 +385,8 @@ $PUBLIC_URL = if ($script:PUBLIC_URL) { $script:PUBLIC_URL.TrimEnd('/') } else {
 # Export environment variables for bootstrap scripts
 $env:API_BASE = $BASE_URL
 $env:PUBLIC_URL = $PUBLIC_URL
-$env:THUNDER_SYSTEM_RS_HANDLE = if ($script:SYSTEM_RS_HANDLE) { $script:SYSTEM_RS_HANDLE } else { "" }
-$env:THUNDER_SYSTEM_RS_IDENTIFIER = if ($script:SYSTEM_RS_IDENTIFIER) { $script:SYSTEM_RS_IDENTIFIER } else { "" }
+$env:SYSTEM_RS_HANDLE = if ($script:SYSTEM_RS_HANDLE) { $script:SYSTEM_RS_HANDLE } else { "" }
+$env:SYSTEM_RS_IDENTIFIER = if ($script:SYSTEM_RS_IDENTIFIER) { $script:SYSTEM_RS_IDENTIFIER } else { "" }
 
 Write-Host ""
 Write-Host "========================================="

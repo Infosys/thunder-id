@@ -57,7 +57,7 @@ export default function CTASection(): JSX.Element {
           </Typography>
           <Button
             component={Link}
-            href="/docs/next/guides/getting-started/what-is-thunder"
+            href="/docs/next/guides/getting-started/what-is-thunderid"
             variant="contained"
             color="primary"
             size="large"

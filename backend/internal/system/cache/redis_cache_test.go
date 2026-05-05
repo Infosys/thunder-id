@@ -52,7 +52,7 @@ func (suite *RedisCacheTestSuite) SetupSuite() {
 		},
 	}
 	config.ResetServerRuntime()
-	err := config.InitializeServerRuntime("/test/thunder/home", mockConfig)
+	err := config.InitializeServerRuntime("/test/thunderid/home", mockConfig)
 	if err != nil {
 		suite.T().Fatal("Failed to initialize server runtime:", err)
 	}
@@ -139,11 +139,11 @@ func (suite *RedisCacheTestSuite) TestBuildKey() {
 	cache := &redisCache[string]{
 		enabled:   true,
 		name:      "TestCache",
-		keyPrefix: "thunder",
+		keyPrefix: "thunderid",
 	}
 
 	key := cache.buildKey(CacheKey{Key: "myKey"})
-	assert.Equal(t, "thunder:TestCache:myKey", key)
+	assert.Equal(t, "thunderid:TestCache:myKey", key)
 }
 
 func (suite *RedisCacheTestSuite) TestBuildKeyWithEmptyPrefix() {

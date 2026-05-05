@@ -32,7 +32,7 @@ import PostmanButton from './PostmanButton';
  *   static/api/<versionPath>/combined.yaml
  *
  * The Postman collection is expected to live at:
- *   static/api/<versionPath>/postman/thunder.json
+ *   static/api/<versionPath>/postman/thunderid-api-postman-collection.json
  *
  * The version path follows the convention:
  *   - Docusaurus "current" version (labeled "Next") → 'next'

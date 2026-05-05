@@ -11,7 +11,7 @@
     "shareable",
     "wso2"
   ],
-  "homepage": "https://github.com/asgardeo/thunder/tree/main/frontend/packages/thunder-eslint-config#readme",
+  "homepage": "https://github.com/asgardeo/thunder/tree/main/frontend/packages/eslint-config#readme",
   "bugs": {
     "url": "https://github.com/asgardeo/thunder/issues"
   },

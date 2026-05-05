@@ -37,7 +37,7 @@ import (
 )
 
 const (
-	redisTestKeyPrefix    = "thunder"
+	redisTestKeyPrefix    = "thunderid"
 	redisTestDeploymentID = "test-redis-deployment"
 	redisTestFlowID       = "test-flow-id"
 )
@@ -62,7 +62,7 @@ func TestRedisFlowStoreSuite(t *testing.T) {
 		},
 	}
 	config.ResetServerRuntime()
-	if err := config.InitializeServerRuntime("/test/thunder/home", testConfig); err != nil {
+	if err := config.InitializeServerRuntime("/test/thunderid/home", testConfig); err != nil {
 		t.Fatalf("Failed to initialize server runtime: %v", err)
 	}
 	t.Cleanup(config.ResetServerRuntime)

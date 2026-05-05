@@ -83,7 +83,7 @@ const DocusaurusProductConfig = {
   },
   postman: {
     collection: {
-      output: 'thunder-api-postman-collection.json',
+      output: 'thunderid-api-postman-collection.json',
     },
   },
   documentation: {

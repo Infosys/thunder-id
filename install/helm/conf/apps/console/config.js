@@ -18,7 +18,7 @@
 
 /* eslint-disable no-underscore-dangle */
 
-window.__THUNDER_RUNTIME_CONFIG__ = {
+window.__THUNDERID_RUNTIME_CONFIG__ = {
   client: {
     base: {{ .Values.configuration.consoleClient.path | quote }},
     client_id: {{ .Values.configuration.consoleClient.clientId | quote }},

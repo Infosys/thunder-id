@@ -136,7 +136,7 @@ export default function Footer(): JSX.Element {
             title="Pages"
             links={[
               {label: 'Home', href: '/'},
-              {label: 'Docs', href: '/docs/next/guides/getting-started/what-is-thunder'},
+              {label: 'Docs', href: '/docs/next/guides/getting-started/what-is-thunderid'},
               {label: 'APIs', href: '/docs/next/apis'},
               {label: 'SDKs', href: '/docs/next/sdks/overview'},
             ]}

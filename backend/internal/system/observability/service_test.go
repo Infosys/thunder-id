@@ -46,7 +46,7 @@ func setupTestService(enabled bool) ObservabilityServiceInterface {
 	}
 
 	// Initialize the global runtime
-	err := config.InitializeServerRuntime("/tmp/thunder-test", cfg)
+	err := config.InitializeServerRuntime("/tmp/test", cfg)
 	if err != nil {
 		panic("failed to initialize test runtime: " + err.Error())
 	}

@@ -47,7 +47,7 @@ func (suite *CacheManagerTestSuite) SetupSuite() {
 		},
 	}
 	config.ResetServerRuntime()
-	err := config.InitializeServerRuntime("/test/thunder/home", mockConfig)
+	err := config.InitializeServerRuntime("/test/thunderid/home", mockConfig)
 	if err != nil {
 		suite.T().Fatal("Failed to initialize server runtime:", err)
 	}
@@ -97,7 +97,7 @@ func (suite *CacheManagerTestSuite) TestCacheManagerInit() {
 		},
 	}
 	config.ResetServerRuntime()
-	err := config.InitializeServerRuntime("/test/thunder/home", enabledConfig)
+	err := config.InitializeServerRuntime("/test/thunderid/home", enabledConfig)
 	assert.NoError(t, err)
 
 	manager = &CacheManager{
@@ -258,7 +258,7 @@ func (suite *CacheManagerTestSuite) TestConcurrentAccess() {
 		},
 	}
 	config.ResetServerRuntime()
-	err := config.InitializeServerRuntime("/test/thunder/home", enabledConfig)
+	err := config.InitializeServerRuntime("/test/thunderid/home", enabledConfig)
 	assert.NoError(t, err)
 
 	// Reset cache manager
@@ -331,7 +331,7 @@ func (suite *CacheManagerTestSuite) TestNewCache() {
 	defer func() {
 		// Reset config to original
 		config.ResetServerRuntime()
-		err := config.InitializeServerRuntime("/test/thunder/home", &originalConfig)
+		err := config.InitializeServerRuntime("/test/thunderid/home", &originalConfig)
 		assert.NoError(t, err)
 	}()
 
@@ -342,7 +342,7 @@ func (suite *CacheManagerTestSuite) TestNewCache() {
 		},
 	}
 	config.ResetServerRuntime()
-	err := config.InitializeServerRuntime("/test/thunder/home", &disabledConfig)
+	err := config.InitializeServerRuntime("/test/thunderid/home", &disabledConfig)
 	assert.NoError(t, err)
 
 	cache1 := newCache[string]("testDisabledCache")
@@ -362,7 +362,7 @@ func (suite *CacheManagerTestSuite) TestNewCache() {
 		},
 	}
 	config.ResetServerRuntime()
-	err = config.InitializeServerRuntime("/test/thunder/home", &enabledConfig)
+	err = config.InitializeServerRuntime("/test/thunderid/home", &enabledConfig)
 	assert.NoError(t, err)
 
 	cache2 := newCache[string]("testSpecificDisabledCache")
@@ -384,7 +384,7 @@ func (suite *CacheManagerTestSuite) TestNewCache() {
 		},
 	}
 	config.ResetServerRuntime()
-	err = config.InitializeServerRuntime("/test/thunder/home", &inMemConfig)
+	err = config.InitializeServerRuntime("/test/thunderid/home", &inMemConfig)
 	assert.NoError(t, err)
 
 	cache3 := newCache[string]("testInMemCache")
@@ -399,7 +399,7 @@ func (suite *CacheManagerTestSuite) TestNewCache() {
 		},
 	}
 	config.ResetServerRuntime()
-	err = config.InitializeServerRuntime("/test/thunder/home", &unknownTypeConfig)
+	err = config.InitializeServerRuntime("/test/thunderid/home", &unknownTypeConfig)
 	assert.NoError(t, err)
 
 	cache4 := newCache[string]("testUnknownTypeCache")
@@ -422,7 +422,7 @@ func (suite *CacheManagerTestSuite) TestBuildRedisKeyPrefix() {
 	originalConfig := config.GetServerRuntime().Config
 	defer func() {
 		config.ResetServerRuntime()
-		err := config.InitializeServerRuntime("/test/thunder/home", &originalConfig)
+		err := config.InitializeServerRuntime("/test/thunderid/home", &originalConfig)
 		assert.NoError(t, err)
 	}()
 
@@ -434,9 +434,9 @@ func (suite *CacheManagerTestSuite) TestBuildRedisKeyPrefix() {
 	}{
 		{
 			name:         "both basePrefix and deploymentID",
-			basePrefix:   "thunder",
+			basePrefix:   "thunderid",
 			deploymentID: "deployment-1",
-			expected:     "thunder:deployment-1",
+			expected:     "thunderid:deployment-1",
 		},
 		{
 			name:         "only deploymentID",
@@ -446,9 +446,9 @@ func (suite *CacheManagerTestSuite) TestBuildRedisKeyPrefix() {
 		},
 		{
 			name:         "only basePrefix",
-			basePrefix:   "thunder",
+			basePrefix:   "thunderid",
 			deploymentID: "",
-			expected:     "thunder",
+			expected:     "thunderid",
 		},
 		{
 			name:         "both empty",
@@ -463,7 +463,7 @@ func (suite *CacheManagerTestSuite) TestBuildRedisKeyPrefix() {
 			cfg := originalConfig
 			cfg.Server.Identifier = tc.deploymentID
 			config.ResetServerRuntime()
-			err := config.InitializeServerRuntime("/test/thunder/home", &cfg)
+			err := config.InitializeServerRuntime("/test/thunderid/home", &cfg)
 			assert.NoError(t, err)
 
 			result := buildRedisKeyPrefix(tc.basePrefix)

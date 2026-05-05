@@ -97,7 +97,7 @@ PRODUCT_VERSION=${VERSION}
 if [[ $PRODUCT_VERSION == v* ]]; then
   PRODUCT_VERSION="${PRODUCT_VERSION#v}"
 fi
-PRODUCT_NAME="Thunder"
+PRODUCT_NAME="ThunderID"
 PRODUCT_NAME_LOWERCASE="$(echo "$PRODUCT_NAME" | tr '[:upper:]' '[:lower:]')"
 BINARY_NAME="${PRODUCT_NAME_LOWERCASE}"
 PRODUCT_FOLDER=${BINARY_NAME}-${PRODUCT_VERSION}-${GO_PACKAGE_OS}-${GO_PACKAGE_ARCH}
@@ -1044,8 +1044,8 @@ function run() {
     
     # Run the bootstrap script directly with environment variable and arguments
     API_BASE="$BASE_URL" \
-        THUNDER_SYSTEM_RS_HANDLE="$SYSTEM_RS_HANDLE" \
-        THUNDER_SYSTEM_RS_IDENTIFIER="$SYSTEM_RS_IDENTIFIER" \
+        SYSTEM_RS_HANDLE="$SYSTEM_RS_HANDLE" \
+        SYSTEM_RS_IDENTIFIER="$SYSTEM_RS_IDENTIFIER" \
         "$BACKEND_BASE_DIR/cmd/server/bootstrap/01-default-resources.sh" \
         --console-redirect-uris "https://localhost:$CONSOLE_APP_DEFAULT_PORT/console"
 

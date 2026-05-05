@@ -89,14 +89,14 @@ func TestResolveTemplate_ResolvesVariablesAndRangeWhilePreservingLiterals(t *tes
 func TestResolveTemplate_DoesNotCollideWithLiteralPlaceholderLookingText(t *testing.T) {
 	content := strings.Join([]string{
 		"name: test",
-		"existing: __THUNDER_LITERAL_TEMPLATE_EXPR_0__",
+		"existing: __LITERAL_TEMPLATE_EXPR_0__",
 		"label: {{ t(signin:forms.credentials.title) }}",
 		"",
 	}, "\n")
 
 	resolved, err := resolveTemplate(content, nil)
 	require.NoError(t, err)
-	assert.Contains(t, resolved, "existing: __THUNDER_LITERAL_TEMPLATE_EXPR_0__")
+	assert.Contains(t, resolved, "existing: __LITERAL_TEMPLATE_EXPR_0__")
 	assert.Contains(t, resolved, "{{ t(signin:forms.credentials.title) }}")
 }
 

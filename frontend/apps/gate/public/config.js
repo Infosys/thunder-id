@@ -16,7 +16,7 @@
  * under the License.
  */
 
-window.__THUNDER_RUNTIME_CONFIG__ = {
+window.__THUNDERID_RUNTIME_CONFIG__ = {
   brand: {
     product_name: 'ThunderID',
   },

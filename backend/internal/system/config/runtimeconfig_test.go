@@ -51,13 +51,13 @@ func (suite *RuntimeConfigTestSuite) TestInitializeServerRuntime() {
 		},
 	}
 
-	err := InitializeServerRuntime("/test/thunder/home", config)
+	err := InitializeServerRuntime("/test/thunderid/home", config)
 
 	assert.NoError(suite.T(), err)
 
 	runtime := runtimeConfig
 	assert.NotNil(suite.T(), runtime)
-	assert.Equal(suite.T(), "/test/thunder/home", runtime.ServerHome)
+	assert.Equal(suite.T(), "/test/thunderid/home", runtime.ServerHome)
 	assert.Equal(suite.T(), config.Server.Hostname, runtime.Config.Server.Hostname)
 	assert.Equal(suite.T(), config.Server.Port, runtime.Config.Server.Port)
 	assert.Equal(suite.T(), config.TLS.CertFile, runtime.Config.TLS.CertFile)

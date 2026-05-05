@@ -48,7 +48,7 @@ The JWKS cache TTL is configured at `server.security.jwks_cache_ttl`, not inside
 The `server.security.trusted_issuer` block on the server only controls how <ProductName /> validates incoming tokens. <ProductName />'s console portal still authenticates against this <ProductName /> instance unless you also delegate its login to the external authorization server. To delegate console login, add a `trusted_issuer` entry to the console's runtime configuration at `apps/console/config.js`:
 
 ```js
-window.__THUNDER_RUNTIME_CONFIG__ = {
+window.__THUNDERID_RUNTIME_CONFIG__ = {
   // ...existing client, server, brand entries...
   trusted_issuer: {
     hostname: "auth.example.com",
@@ -70,7 +70,7 @@ window.__THUNDER_RUNTIME_CONFIG__ = {
 | `public_url` | Fully-qualified URL of the external authorization server. Used by the console to build authorization requests. |
 | `client_id` | OAuth client ID registered on the external authorization server for this <ProductName /> instance's console. |
 | `scopes` | Scopes the console requests from the external authorization server. Must include every scope <ProductName />'s APIs require. |
-| `type` | Set to `"generic"` when the trusted issuer is a generic OIDC provider. When set, the console skips <ProductName />-specific bootstrap calls (flow metadata, branding preferences) that would fail against a generic provider and uses the IdP's `end_session_endpoint` for sign-out. Defaults to `"thunder"`. |
+| `type` | Set to `"generic"` when the trusted issuer is a generic OIDC provider. When set, the console skips <ProductName />-specific bootstrap calls (flow metadata, branding preferences) that would fail against a generic provider and uses the IdP's `end_session_endpoint` for sign-out. Defaults to `"thunderid"`. |
 
 When this block is present, the console delegates login to the external authorization server. When omitted, the console authenticates against this <ProductName /> instance normally.
 
@@ -147,7 +147,7 @@ configuration:
 |---------|--------------|-----|
 | Login redirect hangs or the token exchange fails with a CORS error in the browser console | <ProductName />'s origin is not permitted by the external authorization server's CORS configuration | Add <ProductName />'s origin to the authorization server's CORS allowed-origins configuration. |
 | Tokens rejected with "issuer mismatch" | `trusted_issuer.issuer` does not exactly match the `iss` claim on incoming tokens | Set `trusted_issuer.issuer` to match exactly (scheme, host, port, trailing slash). |
-| Tokens rejected with "audience mismatch" | The authorization server is not sending a `resource` parameter, so `aud` defaults to the client ID instead of <ProductName />'s URL | Either set `trusted_issuer.audience` to the client ID, or configure the client to send `resource=<thunder-url>` in the authorization request. |
+| Tokens rejected with "audience mismatch" | The authorization server is not sending a `resource` parameter, so `aud` defaults to the client ID instead of <ProductName />'s URL | Either set `trusted_issuer.audience` to the client ID, or configure the client to send `resource=<server-url>` in the authorization request. |
 | Tokens rejected with "required claim missing" | A claim listed under `required_claims` is not present on the token, or its value differs | Remove the claim from `required_claims`, or configure the authorization server to include it with the expected value. |
 | JWKS fetch fails | `trusted_issuer.jwks_url` cannot be reached from <ProductName />, or the authorization server uses a certificate <ProductName /> does not trust | Check that the network allows the request, and install the authorization server's CA certificate on <ProductName /> if needed. |
 | Console never redirects to the external authorization server | `consoleClient.trustedIssuer` not set, or `publicUrl`/`hostname` still point at <ProductName /> | Verify the `consoleClient.trustedIssuer` block and re-render the chart. |

@@ -40,7 +40,7 @@
 --   3. OS cron (every 60 minutes):
 -- --      */60 * * * * postgres PGPASSWORD=<pass> psql -h <host> -p <port> \
 -- --        -U <user> -d <runtimedb> -c "CALL cleanup_expired_runtimedb_data();" \
--- --        >> /var/log/thunder-cleanup.log 2>&1
+-- --        >> /var/log/thunderid-cleanup.log 2>&1
 -- ============================================================
 
 CREATE OR REPLACE PROCEDURE cleanup_expired_runtimedb_data()

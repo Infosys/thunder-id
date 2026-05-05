@@ -50,7 +50,7 @@ func TestModelTestSuite(t *testing.T) {
 		},
 	}
 	config.ResetServerRuntime()
-	err := config.InitializeServerRuntime("/test/thunder/home", testConfig)
+	err := config.InitializeServerRuntime("/test/thunderid/home", testConfig)
 	if err != nil {
 		t.Fatalf("failed to initialize server runtime: %v", err)
 	}

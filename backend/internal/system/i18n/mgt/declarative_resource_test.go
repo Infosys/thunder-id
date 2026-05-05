@@ -268,7 +268,7 @@ func (s *DeclarativeResourceTestSuite) TestLoadDeclarativeResources_InvalidStore
 
 func (s *DeclarativeResourceTestSuite) TestLoadDeclarativeResources_Success() {
 	// Setup temp dir
-	tempDir, err := os.MkdirTemp("", "thunder_test_resources_success")
+	tempDir, err := os.MkdirTemp("", "test_resources_success")
 	assert.NoError(s.T(), err)
 	defer func() {
 		_ = os.RemoveAll(tempDir)

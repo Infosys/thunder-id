@@ -27,7 +27,7 @@ This framework uses the **Page Object Model (POM)** design pattern and Playwrigh
 
 1. Navigate to the e2e directory:
    ```bash
-   cd thunder/tests/e2e
+   cd <PROJECT_ROOT>/tests/e2e
    ```
 2. Install dependencies:
    ```bash

@@ -36,7 +36,7 @@ let container: HTMLDivElement;
 let root: Root;
 
 function renderWithConfig(config: ProductConfig | undefined, Consumer: React.ComponentType) {
-  window.__THUNDER_RUNTIME_CONFIG__ = config;
+  window.__THUNDERID_RUNTIME_CONFIG__ = config;
   act(() => {
     root.render(
       <ConfigProvider>
@@ -71,7 +71,7 @@ describe('ConfigProvider', () => {
   let originalConfig: ProductConfig | undefined;
 
   beforeEach(() => {
-    originalConfig = window.__THUNDER_RUNTIME_CONFIG__;
+    originalConfig = window.__THUNDERID_RUNTIME_CONFIG__;
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
@@ -81,12 +81,12 @@ describe('ConfigProvider', () => {
     act(() => {
       root.unmount();
     });
-    window.__THUNDER_RUNTIME_CONFIG__ = originalConfig;
+    window.__THUNDERID_RUNTIME_CONFIG__ = originalConfig;
     document.body.removeChild(container);
   });
 
   it('throws when window config is not set', () => {
-    window.__THUNDER_RUNTIME_CONFIG__ = undefined;
+    window.__THUNDERID_RUNTIME_CONFIG__ = undefined;
     expect(() => {
       act(() => {
         root.render(

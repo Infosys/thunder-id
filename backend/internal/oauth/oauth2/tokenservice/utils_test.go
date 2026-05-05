@@ -127,7 +127,7 @@ func (suite *UtilsTestSuite) TestGetValidIssuers_WithIDTokenConfig() {
 	assert.Contains(suite.T(), validIssuers, "https://thunder.io")
 }
 
-func (suite *UtilsTestSuite) TestGetValidIssuers_AlwaysUsesThunderIssuer() {
+func (suite *UtilsTestSuite) TestGetValidIssuers_AlwaysUsesServerIssuer() {
 	// Valid issuers always come from server config, never empty strings
 	oauthApp := &inboundmodel.OAuthClient{
 		ClientID: "test-client",
@@ -157,7 +157,7 @@ func (suite *UtilsTestSuite) TestvalidateIssuer_WithValidDefaultIssuer() {
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *UtilsTestSuite) TestvalidateIssuer_WithThunderIssuerAndTokenConfig() {
+func (suite *UtilsTestSuite) TestvalidateIssuer_WithServerIssuerAndTokenConfig() {
 	// Server-level issuer is always valid regardless of token config presence
 	oauthApp := &inboundmodel.OAuthClient{
 		ClientID: "test-client",
@@ -169,7 +169,7 @@ func (suite *UtilsTestSuite) TestvalidateIssuer_WithThunderIssuerAndTokenConfig(
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *UtilsTestSuite) TestvalidateIssuer_WithThunderIssuerAndAccessTokenConfig() {
+func (suite *UtilsTestSuite) TestvalidateIssuer_WithServerIssuerAndAccessTokenConfig() {
 	// Server-level issuer is always valid regardless of access token config presence
 	oauthApp := &inboundmodel.OAuthClient{
 		ClientID: "test-client",
@@ -222,7 +222,7 @@ func (suite *UtilsTestSuite) TestvalidateIssuer_WithNilOAuthAppInvalidIssuer() {
 	assert.Contains(suite.T(), err.Error(), "not supported")
 }
 
-func (suite *UtilsTestSuite) TestFederationScenario_OnlyThunderIssuerIsValid() {
+func (suite *UtilsTestSuite) TestFederationScenario_OnlyServerIssuerIsValid() {
 	// Only the server-level issuer from config is accepted; app-level issuers are no longer supported
 	oauthApp := &inboundmodel.OAuthClient{
 		ClientID: "test-client",
@@ -240,7 +240,7 @@ func (suite *UtilsTestSuite) TestFederationScenario_OnlyThunderIssuerIsValid() {
 	assert.NoError(suite.T(), validateIssuer("https://thunder.io", oauthApp))
 
 	// Should reject unknown issuers
-	assert.Error(suite.T(), validateIssuer("https://thunder-staging.company.com", oauthApp))
+	assert.Error(suite.T(), validateIssuer("https://staging.company.com", oauthApp))
 	assert.Error(suite.T(), validateIssuer("https://unknown.company.com", oauthApp))
 }
 
@@ -981,7 +981,7 @@ func (suite *UtilsTestSuite) TestResolveTokenConfig_WithCustomIssuer_NilOAuthApp
 	assert.Equal(suite.T(), "https://thunder.io", result.Issuer)
 }
 
-func (suite *UtilsTestSuite) TestResolveTokenConfig_WithTokenConfig_UsesThunderIssuer() {
+func (suite *UtilsTestSuite) TestResolveTokenConfig_WithTokenConfig_UsesServerIssuer() {
 	config.ResetServerRuntime()
 	testConfig := &config.Config{
 		JWT: config.JWTConfig{

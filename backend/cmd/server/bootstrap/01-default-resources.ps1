@@ -22,7 +22,7 @@ param(
     [string]$ConsoleRedirectUris = ""
 )
 
-$PRODUCT_NAME = "Thunder"
+$PRODUCT_NAME = "ThunderID"
 
 # Check for PowerShell Version Compatibility
 if ($PSVersionTable.PSVersion.Major -lt 7) {
@@ -53,8 +53,8 @@ Log-Info "Creating default $PRODUCT_NAME resources..."
 Write-Host ""
 
 # System resource server configuration from environment variables.
-$SYSTEM_RS_HANDLE = if ($env:THUNDER_SYSTEM_RS_HANDLE) { $env:THUNDER_SYSTEM_RS_HANDLE } else { "" }
-$SYSTEM_RS_IDENTIFIER = if ($env:THUNDER_SYSTEM_RS_IDENTIFIER) { $env:THUNDER_SYSTEM_RS_IDENTIFIER } else { "system" }
+$SYSTEM_RS_HANDLE = if ($env:SYSTEM_RS_HANDLE) { $env:SYSTEM_RS_HANDLE } else { "" }
+$SYSTEM_RS_IDENTIFIER = if ($env:SYSTEM_RS_IDENTIFIER) { $env:SYSTEM_RS_IDENTIFIER } else { "system" }
 
 # Derive the system permission root based on the configured handle.
 if ($SYSTEM_RS_HANDLE) {
@@ -991,7 +991,7 @@ else {
 
     # Template user onboarding flow files with the dynamic system permission.
     if ((Test-Path $USER_ONBOARDING_FLOWS_DIR) -and ($SYSTEM_PERMISSION -ne "system")) {
-        $TEMPLATED_ONBOARDING_DIR = Join-Path ([System.IO.Path]::GetTempPath()) "thunder-onboarding-flows-$([System.Guid]::NewGuid().ToString())"
+        $TEMPLATED_ONBOARDING_DIR = Join-Path ([System.IO.Path]::GetTempPath()) "user-onboarding-flows-$([System.Guid]::NewGuid().ToString())"
         New-Item -ItemType Directory -Path $TEMPLATED_ONBOARDING_DIR -Force | Out-Null
         Get-ChildItem -Path $USER_ONBOARDING_FLOWS_DIR -Filter "*.json" -File | ForEach-Object {
             $content = Get-Content -Path $_.FullName -Raw

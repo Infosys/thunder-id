@@ -60,7 +60,7 @@ elif [ "$DB_TYPE" = "redis" ]; then
     redis:
       address: "localhost:6379"
       db: 0
-      key_prefix: "thunder"
+      key_prefix: "thunderid"
 
   user:
     type: sqlite

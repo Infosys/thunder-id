@@ -33,15 +33,15 @@ spec:
     projectName: {{ .Values.project.name }}
   componentType:
     kind: {{ if .Values.componentType.cluster }}ClusterComponentType{{ else }}ComponentType{{ end }}
-    name: deployment/thunder
+    name: deployment/thunderid
     spec:
       {{- if .Values.componentType.cluster }}
-      {{- $ct := lookup "openchoreo.dev/v1alpha1" "ClusterComponentType" "" "thunder" }}
-      {{- if not $ct }}{{ fail "ClusterComponentType 'thunder' not found. Install the thunder-oc-componenttype chart first." }}{{ end }}
+      {{- $ct := lookup "openchoreo.dev/v1alpha1" "ClusterComponentType" "" "thunderid" }}
+      {{- if not $ct }}{{ fail "ClusterComponentType 'thunderid' not found. Install the thunderid-oc-componenttype chart first." }}{{ end }}
       {{- $ct.spec | toYaml | nindent 6 }}
       {{- else }}
-      {{- $ct := lookup "openchoreo.dev/v1alpha1" "ComponentType" .Release.Namespace "thunder" }}
-      {{- if not $ct }}{{ fail "ComponentType 'thunder' not found. Install the thunder-oc-componenttype chart first." }}{{ end }}
+      {{- $ct := lookup "openchoreo.dev/v1alpha1" "ComponentType" .Release.Namespace "thunderid" }}
+      {{- if not $ct }}{{ fail "ComponentType 'thunderid' not found. Install the thunderid-oc-componenttype chart first." }}{{ end }}
       {{- $ct.spec | toYaml | nindent 6 }}
       {{- end }}
   workload:
@@ -49,7 +49,7 @@ spec:
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       env:
         - key: SERVER_PORT
-          value: {{ .Values.thunder.server.port | quote }}
+          value: {{ .Values.thunderid.server.port | quote }}
         - key: JWT_VALIDITY
           value: {{ .Values.jwt.validity | quote }}
         - key: OAUTH_REFRESH_TOKEN_VALIDITY
@@ -77,16 +77,16 @@ spec:
         - key: GATE_CLIENT_SCHEME
           value: {{ .Values.gate.scheme | quote }}
         - key: DB_CONFIG_PATH
-          value: {{ .Values.database.config.path | default "repository/database/thunder_config.db" | quote }}
+          value: {{ .Values.database.config.path | default "repository/database/config.db" | quote }}
         - key: DB_RUNTIME_PATH
-          value: {{ .Values.database.runtime.path | default "repository/database/thunder_runtime.db" | quote }}
+          value: {{ .Values.database.runtime.path | default "repository/database/runtime.db" | quote }}
         - key: DB_USER_PATH
-          value: {{ .Values.database.user.path | default "repository/database/thunder_user.db" | quote }}
+          value: {{ .Values.database.user.path | default "repository/database/user.db" | quote }}
         - key: CRYPTO_ENCRYPTION_KEY
           value: {{ .Values.crypto.encryption.key | quote }}
     endpoints:
       api:
-        displayName: Thunder API
+        displayName: ThunderID API
         port: 8090
         type: HTTP
         visibility:

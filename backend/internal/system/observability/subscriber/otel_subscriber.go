@@ -105,7 +105,7 @@ func (o *OTelSubscriber) Initialize() error {
 	o.tracerProvider = tracerProvider
 
 	// Get tracer from the global provider
-	o.tracer = otel.Tracer("thunder-observability")
+	o.tracer = otel.Tracer("thunderid-observability")
 	o.id, err = utils.GenerateUUIDv7()
 	if err != nil {
 		o.logger.Error("Failed to generate UUID", log.Error(err))

@@ -1304,8 +1304,8 @@ func (suite *SMTPClientTestSuite) TestSendLiveEmail() {
 
 	emailData := EmailData{
 		To:      []string{"test@example.com"},
-		Subject: "Thunder Email System Test",
-		Body: "<h1>Thunder Email System is Working!</h1>" +
+		Subject: "ThunderID Email System Test",
+		Body: "<h1>ThunderID Email System is Working!</h1>" +
 			"<p>This is a live test email sent using the new email capability.</p>",
 		IsHTML: true,
 	}

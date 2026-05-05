@@ -106,13 +106,13 @@ func main() {
 
 	serverURL := config.GetServerURL(&cfg.Server)
 	consoleURL := fmt.Sprintf("%s/console", strings.TrimSuffix(serverURL, "/"))
-	logger.Info("Thunder Server URL", log.String("url", serverURL))
-	logger.Info("Thunder Console URL", log.String("url", consoleURL))
+	logger.Info("ThunderID Server URL", log.String("url", serverURL))
+	logger.Info("ThunderID Console URL", log.String("url", consoleURL))
 
 	// Start server in a goroutine
 	go func() {
 		startupDuration := time.Since(startupStartedAt)
-		logger.Info("Thunder Server started", log.String("startup_time", startupDuration.String()))
+		logger.Info("ThunderID Server started", log.String("startup_time", startupDuration.String()))
 		if err := server.Serve(ln); err != nil && err != http.ErrServerClosed {
 			logger.Fatal("Failed to serve requests", log.Error(err))
 		}
@@ -128,7 +128,7 @@ func main() {
 func getThunderHome(logger *log.Logger) string {
 	// Parse project directory from command line arguments.
 	projectHome := ""
-	projectHomeFlag := flag.String("serverHome", "", "Path to Thunder home directory")
+	projectHomeFlag := flag.String("serverHome", "", "Path to ThunderID home directory")
 	flag.Parse()
 
 	if *projectHomeFlag != "" {

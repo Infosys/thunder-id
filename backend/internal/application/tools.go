@@ -42,7 +42,7 @@ func registerMCPTools(server *mcp.Server, appService ApplicationServiceInterface
 	}
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name:        "thunder_list_applications",
+		Name:        "thunderid_list_applications",
 		Description: `List all registered applications.`,
 		Annotations: &mcp.ToolAnnotations{
 			Title:        "List Applications",
@@ -51,7 +51,7 @@ func registerMCPTools(server *mcp.Server, appService ApplicationServiceInterface
 	}, tools.listApplications)
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name: "thunder_get_application_by_id",
+		Name: "thunderid_get_application_by_id",
 		Description: `Retrieve full details of an application by ID including OAuth settings, ` +
 			`customizations, and flow associations.`,
 		Annotations: &mcp.ToolAnnotations{
@@ -61,7 +61,7 @@ func registerMCPTools(server *mcp.Server, appService ApplicationServiceInterface
 	}, tools.getApplicationByID)
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name: "thunder_get_application_by_client_id",
+		Name: "thunderid_get_application_by_client_id",
 		Description: `Retrieve full details of an application by client_id including OAuth ` +
 			`settings, customizations, and flow associations.`,
 		Annotations: &mcp.ToolAnnotations{
@@ -71,7 +71,7 @@ func registerMCPTools(server *mcp.Server, appService ApplicationServiceInterface
 	}, tools.getApplicationByClientID)
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name: "thunder_create_application",
+		Name: "thunderid_create_application",
 		Description: `Create a new application optionally with OAuth configuration.
 
 Use get_application_templates to get pre-configured minimal templates for common app types (SPA, Mobile, Server, M2M).
@@ -89,7 +89,7 @@ Behavior:
 	}, tools.createApplication)
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name: "thunder_update_application",
+		Name: "thunderid_update_application",
 		Description: `Update an existing application (full replacement).
 
 Provide the COMPLETE application object to update the application.
@@ -108,7 +108,7 @@ Any field not provided will be reset to empty/default.`,
 	}, tools.updateApplication)
 
 	mcp.AddTool(server, &mcp.Tool{
-		Name: "thunder_get_application_templates",
+		Name: "thunderid_get_application_templates",
 		Description: `Get minimal OAuth configuration templates for common application types.
 
 Templates contain ONLY the required fields to create each app type. ` +

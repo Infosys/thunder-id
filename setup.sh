@@ -38,7 +38,7 @@ fi
 set -e
 
 # Default settings
-PRODUCT_NAME="Thunder"
+PRODUCT_NAME="ThunderID"
 PRODUCT_NAME_LOWERCASE="$(echo "$PRODUCT_NAME" | tr '[:upper:]' '[:lower:]')"
 BINARY_NAME="${PRODUCT_NAME_LOWERCASE}"
 DEBUG_PORT=${DEBUG_PORT:-2345}
@@ -397,8 +397,8 @@ fi
 # Export variables to be used in scripts
 export API_BASE="${BASE_URL}"
 export PUBLIC_URL="${PUBLIC_URL}"
-export THUNDER_SYSTEM_RS_HANDLE="${SYSTEM_RS_HANDLE}"
-export THUNDER_SYSTEM_RS_IDENTIFIER="${SYSTEM_RS_IDENTIFIER}"
+export SYSTEM_RS_HANDLE="${SYSTEM_RS_HANDLE}"
+export SYSTEM_RS_IDENTIFIER="${SYSTEM_RS_IDENTIFIER}"
 
 # Check if bootstrap directory exists
 if [ ! -d "$BOOTSTRAP_DIR" ]; then

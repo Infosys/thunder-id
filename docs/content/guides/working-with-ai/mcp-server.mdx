@@ -15,7 +15,7 @@ The MCP server is available at the `/mcp` endpoint on your <ProductName /> insta
 
 ### Authentication
 
-The MCP endpoint is secured with OAuth 2.0 Bearer Token authentication following the [MCP Authorization Specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization). Clients must present a valid JWT access token with the `system` scope. <ProductName /> validates the token signature, issuer, audience (set to the MCP server URL), and expiry. See [Step 3](#step-3-add-thunder-mcp-server-to-vs-code) for setup instructions.
+The MCP endpoint is secured with OAuth 2.0 Bearer Token authentication following the [MCP Authorization Specification](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization). Clients must present a valid JWT access token with the `system` scope. <ProductName /> validates the token signature, issuer, audience (set to the MCP server URL), and expiry. See [Step 3](#step-3-add-mcp-server-to-vs-code) for setup instructions.
 
 ## Available Tools
 
@@ -50,11 +50,11 @@ The MCP endpoint is secured with OAuth 2.0 Bearer Token authentication following
 
 - <ProductName /> server running (default: `https://localhost:8090`)
 - VS Code with MCP support (or another MCP-compatible client)
-- Choose an authentication approach — see [Step 3](#step-3-add-thunder-mcp-server-to-vs-code) for detailed setup:
+- Choose an authentication approach — see [Step 3](#step-3-add-mcp-server-to-vs-code) for detailed setup:
   - **Option A**: Standard MCP authorization flow using DCR (recommended)
   - **Option B**: Client credentials with a pre-registered application
 
-## Step 1: Add <ProductName /> Certificate to System Certificates
+## Step 1: Add Certificate to System Certificates
 
 <ProductName /> uses HTTPS with a self-signed certificate by default. Add the <ProductName /> certificate (`backend/cmd/server/repository/resources/security/server.cert`) to your system's trusted certificates (Keychain on macOS, certificate store on Linux/Windows).
 
@@ -62,7 +62,7 @@ The MCP endpoint is secured with OAuth 2.0 Bearer Token authentication following
 
 The MCP client (VS Code) needs to be configured to trust system certificates and should be restarted.
 
-## Step 3: Add <ProductName /> MCP Server to VS Code
+## Step 3: Add MCP Server to VS Code
 
 Two approaches are available to authenticate with the <ProductName /> MCP server: the standard MCP authorization flow using DCR (recommended), or client credentials with a pre-registered application.
 
