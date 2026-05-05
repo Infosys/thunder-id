@@ -48,7 +48,7 @@ ThunderID's configuration system supports multiple value formats for **any param
 | Git           | [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) | `git --version` |
 | Helm          | [Install Helm](https://helm.sh/docs/intro/install/) | `helm version` |
 | Docker        | [Install Docker](https://docs.docker.com/engine/install/) | `docker --version` |
-| kubectl       | [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) | `kubectl version` |
+| `kubectl`     | [Install kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) | `kubectl version` |
 
 ## Quick Start Guide
 
@@ -92,7 +92,7 @@ helm install my-thunderid oci://ghcr.io/asgardeo/helm-charts/thunderid \
 - The setup job's init container will automatically copy SQLite databases from the image to a PVC
 - Database files will persist across pod restarts
 
-### 2. Obtain the External IP
+### 2. Get the External IP
 
 After deploying ThunderID, you need to find its external IP address to access it outside the cluster. Run the following command to list the Ingress resources:
 
@@ -101,9 +101,9 @@ kubectl get ingress
 ```
 **Output Fields:**
 
-- **HOSTS** – Hostname (e.g., `thunderid.local`)
+- **HOSTS** – hostname (e.g., `thunderid.local`)
 - **ADDRESS** – External IP
-- **PORTS** – Exposed ports (usually 80, 443)
+- **PORTS** – Exposed ports (typically 80, 443)
 
 After the installation is complete, you can access ThunderID via the Ingress hostname.
 
@@ -124,7 +124,7 @@ This command removes all the Kubernetes components associated with the chart and
 ThunderID supports Kubernetes Gateway API as a modern alternative to Ingress. Enable it by setting `gateway.enabled=true` and `httproute.enabled=true` when installing the chart.
 
 ### Gateway API Prerequisites
-- A TLS certificate stored as a Kubernetes Secret named `thunderid-tls` in your deployment namespace
+- A TLS certificate stored as a Kubernetes Secret named `thunderid-tls` in your deployment `namespace`
 
 ### Create a TLS Certificate
 
@@ -173,7 +173,7 @@ The following table lists the configurable parameters of the ThunderID chart and
 | `deployment.startupProbe.initialDelaySeconds` | Startup probe initial delay seconds                                               | `1`                            |
 | `deployment.startupProbe.periodSeconds` | Startup probe period seconds                                                            | `2`                            |
 | `deployment.startupProbe.failureThreshold` | Startup probe failure threshold                                                      | `30`                           |
-| `deployment.livenessProbe.periodSeconds` | Liveness probe period seconds                                                          | `10`                           |
+| `deployment.livenessProbe.periodSeconds` | `Liveness` probe period seconds                                                        | `10`                           |
 | `deployment.readinessProbe.initialDelaySeconds` | Readiness probe initial delay seconds                                           | `1`                            |
 | `deployment.readinessProbe.periodSeconds` | Readiness probe period seconds                                                        | `10`                           |
 | `deployment.resources.limits.cpu`       | CPU resource limits                                                                     | `200m`                         |
@@ -185,10 +185,10 @@ The following table lists the configurable parameters of the ThunderID chart and
 | `deployment.securityContext.runAsUser`  | User ID to run the container                                                            | `10001`                        |
 | `deployment.securityContext.enableRunAsGroup` | Enable setting group ID for the container process                                 | `true`                         |
 | `deployment.securityContext.runAsGroup` | Group ID to run the container                                                           | `10001`                        |
-| `deployment.securityContext.enableFsGroup` | Enable setting fsGroup for volume ownership                                          | `true`                         |
+| `deployment.securityContext.enableFsGroup` | Enable setting `fsGroup` for volume ownership                                        | `true`                         |
 | `deployment.securityContext.fsGroup`    | Group ID for mounted volumes (fixes SQLite permission issues on cloud platforms)        | `10001`                        |
-| `deployment.securityContext.seccompProfile.enabled` | Enable seccomp profile                                                      | `false`                        |
-| `deployment.securityContext.seccompProfile.type` | Seccomp profile type                                                           | `RuntimeDefault`               |
+| `deployment.securityContext.seccompProfile.enabled` | Enable `seccomp` profile                                                    | `false`                        |
+| `deployment.securityContext.seccompProfile.type` | `Seccomp` profile type                                                         | `RuntimeDefault`               |
 | `deployment.env`                        | Additional environment variables with plain values                                     | `[]`                           |
 | `deployment.secretEnv`                  | Additional environment variables sourced from Kubernetes Secrets                         | `[]`                           |
 
@@ -196,10 +196,10 @@ The following table lists the configurable parameters of the ThunderID chart and
 
 | Name                              | Description                                                      | Default                       |
 | --------------------------------- | ---------------------------------------------------------------- | ----------------------------- |
-| `hpa.enabled`                     | Enable Horizontal Pod Autoscaler                                 | `true`                        |
+| `hpa.enabled`                     | Enable Horizontal Pod `Autoscaler`                               | `true`                        |
 | `hpa.maxReplicas`                 | Maximum number of replicas                                       | `10`                          |
-| `hpa.averageUtilizationCPU`       | Target CPU utilization percentage                                | `65`                          |
-| `hpa.averageUtilizationMemory`    | Target Memory utilization percentage                             | `75`                          |
+| `hpa.averageUtilizationCPU`       | Target CPU usage percentage                                      | `65`                          |
+| `hpa.averageUtilizationMemory`    | Target Memory usage percentage                                   | `75`                          |
 
 ### Service Parameters
 
@@ -233,14 +233,14 @@ The following table lists the configurable parameters of the ThunderID chart and
 | `ingress.commonAnnotations`           | Common annotations for ingress                                  | See values.yaml              |
 | `ingress.customAnnotations`           | Custom annotations for ingress                                  | `{}`                         |
 
-### HTTPRoute Parameters
+### `HTTPRoute` Parameters
 
 | Name                                  | Description                                                                  | Default                      |
 | ------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------- |
-| `httproute.enabled`                   | Enable Gateway API HTTPRoute resource (alternative to Ingress)               | `false`                      |
-| `httproute.annotations`               | Annotations for the HTTPRoute resource                                       | `{}`                         |
+| `httproute.enabled`                   | Enable Gateway API `HTTPRoute` resource (alternative to Ingress)             | `false`                      |
+| `httproute.annotations`               | Annotations for the `HTTPRoute` resource                                     | `{}`                         |
 | `httproute.parentRefs`                | Gateway references this route attaches to (required when enabled)            | `[]`                         |
-| `httproute.hostnames`                 | Hostnames this route responds to                                             | `[]`                         |
+| `httproute.hostnames`                 | `Hostnames` this route responds to                                           | `[]`                         |
 
 ### Gateway Parameters
 
@@ -266,7 +266,7 @@ ThunderID provides flexible password management for database connections with au
 ThunderID uses intelligent password detection based on the `password` and `passwordRef` fields:
 
 1. **If `passwordRef.key` is set** → Uses external Secret (production pattern)
-2. **If `password` has a value but `passwordRef.key` is empty** → Auto-converts to Helm-managed Secret (dev/test pattern)
+2. **If `password` has a value but `passwordRef.key` is empty** → Auto-converts to Helm-managed Secret (development/test pattern)
 3. **If both are empty** → No password (SQLite-only deployments)
 
 The auto-created Secret is created as a Helm pre-install/pre-upgrade hook to ensure it exists before the main deployment and setup job run.
@@ -344,21 +344,21 @@ configuration:
 
 When `passwordRef.key` is set, the `password` field is ignored and Helm uses your external Secret.
 
-**Important:** The checksum annotation used to trigger pod rollouts is only computed for auto-generated Secrets. When you use an external Secret via `passwordRef` (Pattern 2), changes to that Secret will **not** automatically restart pods. You must either manually restart the pods or use a tool to watch for Secret changes and trigger rollouts.
+**Important:** The checksum annotation used to trigger pod `rollouts` is only computed for auto-generated Secrets. When you use an external Secret via `passwordRef` (Pattern 2), changes to that Secret will **not** automatically restart pods. You must either manually restart the pods or use a tool to watch for Secret changes and trigger pod `rollouts`.
 
 **Important:** When you *do not* use `passwordRef.key` (i.e., you rely on the auto-generated Secret), the Helm chart will
 base64-encode the `password` value directly into a Kubernetes Secret. In this mode, values like `"{{.DB_PASSWORD}}"` or
 `"file:///secrets/pass"` are stored as literal strings in the Secret and **are not** resolved as environment variables or
-file references by Helm. Environment variable placeholders (`{{.VAR}}`) and `file://` references are only resolved when
-ThunderID reads configuration directly via its application config loader (e.g., from a ConfigMap or file), not when the
-value is first converted into a Kubernetes Secret by this chart.
+file references by Helm. Environment variable placeholders (`{{.VAR}}`) and `file://` references are only resolved
+when ThunderID reads configuration directly via its application config loader (e.g., from a ConfigMap or file).
+They are not resolved when the value is first converted into a Kubernetes Secret by this chart.
 
 #### Password Field Options
 Password fields are available in `configuration.database.config.postgres`, `configuration.database.runtime.postgres`, `configuration.database.runtime.redis`, and `configuration.database.user.postgres`:
 
 | Field                  | Description                                                                                                                                    | Example                      |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `password`             | Direct password value. When ThunderID reads config directly, this may also be an env var placeholder (`{{.VAR}}`) or file reference (`file://path`). When using the auto-generated Secret, the value is stored **as-is** in the Secret and such placeholders are **not** resolved. | `"mypassword"` or `"{{.DB_PASSWORD}}"` or `"file:///secrets/pass"` |
+| `password`             | Direct password value. When ThunderID reads config directly, this may also be an environment variable placeholder (`{{.VAR}}`) or file reference (`file://path`). When using the auto-generated Secret, the value is stored **as-is** in the Secret and such placeholders are **not** resolved. | `"mypassword"` or `"{{.DB_PASSWORD}}"` or `"file:///secrets/pass"` |
 | `passwordRef.name`     | Kubernetes Secret name (optional, defaults to `<release-name>-db-credentials` for auto-convert)                                               | `"my-db-secrets"`            |
 | `passwordRef.key`      | Secret key name. When set, `password` field is ignored and external Secret is used                                                            | `"config-password"`          |
 
@@ -706,7 +706,7 @@ Environment variable item structure for secret-backed environment variables in `
 - `name`: Environment variable name in the container.
 - `secretName`: Kubernetes Secret resource name.
 - `secretKey`: Key in the Secret data map.
-- `optional`: Optional boolean passed to `secretKeyRef.optional`.
+- `optional`: Optional `boolean` passed to `secretKeyRef.optional`.
 
 **Job Retention Behavior:**
 - When `preserveJob=false` (default): Successful jobs are deleted immediately. Failed jobs are kept for `ttlSecondsAfterFinished` (24 hours) to allow debugging.
@@ -720,7 +720,7 @@ Bootstrap scripts extend ThunderID's setup process by adding your own initializa
 
 ThunderID provides these default bootstrap scripts in `/opt/thunderid/bootstrap/`:
 - **`common.sh`** - Helper functions for logging (`log_info`, `log_success`, `log_warning`, `log_error`) and API calls (`thunderid_api_call`)
-- **`01-default-resources.sh`** - Creates admin user, default organization, and Person user schema
+- **`01-default-resources.sh`** - Creates admin user, default organization, and Person user type
 - **`02-sample-resources.sh`** - Creates sample resources for testing
 
 #### Configuration Parameters
@@ -786,7 +786,7 @@ bootstrap:
 
 **Pattern 3: Replace All Scripts with ConfigMap** (Complete Replacement)
 
-⚠️ **WARNING**: This completely replaces ThunderID's default bootstrap scripts. Use only if you need complete control.
+⚠️ **WARNING**: This entirely replaces ThunderID's default bootstrap scripts. Use only if you need complete control.
 
 Use `bootstrap.configMap` **without** specifying `files` to mount the entire ConfigMap and replace all defaults.
 
@@ -815,7 +815,7 @@ bootstrap:
 ### Custom Configuration
 
 The ThunderID configuration file (deployment.yaml) can be customized by overriding the default values in the values.yaml file.
-Alternatively, you can directly update the values in conf/deployment.yaml before deploying the Helm chart.
+Or you can directly update the values in conf/deployment.yaml before deploying the Helm chart.
 
 ### Database Configuration
 

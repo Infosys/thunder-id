@@ -18,7 +18,7 @@
 # ----------------------------------------------------------------------------
 
 # Bootstrap Script: Default Resources Setup
-# Creates default organization unit, user schema, admin user, system resource server, system action, admin role, and CONSOLE application
+# Creates default organization unit, user type, admin user, system resource server, system action, admin role, and CONSOLE application
 
 set -e
 
@@ -107,12 +107,12 @@ fi
 echo ""
 
 # ============================================================================
-# Create Default User Schema
+# Create Default User Type
 # ============================================================================
 
-log_info "Creating default user schema (person)..."
+log_info "Creating default user type (person)..."
 
-RESPONSE=$(api_call POST "/user-schemas" '{
+RESPONSE=$(api_call POST "/user-types" '{
   "name": "Person",
   "ouId": "'${DEFAULT_OU_ID}'",
   "schema": {
@@ -179,11 +179,11 @@ RESPONSE=$(api_call POST "/user-schemas" '{
 HTTP_CODE="${RESPONSE: -3}"
 
 if [[ "$HTTP_CODE" == "201" ]] || [[ "$HTTP_CODE" == "200" ]]; then
-    log_success "User schema created successfully"
+    log_success "User type created successfully"
 elif [[ "$HTTP_CODE" == "409" ]]; then
-    log_warning "User schema already exists, skipping"
+    log_warning "User type already exists, skipping"
 else
-    log_error "Failed to create user schema (HTTP $HTTP_CODE)"
+    log_error "Failed to create user type (HTTP $HTTP_CODE)"
     exit 1
 fi
 
@@ -345,8 +345,8 @@ echo ""
 #           └── Action handle "view"       → permission "system:user:view"
 #       └── Resource handle "group"        → permission "system:group"
 #           └── Action handle "view"       → permission "system:group:view"
-#       └── Resource handle "userschema"   → permission "system:userschema"
-#           └── Action handle "view"       → permission "system:userschema:view"
+#       └── Resource handle "usertype"      → permission "system:usertype"
+#           └── Action handle "view"       → permission "system:usertype:view"
 # ============================================================================
 
 log_info "Creating 'system' resource under the system resource server..."
@@ -530,12 +530,12 @@ else
     exit 1
 fi
 
-log_info "Creating 'userschema' sub-resource under the 'system' resource..."
+log_info "Creating 'usertype' sub-resource under the 'system' resource..."
 
 RESPONSE=$(api_call POST "/resource-servers/${SYSTEM_RS_ID}/resources" "{
-  \"name\": \"User Schema\",
-  \"description\": \"User schema resource\",
-  \"handle\": \"userschema\",
+  \"name\": \"User Type\",
+  \"description\": \"User type resource\",
+  \"handle\": \"usertype\",
   \"parent\": \"${SYSTEM_RESOURCE_ID}\"
 }")
 
@@ -543,26 +543,26 @@ HTTP_CODE="${RESPONSE: -3}"
 BODY="${RESPONSE%???}"
 
 if [[ "$HTTP_CODE" == "201" ]] || [[ "$HTTP_CODE" == "200" ]]; then
-    log_success "User schema resource created successfully (permission: system:userschema)"
-    USER_SCHEMA_RESOURCE_ID=$(echo "$BODY" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
-    if [[ -n "$USER_SCHEMA_RESOURCE_ID" ]]; then
-        log_info "User schema resource ID: $USER_SCHEMA_RESOURCE_ID"
+    log_success "User type resource created successfully (permission: system:usertype)"
+    USER_TYPE_RESOURCE_ID=$(echo "$BODY" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+    if [[ -n "$USER_TYPE_RESOURCE_ID" ]]; then
+        log_info "User type resource ID: $USER_TYPE_RESOURCE_ID"
     else
-        log_error "Could not extract user schema resource ID from response"
+        log_error "Could not extract user type resource ID from response"
         exit 1
     fi
 elif [[ "$HTTP_CODE" == "409" ]]; then
-    log_warning "User schema resource already exists, retrieving ID..."
+    log_warning "User type resource already exists, retrieving ID..."
     RESPONSE=$(api_call GET "/resource-servers/${SYSTEM_RS_ID}/resources?parentId=${SYSTEM_RESOURCE_ID}")
     HTTP_CODE="${RESPONSE: -3}"
     BODY="${RESPONSE%???}"
 
     if [[ "$HTTP_CODE" == "200" ]]; then
-        USER_SCHEMA_RESOURCE_ID=$(echo "$BODY" | sed 's/},{/}\n{/g' | grep '"handle":"userschema"' | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
-        if [[ -n "$USER_SCHEMA_RESOURCE_ID" ]]; then
-            log_success "Found user schema resource ID: $USER_SCHEMA_RESOURCE_ID"
+        USER_TYPE_RESOURCE_ID=$(echo "$BODY" | sed 's/},{/}\n{/g' | grep '"handle":"usertype"' | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+        if [[ -n "$USER_TYPE_RESOURCE_ID" ]]; then
+            log_success "Found user type resource ID: $USER_TYPE_RESOURCE_ID"
         else
-            log_error "Could not find user schema resource in response"
+            log_error "Could not find user type resource in response"
             exit 1
         fi
     else
@@ -570,16 +570,16 @@ elif [[ "$HTTP_CODE" == "409" ]]; then
         exit 1
     fi
 else
-    log_error "Failed to create user schema resource (HTTP $HTTP_CODE)"
+    log_error "Failed to create user type resource (HTTP $HTTP_CODE)"
     echo "Response: $BODY"
     exit 1
 fi
 
-log_info "Creating 'view' action under the 'userschema' resource..."
+log_info "Creating 'view' action under the 'usertype' resource..."
 
-RESPONSE=$(api_call POST "/resource-servers/${SYSTEM_RS_ID}/resources/${USER_SCHEMA_RESOURCE_ID}/actions" '{
+RESPONSE=$(api_call POST "/resource-servers/${SYSTEM_RS_ID}/resources/${USER_TYPE_RESOURCE_ID}/actions" '{
   "name": "View",
-  "description": "Read-only access to user schemas",
+  "description": "Read-only access to user types",
   "handle": "view"
 }')
 
@@ -587,11 +587,11 @@ HTTP_CODE="${RESPONSE: -3}"
 BODY="${RESPONSE%???}"
 
 if [[ "$HTTP_CODE" == "201" ]] || [[ "$HTTP_CODE" == "200" ]]; then
-    log_success "User schema view action created successfully (permission: system:userschema:view)"
+    log_success "User type view action created successfully (permission: system:usertype:view)"
 elif [[ "$HTTP_CODE" == "409" ]]; then
-    log_warning "User schema view action already exists, skipping"
+    log_warning "User type view action already exists, skipping"
 else
-    log_error "Failed to create user schema view action (HTTP $HTTP_CODE)"
+    log_error "Failed to create user type view action (HTTP $HTTP_CODE)"
     echo "Response: $BODY"
     exit 1
 fi

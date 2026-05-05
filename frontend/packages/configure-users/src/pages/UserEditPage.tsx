@@ -44,8 +44,8 @@ import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {Link, useNavigate, useParams} from 'react-router';
 import useGetUser from '../api/useGetUser';
-import useGetUserSchema from '../api/useGetUserSchema';
-import useGetUserSchemas from '../api/useGetUserSchemas';
+import useGetUserType from '../api/useGetUserType';
+import useGetUserTypes from '../api/useGetUserTypes';
 import useUpdateUser from '../api/useUpdateUser';
 import QuickCopySection from '../components/edit-user/QuickCopySection';
 import UserDeleteDialog from '../components/UserDeleteDialog';
@@ -91,29 +91,29 @@ export default function UserEditPage() {
   const updateUserMutation = useUpdateUser();
 
   // Get all schemas to find the schema ID from the schema name
-  const {data: userSchemas} = useGetUserSchemas();
+  const {data: userTypeList} = useGetUserTypes();
 
   // Find the schema ID based on the user's type (which is the schema name)
   const matchedSchema = useMemo(() => {
-    if (!user?.type || !userSchemas?.schemas) {
+    if (!user?.type || !userTypeList?.schemas) {
       return undefined;
     }
 
-    return userSchemas.schemas.find((s) => s.name === user.type);
-  }, [user?.type, userSchemas?.schemas]);
+    return userTypeList.schemas.find((s) => s.name === user.type);
+  }, [user?.type, userTypeList?.schemas]);
 
   const schemaId = matchedSchema?.id;
   const trimmedOuId = matchedSchema?.ouId?.trim();
   const schemaOuId = trimmedOuId === '' ? undefined : trimmedOuId;
 
-  const {data: userSchema, isLoading: isSchemaLoading, error: schemaError} = useGetUserSchema(schemaId);
+  const {data: userTypeDetails, isLoading: isSchemaLoading, error: schemaError} = useGetUserType(schemaId);
 
   const hasEditableFields = useMemo(() => {
-    if (!userSchema?.schema) return false;
-    return Object.entries(userSchema.schema).some(
+    if (!userTypeDetails?.schema) return false;
+    return Object.entries(userTypeDetails.schema).some(
       ([, fieldDef]) => !((fieldDef.type === 'string' || fieldDef.type === 'number') && fieldDef.credential),
     );
-  }, [userSchema]);
+  }, [userTypeDetails]);
 
   const displayName = user?.display ?? user?.id ?? '';
 
@@ -128,12 +128,12 @@ export default function UserEditPage() {
 
   // Populate form with user data when user data is loaded
   useEffect(() => {
-    if (user?.attributes && userSchema?.schema) {
+    if (user?.attributes && userTypeDetails?.schema) {
       Object.entries(user.attributes).forEach(([key, value]) => {
         setValue(key, value as string | number | boolean);
       });
     }
-  }, [user, userSchema, setValue]);
+  }, [user, userTypeDetails, setValue]);
 
   useEffect(
     () => () => {
@@ -186,7 +186,7 @@ export default function UserEditPage() {
   const handleCancel = () => {
     setIsEditMode(false);
     updateUserMutation.reset();
-    if (user?.attributes && userSchema?.schema) {
+    if (user?.attributes && userTypeDetails?.schema) {
       Object.entries(user.attributes).forEach(([key, value]) => {
         setValue(key, value as string | number | boolean);
       });
@@ -325,7 +325,7 @@ export default function UserEditPage() {
                         displayValue = '-';
                       }
 
-                      const fieldDef = userSchema?.schema?.[key];
+                      const fieldDef = userTypeDetails?.schema?.[key];
                       let attributeLabel = key;
                       if (fieldDef?.displayName) {
                         const resolved = resolveDisplayName(fieldDef.displayName);
@@ -356,8 +356,8 @@ export default function UserEditPage() {
                   noValidate
                   sx={{display: 'flex', flexDirection: 'column', gap: 2}}
                 >
-                  {userSchema?.schema ? (
-                    Object.entries(userSchema.schema)
+                  {userTypeDetails?.schema ? (
+                    Object.entries(userTypeDetails.schema)
                       .filter(
                         ([, fieldDef]) =>
                           !((fieldDef.type === 'string' || fieldDef.type === 'number') && fieldDef.credential),

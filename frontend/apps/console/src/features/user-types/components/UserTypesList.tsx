@@ -40,7 +40,7 @@ import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router';
 import useDeleteUserType from '../api/useDeleteUserType';
 import useGetUserTypes from '../api/useGetUserTypes';
-import type {UserSchemaListItem} from '../types/user-types';
+import type {UserTypeListItem} from '../types/user-types';
 
 type GridColDef<R extends DataGrid.GridValidRowModel = DataGrid.GridValidRowModel> = DataGrid.GridColDef<R>;
 type GridRenderCellParams<R extends DataGrid.GridValidRowModel = DataGrid.GridValidRowModel> =
@@ -108,7 +108,7 @@ export default function UserTypesList() {
     }
   };
 
-  const columns: GridColDef<UserSchemaListItem>[] = useMemo(
+  const columns: GridColDef<UserTypeListItem>[] = useMemo(
     () => [
       {
         field: 'name',
@@ -120,7 +120,7 @@ export default function UserTypesList() {
         field: 'id',
         headerName: t('userTypes:listing.columns.id', 'User Type ID'),
         width: 350,
-        renderCell: (params: DataGrid.GridRenderCellParams<UserSchemaListItem>) => (
+        renderCell: (params: DataGrid.GridRenderCellParams<UserTypeListItem>) => (
           <Typography variant="body2" sx={{fontFamily: 'monospace', fontSize: '0.875rem'}}>
             {params.row.id}
           </Typography>
@@ -131,7 +131,7 @@ export default function UserTypesList() {
         headerName: t('userTypes:listing.columns.organizationUnit', 'Organization Unit'),
         flex: 1,
         minWidth: 220,
-        renderCell: (params: DataGrid.GridRenderCellParams<UserSchemaListItem>) => (
+        renderCell: (params: DataGrid.GridRenderCellParams<UserTypeListItem>) => (
           <Typography variant="body2" sx={{fontFamily: 'monospace', fontSize: '0.875rem'}}>
             {params.row.ouHandle ?? params.row.ouId ?? t('common:messages.noData')}
           </Typography>
@@ -141,7 +141,7 @@ export default function UserTypesList() {
         field: 'allowSelfRegistration',
         headerName: t('userTypes:listing.columns.allowSelfRegistration', 'Self Registration'),
         width: 200,
-        renderCell: (params: GridRenderCellParams<UserSchemaListItem>) => (
+        renderCell: (params: GridRenderCellParams<UserTypeListItem>) => (
           <Chip
             label={params.row.allowSelfRegistration ? t('common:status.enabled') : t('common:status.disabled')}
             color={params.row.allowSelfRegistration ? 'success' : 'default'}
@@ -158,7 +158,7 @@ export default function UserTypesList() {
         sortable: false,
         filterable: false,
         hideable: false,
-        renderCell: (params: GridRenderCellParams<UserSchemaListItem>) => (
+        renderCell: (params: GridRenderCellParams<UserTypeListItem>) => (
           <ListingTable.RowActions>
             <Tooltip title={t('common:actions.edit')}>
               <IconButton
@@ -197,9 +197,9 @@ export default function UserTypesList() {
           <ListingTable.DataGrid
             rows={userTypesData?.schemas ?? []}
             columns={columns}
-            getRowId={(row) => (row as UserSchemaListItem).id}
+            getRowId={(row) => (row as UserTypeListItem).id}
             onRowClick={(params) => {
-              handleViewClick((params.row as UserSchemaListItem).id);
+              handleViewClick((params.row as UserTypeListItem).id);
             }}
             initialState={{
               pagination: {

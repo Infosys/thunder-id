@@ -30,7 +30,7 @@ import (
 
 const (
 	resourceTypeOrganizationUnit   = "organization_unit"
-	resourceTypeUserSchema         = "user_schema"
+	resourceTypeEntityType         = "user_type"
 	resourceTypeResourceServer     = "resource_server"
 	resourceTypeRole               = "role"
 	resourceTypeIdentityProvider   = "identity_provider"
@@ -153,7 +153,7 @@ func parseResourceTypeFromComment(comment string) string {
 func isKnownResourceType(resourceType string) bool {
 	knownTypes := map[string]struct{}{
 		resourceTypeOrganizationUnit:   {},
-		resourceTypeUserSchema:         {},
+		resourceTypeEntityType:         {},
 		resourceTypeResourceServer:     {},
 		resourceTypeRole:               {},
 		resourceTypeIdentityProvider:   {},
@@ -178,7 +178,7 @@ func classifyResourceType(node *yaml.Node) string {
 	}
 
 	if hasAllKeys(node, "organization_unit_id", "schema") {
-		matches = append(matches, resourceTypeUserSchema)
+		matches = append(matches, resourceTypeEntityType)
 	}
 
 	if hasAllKeys(node, "identifier", "resources") {

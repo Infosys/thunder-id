@@ -19,7 +19,7 @@
 import userEvent from '@testing-library/user-event';
 import {render, screen, waitFor} from '@thunderid/test-utils';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
-import type {ApiUserSchema} from '../../../models/users';
+import type {ApiUserType} from '../../../models/users';
 import ConfigureUserDetails, {type ConfigureUserDetailsProps} from '../ConfigureUserDetails';
 
 vi.mock('react-i18next', () => ({
@@ -28,7 +28,7 @@ vi.mock('react-i18next', () => ({
   }),
 }));
 
-const mockSchema: ApiUserSchema = {
+const mockSchema: ApiUserType = {
   id: 'schema-1',
   name: 'Employee',
   schema: {
@@ -148,7 +148,7 @@ describe('ConfigureUserDetails', () => {
   });
 
   it('renders credential fields as password inputs with toggle visibility', () => {
-    const schemaWithCredential: ApiUserSchema = {
+    const schemaWithCredential: ApiUserType = {
       id: 'schema-cred',
       name: 'Employee',
       schema: {
@@ -175,7 +175,7 @@ describe('ConfigureUserDetails', () => {
   });
 
   it('handles schema with no fields', () => {
-    const emptySchema: ApiUserSchema = {
+    const emptySchema: ApiUserType = {
       id: 'schema-empty',
       name: 'Empty',
       schema: {},

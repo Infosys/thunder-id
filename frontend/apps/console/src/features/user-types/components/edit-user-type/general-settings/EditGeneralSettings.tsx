@@ -24,10 +24,10 @@ import type {JSX} from 'react';
 import {useState, useCallback, useRef, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import QuickCopySection from './QuickCopySection';
-import type {ApiUserSchema, SchemaPropertyInput} from '../../../types/user-types';
+import type {ApiUserType, SchemaPropertyInput} from '../../../types/user-types';
 
 export interface EditGeneralSettingsProps {
-  userType: ApiUserSchema;
+  userType: ApiUserType;
   editedOuId: string | undefined;
   editedAllowSelfRegistration: boolean | undefined;
   editedDisplayAttribute: string | undefined;

@@ -19,7 +19,7 @@
 import {waitFor, renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import UserTypeQueryKeys from '../../constants/userTypeQueryKeys';
-import type {UserSchemaListResponse} from '../../types/user-types';
+import type {UserTypeListResponse} from '../../types/user-types';
 import useGetUserTypes from '../useGetUserTypes';
 
 // Mock the dependencies
@@ -42,7 +42,7 @@ describe('useGetUserTypes', () => {
   let mockHttpRequest: ReturnType<typeof vi.fn>;
   let mockGetServerUrl: ReturnType<typeof vi.fn>;
 
-  const mockUserSchemaListResponse: UserSchemaListResponse = {
+  const mockUserTypeListResponse: UserTypeListResponse = {
     totalResults: 2,
     startIndex: 1,
     count: 2,
@@ -50,7 +50,7 @@ describe('useGetUserTypes', () => {
       {id: '123', name: 'UserType1', ouId: 'root-ou', allowSelfRegistration: false},
       {id: '456', name: 'UserType2', ouId: 'child-ou', allowSelfRegistration: true},
     ],
-    links: [{rel: 'self', href: 'https://api.test.com/user-schemas'}],
+    links: [{rel: 'self', href: 'https://api.test.com/user-types'}],
   };
 
   beforeEach(() => {
@@ -84,7 +84,7 @@ describe('useGetUserTypes', () => {
 
   it('should successfully fetch user types list', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     const {result} = renderHook(() => useGetUserTypes());
@@ -93,7 +93,7 @@ describe('useGetUserTypes', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.data).toEqual(mockUserSchemaListResponse);
+    expect(result.current.data).toEqual(mockUserTypeListResponse);
     expect(result.current.data?.schemas).toHaveLength(2);
     expect(result.current.data?.totalResults).toBe(2);
     expect(result.current.data?.count).toBe(2);
@@ -101,7 +101,7 @@ describe('useGetUserTypes', () => {
 
   it('should build URL without query params when none provided', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     renderHook(() => useGetUserTypes());
@@ -113,12 +113,12 @@ describe('useGetUserTypes', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const callArgs = mockHttpRequest.mock.calls[0][0];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(callArgs.url).toBe('https://api.test.com/user-schemas?include=display');
+    expect(callArgs.url).toBe('https://api.test.com/user-types?include=display');
   });
 
   it('should build URL with limit parameter only', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     renderHook(() => useGetUserTypes({limit: 10}));
@@ -130,12 +130,12 @@ describe('useGetUserTypes', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const callArgs = mockHttpRequest.mock.calls[0][0];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(callArgs.url).toBe('https://api.test.com/user-schemas?limit=10&include=display');
+    expect(callArgs.url).toBe('https://api.test.com/user-types?limit=10&include=display');
   });
 
   it('should build URL with offset parameter only', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     renderHook(() => useGetUserTypes({offset: 5}));
@@ -147,12 +147,12 @@ describe('useGetUserTypes', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const callArgs = mockHttpRequest.mock.calls[0][0];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(callArgs.url).toBe('https://api.test.com/user-schemas?offset=5&include=display');
+    expect(callArgs.url).toBe('https://api.test.com/user-types?offset=5&include=display');
   });
 
   it('should build URL with both limit and offset parameters', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     renderHook(() => useGetUserTypes({limit: 10, offset: 5}));
@@ -185,7 +185,7 @@ describe('useGetUserTypes', () => {
 
   it('should use correct server URL from config', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     renderHook(() => useGetUserTypes());
@@ -197,12 +197,12 @@ describe('useGetUserTypes', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const callArgs = mockHttpRequest.mock.calls[0][0];
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(callArgs.url).toContain('https://api.test.com/user-schemas');
+    expect(callArgs.url).toContain('https://api.test.com/user-types');
   });
 
   it('should include correct headers', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     renderHook(() => useGetUserTypes());
@@ -221,7 +221,7 @@ describe('useGetUserTypes', () => {
 
   it('should use correct query key', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     const {result, queryClient} = renderHook(() => useGetUserTypes({limit: 20, offset: 10}));
@@ -240,7 +240,7 @@ describe('useGetUserTypes', () => {
 
   it('should cache results for same parameters', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     // First call - get the queryClient from the render result
@@ -261,14 +261,14 @@ describe('useGetUserTypes', () => {
     });
 
     await waitFor(() => {
-      expect(result2.current.data).toEqual(mockUserSchemaListResponse);
+      expect(result2.current.data).toEqual(mockUserTypeListResponse);
     });
     expect(mockHttpRequest).toHaveBeenCalledTimes(1); // Should not make another request
   });
 
   it('should support refetching data', async () => {
     mockHttpRequest.mockResolvedValue({
-      data: mockUserSchemaListResponse,
+      data: mockUserTypeListResponse,
     });
 
     const {result} = renderHook(() => useGetUserTypes());
@@ -286,7 +286,7 @@ describe('useGetUserTypes', () => {
   });
 
   it('should handle empty list', async () => {
-    const emptyResponse: UserSchemaListResponse = {
+    const emptyResponse: UserTypeListResponse = {
       totalResults: 0,
       startIndex: 0,
       count: 0,

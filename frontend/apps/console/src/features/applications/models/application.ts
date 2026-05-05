@@ -211,7 +211,7 @@ export interface Application {
   userAttributes?: string[];
 
   /**
-   * Allowed user types (user schema IDs) that can access this application
+   * Allowed user types that can access this application
    * @example ['person', 'person_2', 'person_3']
    */
   allowedUserTypes?: string[];

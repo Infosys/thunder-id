@@ -94,7 +94,7 @@ const (
 	mockGoogleFlowPort = 8093
 )
 
-var googleUserSchema = testutils.UserSchema{
+var googleEntityType = testutils.UserType{
 	Name: "google_auth_user",
 	Schema: map[string]interface{}{
 		"username": map[string]interface{}{
@@ -142,7 +142,7 @@ type GoogleAuthFlowTestSuite struct {
 	config           *common.TestSuiteConfig
 	mockGoogleServer *testutils.MockGoogleOIDCServer
 	userID           string
-	userSchemaID     string
+	entityTypeID     string
 }
 
 func TestGoogleAuthFlowTestSuite(t *testing.T) {
@@ -180,11 +180,11 @@ func (ts *GoogleAuthFlowTestSuite) SetupSuite() {
 	}
 	googleAuthTestOU.ID = ouID
 
-	// Create user schema
-	googleUserSchema.OUID = ouID
-	schemaID, err := testutils.CreateUserType(googleUserSchema)
-	ts.Require().NoError(err, "Failed to create Google user schema")
-	ts.userSchemaID = schemaID
+	// create user type
+	googleEntityType.OUID = ouID
+	schemaID, err := testutils.CreateUserType(googleEntityType)
+	ts.Require().NoError(err, "Failed to create Google user type")
+	ts.entityTypeID = schemaID
 
 	// Create user
 	userAttributes := map[string]interface{}{
@@ -201,8 +201,8 @@ func (ts *GoogleAuthFlowTestSuite) SetupSuite() {
 
 	// Create user in the pre-configured OU from database scripts
 	user := testutils.User{
-		Type:       googleUserSchema.Name,
-		OUID:       googleUserSchema.OUID,
+		Type:       googleEntityType.Name,
+		OUID:       googleEntityType.OUID,
 		Attributes: json.RawMessage(attributesJSON),
 	}
 
@@ -310,8 +310,8 @@ func (ts *GoogleAuthFlowTestSuite) TearDownSuite() {
 		_ = testutils.DeleteUser(ts.userID)
 	}
 
-	if ts.userSchemaID != "" {
-		_ = testutils.DeleteUserType(ts.userSchemaID)
+	if ts.entityTypeID != "" {
+		_ = testutils.DeleteUserType(ts.entityTypeID)
 	}
 
 	// Stop mock server
@@ -414,7 +414,7 @@ func (ts *GoogleAuthFlowTestSuite) TestGoogleAuthFlowCompleteSuccess() {
 	jwtClaims, err := testutils.ValidateJWTAssertionFields(
 		completeFlowStep.Assertion,
 		googleAuthTestAppID,
-		googleUserSchema.Name,
+		googleEntityType.Name,
 		googleAuthTestOU.ID,
 		googleAuthTestOU.Name,
 		googleAuthTestOU.Handle,
@@ -510,7 +510,7 @@ func (ts *GoogleAuthFlowTestSuite) TestGoogleAuthFlowMultipleUsersSuccess() {
 	jwtClaims, err := testutils.ValidateJWTAssertionFields(
 		completeFlowStep.Assertion,
 		googleAuthTestAppID,
-		googleUserSchema.Name,
+		googleEntityType.Name,
 		googleAuthTestOU.ID,
 		googleAuthTestOU.Name,
 		googleAuthTestOU.Handle,

@@ -165,21 +165,21 @@ export type PropertyDefinition =
   | ArrayPropertyDefinition;
 
 /**
- * User schema definition
+ * User type definition
  */
-export type UserSchemaDefinition = Record<string, PropertyDefinition>;
+export type UserTypeDefinition = Record<string, PropertyDefinition>;
 
 /**
- * User schema object
+ * User type object
  */
-export interface ApiUserSchema {
+export interface ApiUserType {
   id: string;
   name: string;
-  schema: UserSchemaDefinition;
+  schema: UserTypeDefinition;
 }
 
 /**
- * User schema list query parameters
+ * User type list query parameters
  */
 export interface SchemaListParams {
   limit?: number;
@@ -187,9 +187,9 @@ export interface SchemaListParams {
 }
 
 /**
- * User schema list response
+ * User type list response
  */
-export interface UserSchemaListResponse {
+export interface UserTypeListResponse {
   totalResults: number;
   startIndex: number;
   count: number;

@@ -24,10 +24,10 @@ import (
 	layoutmgt "github.com/asgardeo/thunder/internal/design/layout/mgt"
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
 	"github.com/asgardeo/thunder/internal/entityprovider"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	flowmgt "github.com/asgardeo/thunder/internal/flow/mgt"
 	dre "github.com/asgardeo/thunder/internal/system/declarative_resource/entity"
 	"github.com/asgardeo/thunder/internal/system/transaction"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 // Initialize initializes the inbound client service.
@@ -36,7 +36,7 @@ func Initialize(certService cert.CertificateServiceInterface,
 	themeMgt thememgt.ThemeMgtServiceInterface,
 	layoutMgt layoutmgt.LayoutMgtServiceInterface,
 	flowMgt flowmgt.FlowMgtServiceInterface,
-	userSchema userschema.UserSchemaServiceInterface,
+	entityType entitytype.EntityTypeServiceInterface,
 	consentService consent.ConsentServiceInterface,
 ) (InboundClientServiceInterface, error) {
 	store, transactioner, err := initializeStore()
@@ -44,7 +44,7 @@ func Initialize(certService cert.CertificateServiceInterface,
 		return nil, err
 	}
 	return newInboundClientService(store, transactioner, certService, entityProvider,
-		themeMgt, layoutMgt, flowMgt, userSchema, consentService), nil
+		themeMgt, layoutMgt, flowMgt, entityType, consentService), nil
 }
 
 // initializeStore always creates a composite store (DB + in-memory file store).

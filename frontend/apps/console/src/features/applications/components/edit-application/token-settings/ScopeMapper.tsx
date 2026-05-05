@@ -35,7 +35,7 @@ interface ScopeMapperProps {
    */
   scopeClaims: ScopeClaims;
   /**
-   * All available user attributes derived from user schemas.
+   * All available user attributes derived from user types.
    */
   userAttributes: string[];
   /**

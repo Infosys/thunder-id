@@ -19,7 +19,7 @@
 import {waitFor, act, renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import UserTypeQueryKeys from '../../constants/userTypeQueryKeys';
-import type {ApiUserSchema, UpdateUserSchemaRequest} from '../../types/user-types';
+import type {ApiUserType, UpdateUserTypeRequest} from '../../types/user-types';
 import useUpdateUserType from '../useUpdateUserType';
 import type {UpdateUserTypeVariables} from '../useUpdateUserType';
 
@@ -35,7 +35,7 @@ const {useConfig} = await import('@thunderid/contexts');
 describe('useUpdateUserType', () => {
   const mockUserTypeId = '123';
 
-  const mockUserSchema: ApiUserSchema = {
+  const mockUserType: ApiUserType = {
     id: '123',
     name: 'Person',
     ouId: 'ou-1',
@@ -48,7 +48,7 @@ describe('useUpdateUserType', () => {
     },
   };
 
-  const mockUpdateRequest: UpdateUserSchemaRequest = {
+  const mockUpdateRequest: UpdateUserTypeRequest = {
     name: 'Person',
     ouId: 'ou-1',
     allowSelfRegistration: true,
@@ -100,7 +100,7 @@ describe('useUpdateUserType', () => {
 
   it('should successfully update a user type', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     const {result} = renderHook(() => useUpdateUserType());
@@ -111,13 +111,13 @@ describe('useUpdateUserType', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.data).toEqual(mockUserSchema);
+    expect(result.current.data).toEqual(mockUserType);
     expect(result.current.error).toBeNull();
     expect(result.current.isPending).toBe(false);
 
     expect(mockHttpRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: `https://api.test.com/user-schemas/${mockUserTypeId}`,
+        url: `https://api.test.com/user-types/${mockUserTypeId}`,
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ describe('useUpdateUserType', () => {
         new Promise((resolve) => {
           setTimeout(() => {
             resolve({
-              data: mockUserSchema,
+              data: mockUserType,
             });
           }, 100);
         }),
@@ -181,7 +181,7 @@ describe('useUpdateUserType', () => {
 
   it('should invalidate correct queries on success', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     const {result, queryClient} = renderHook(() => useUpdateUserType());
@@ -203,7 +203,7 @@ describe('useUpdateUserType', () => {
 
   it('should handle invalidateQueries rejection gracefully', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     const {result, queryClient} = renderHook(() => useUpdateUserType());
@@ -215,29 +215,29 @@ describe('useUpdateUserType', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.data).toEqual(mockUserSchema);
+    expect(result.current.data).toEqual(mockUserType);
   });
 
   it('should support mutateAsync for promise-based workflows', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     const {result} = renderHook(() => useUpdateUserType());
 
     const promise = result.current.mutateAsync(mockVariables);
 
-    await expect(promise).resolves.toEqual(mockUserSchema);
+    await expect(promise).resolves.toEqual(mockUserType);
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
-    expect(result.current.data).toEqual(mockUserSchema);
+    expect(result.current.data).toEqual(mockUserType);
   });
 
   it('should reset mutation state', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     const {result} = renderHook(() => useUpdateUserType());

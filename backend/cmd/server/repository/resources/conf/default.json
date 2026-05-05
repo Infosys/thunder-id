@@ -198,7 +198,7 @@
   "application": {
     "store": "composite"
   },
-  "user_schema": {
+  "user_type": {
     "store": "composite"
   },
   "role": {

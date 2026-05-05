@@ -28,12 +28,12 @@ import (
 
 	authncm "github.com/asgardeo/thunder/internal/authn/common"
 	"github.com/asgardeo/thunder/internal/entityprovider"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	"github.com/asgardeo/thunder/internal/flow/core"
 	"github.com/asgardeo/thunder/internal/group"
 	"github.com/asgardeo/thunder/internal/role"
 	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 // provisioningExecutor implements the ExecutorInterface for user provisioning in a flow.
@@ -43,7 +43,7 @@ type provisioningExecutor struct {
 	entityProvider    entityprovider.EntityProviderInterface
 	groupService      group.GroupServiceInterface
 	roleService       role.RoleServiceInterface
-	userSchemaService userschema.UserSchemaServiceInterface
+	entityTypeService entitytype.EntityTypeServiceInterface
 	logger            *log.Logger
 }
 
@@ -56,7 +56,7 @@ func newProvisioningExecutor(
 	groupService group.GroupServiceInterface,
 	roleService role.RoleServiceInterface,
 	entityProvider entityprovider.EntityProviderInterface,
-	userSchemaService userschema.UserSchemaServiceInterface,
+	entityTypeService entitytype.EntityTypeServiceInterface,
 ) *provisioningExecutor {
 	logger := log.GetLogger().With(log.String(log.LoggerKeyComponentName, ExecutorNameProvisioning),
 		log.String(log.LoggerKeyExecutorName, ExecutorNameProvisioning))
@@ -73,7 +73,7 @@ func newProvisioningExecutor(
 		entityProvider:               entityProvider,
 		groupService:                 groupService,
 		roleService:                  roleService,
-		userSchemaService:            userSchemaService,
+		entityTypeService:            entityTypeService,
 		logger:                       logger,
 	}
 }
@@ -279,7 +279,7 @@ func (p *provisioningExecutor) HasRequiredInputs(ctx *core.NodeContext,
 	// run the base executor check for node-defined inputs.
 	nodeInputsSatisfied := p.checkNodeInputs(ctx, execResp, logger)
 
-	// fetch required non-credential attributes from the user schema.
+	// fetch required non-credential attributes from the user type.
 	schemaAttrs, err := p.fetchSchemaAttributes(ctx, logger)
 	if err != nil {
 		execResp.Status = common.ExecFailure
@@ -368,12 +368,12 @@ func (p *provisioningExecutor) checkNodeInputs(ctx *core.NodeContext,
 	return len(remaining) == 0
 }
 
-// fetchSchemaAttributes retrieves non-credential attributes from the user schema service.
+// fetchSchemaAttributes retrieves non-credential attributes from the entity type service.
 // When promptOptionalAttributes is true it fetches all attributes; otherwise only required ones.
 func (p *provisioningExecutor) fetchSchemaAttributes(
 	ctx *core.NodeContext, logger *log.Logger,
-) ([]userschema.AttributeInfo, error) {
-	if p.userSchemaService == nil {
+) ([]entitytype.AttributeInfo, error) {
+	if p.entityTypeService == nil {
 		return nil, nil
 	}
 	userType := p.getUserType(ctx)
@@ -381,7 +381,8 @@ func (p *provisioningExecutor) fetchSchemaAttributes(
 		return nil, fmt.Errorf("user type not found")
 	}
 	requiredOnly := !p.isPromptOptionalAttributesEnabled(ctx)
-	attrs, svcErr := p.userSchemaService.GetNonCredentialAttributes(ctx.Context, userType, requiredOnly)
+	attrs, svcErr := p.entityTypeService.GetNonCredentialAttributes(ctx.Context,
+		entitytype.TypeCategoryUser, userType, requiredOnly)
 	if svcErr != nil {
 		logger.Warn("Failed to fetch schema attributes for provisioning, skipping schema check",
 			log.Any("error", svcErr))
@@ -512,15 +513,16 @@ func (p *provisioningExecutor) getAttributesForProvisioning(ctx *core.NodeContex
 // fetchAllNonCredentialAttributes retrieves all non-credential schema attributes with their required status.
 func (p *provisioningExecutor) fetchAllNonCredentialAttributes(
 	ctx *core.NodeContext,
-) ([]userschema.AttributeInfo, error) {
-	if p.userSchemaService == nil {
+) ([]entitytype.AttributeInfo, error) {
+	if p.entityTypeService == nil {
 		return nil, nil
 	}
 	userType := p.getUserType(ctx)
 	if userType == "" {
 		return nil, fmt.Errorf("user type not found")
 	}
-	attrs, svcErr := p.userSchemaService.GetNonCredentialAttributes(ctx.Context, userType, false)
+	attrs, svcErr := p.entityTypeService.GetNonCredentialAttributes(ctx.Context,
+		entitytype.TypeCategoryUser, userType, false)
 	if svcErr != nil {
 		return nil, fmt.Errorf("failed to fetch schema attributes for user type %q: %s",
 			userType, svcErr.Error.DefaultValue)
@@ -528,7 +530,7 @@ func (p *provisioningExecutor) fetchAllNonCredentialAttributes(
 	return attrs, nil
 }
 
-// appendCredentialAttributes appends credential attributes defined in the user schema to the provided
+// appendCredentialAttributes appends credential attributes defined in the user type to the provided
 // attributes map. If the node declares specific credential inputs, only those are collected; otherwise
 // all schema credential attributes are collected. Values are resolved from UserInputs then RuntimeData.
 func (p *provisioningExecutor) appendCredentialAttributes(ctx *core.NodeContext,
@@ -569,16 +571,16 @@ func (p *provisioningExecutor) appendCredentialAttributes(ctx *core.NodeContext,
 	return nil
 }
 
-// fetchCredentialAttributes retrieves credential attribute names from the user schema service.
+// fetchCredentialAttributes retrieves credential attribute names from the entity type service.
 func (p *provisioningExecutor) fetchCredentialAttributes(ctx *core.NodeContext) ([]string, error) {
-	if p.userSchemaService == nil {
+	if p.entityTypeService == nil {
 		return nil, nil
 	}
 	userType := p.getUserType(ctx)
 	if userType == "" {
 		return nil, fmt.Errorf("user type not found")
 	}
-	attrs, svcErr := p.userSchemaService.GetCredentialAttributes(ctx.Context, userType)
+	attrs, svcErr := p.entityTypeService.GetCredentialAttributes(ctx.Context, entitytype.TypeCategoryUser, userType)
 	if svcErr != nil {
 		return nil, fmt.Errorf("failed to fetch credential attributes for user type %q: %s",
 			userType, svcErr.Error.DefaultValue)

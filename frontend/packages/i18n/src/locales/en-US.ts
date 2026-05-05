@@ -1680,7 +1680,7 @@ const translations = {
     'configureExport.labels.users': 'Users',
     'configureExport.labels.organizationUnits': 'Organization Units',
     'configureExport.labels.notificationSenders': 'Notification Senders',
-    'configureExport.labels.userSchemas': 'User Schemas',
+    'configureExport.labels.userTypes': 'User Types',
     'configureExport.labels.translations': 'Translations',
     'configureExport.labels.layouts': 'Layouts',
     'configureExport.labels.selfRegistration': 'Self Registration',

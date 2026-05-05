@@ -301,8 +301,8 @@ export default function ConfigureExport({
   const notificationSendersCount =
     resourceCounts?.notification_sender ??
     (Array.isArray(configData?.notification_sender) ? configData.notification_sender.length : 0);
-  const userSchemasCount =
-    resourceCounts?.user_schema ?? (Array.isArray(configData?.user_schema) ? configData.user_schema.length : 0);
+  const userTypesCount =
+    resourceCounts?.user_type ?? (Array.isArray(configData?.user_type) ? configData.user_type.length : 0);
   const translationsCount =
     resourceCounts?.translation ?? (Array.isArray(configData?.translation) ? configData.translation.length : 0);
   const layoutsCount = resourceCounts?.layout ?? (Array.isArray(configData?.layout) ? configData.layout.length : 0);
@@ -731,18 +731,18 @@ export default function ConfigureExport({
     });
   }
 
-  // Add user schemas if present
-  if (userSchemasCount > 0) {
+  // Add user types if present
+  if (userTypesCount > 0) {
     const schemas =
-      (configData?.user_schema as {name?: string; handle?: string; allow_self_registration?: boolean}[]) ?? [];
+      (configData?.user_type as {name?: string; handle?: string; allow_self_registration?: boolean}[]) ?? [];
     const displayedSchemas = expandedSchemas ? schemas : schemas.slice(0, 5);
     const remainingCount = schemas.length - 5;
 
     items.push({
-      id: 'user-schemas',
-      label: t('importExport:configureExport.labels.userSchemas'),
+      id: 'user-types',
+      label: t('importExport:configureExport.labels.userTypes'),
       icon: <UserRoundCog size={16} />,
-      value: userSchemasCount,
+      value: userTypesCount,
       status: 'ready',
       dependencyCount: 0,
       content: (

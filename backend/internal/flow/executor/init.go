@@ -43,7 +43,7 @@ import (
 	"github.com/asgardeo/thunder/internal/system/observability"
 	"github.com/asgardeo/thunder/internal/system/template"
 
-	"github.com/asgardeo/thunder/internal/userschema"
+	"github.com/asgardeo/thunder/internal/entitytype"
 )
 
 // Initialize registers available executors and returns the executor registry.
@@ -59,7 +59,7 @@ func Initialize(
 	otpService otp.OTPAuthnServiceInterface,
 	passkeyService passkey.PasskeyServiceInterface,
 	authZService authz.AuthorizationServiceInterface,
-	userSchemaService userschema.UserSchemaServiceInterface,
+	entityTypeService entitytype.EntityTypeServiceInterface,
 	observabilitySvc observability.ObservabilityServiceInterface,
 	groupService group.GroupServiceInterface,
 	roleService role.RoleServiceInterface,
@@ -81,18 +81,18 @@ func Initialize(
 		flowFactory, passkeyService, authnProvider, entityProvider))
 
 	reg.RegisterExecutor(ExecutorNameOAuth, newOAuthExecutor(
-		"", []common.Input{}, []common.Input{}, flowFactory, idpService, userSchemaService,
+		"", []common.Input{}, []common.Input{}, flowFactory, idpService, entityTypeService,
 		oauthSvc, authnProvider, idp.IDPTypeOAuth))
 	reg.RegisterExecutor(ExecutorNameOIDCAuth, newOIDCAuthExecutor(
-		"", []common.Input{}, []common.Input{}, flowFactory, idpService, userSchemaService,
+		"", []common.Input{}, []common.Input{}, flowFactory, idpService, entityTypeService,
 		oidcSvc, authnProvider, idp.IDPTypeOIDC))
 	reg.RegisterExecutor(ExecutorNameGitHubAuth, newGithubOAuthExecutor(
-		flowFactory, idpService, userSchemaService, githubSvc, authnProvider))
+		flowFactory, idpService, entityTypeService, githubSvc, authnProvider))
 	reg.RegisterExecutor(ExecutorNameGoogleAuth, newGoogleOIDCAuthExecutor(
-		flowFactory, idpService, userSchemaService, googleSvc, authnProvider))
+		flowFactory, idpService, entityTypeService, googleSvc, authnProvider))
 
 	reg.RegisterExecutor(ExecutorNameProvisioning, newProvisioningExecutor(flowFactory,
-		groupService, roleService, entityProvider, userSchemaService))
+		groupService, roleService, entityProvider, entityTypeService))
 	reg.RegisterExecutor(ExecutorNameOUCreation, newOUExecutor(flowFactory, ouService))
 
 	reg.RegisterExecutor(ExecutorNameAttributeCollect, newAttributeCollector(flowFactory, entityProvider))
@@ -101,7 +101,7 @@ func Initialize(
 		attributeCacheSvc, roleService))
 	reg.RegisterExecutor(ExecutorNameAuthorization, newAuthorizationExecutor(flowFactory, authZService, entityProvider))
 	reg.RegisterExecutor(ExecutorNameHTTPRequest, newHTTPRequestExecutor(flowFactory, ouService))
-	reg.RegisterExecutor(ExecutorNameUserTypeResolver, newUserTypeResolver(flowFactory, userSchemaService, ouService))
+	reg.RegisterExecutor(ExecutorNameUserTypeResolver, newUserTypeResolver(flowFactory, entityTypeService, ouService))
 	reg.RegisterExecutor(ExecutorNameInviteExecutor, newInviteExecutor(flowFactory))
 	reg.RegisterExecutor(ExecutorNameEmailExecutor, newEmailExecutor(
 		flowFactory, emailClient, templateService, entityProvider))
@@ -113,7 +113,7 @@ func Initialize(
 	reg.RegisterExecutor(ExecutorNameConsent, newConsentExecutor(flowFactory, consentEnforcer))
 	reg.RegisterExecutor(ExecutorNameOUResolver, newOUResolverExecutor(flowFactory, ouService))
 	reg.RegisterExecutor(ExecutorNameAttributeUniquenessValidator, newAttributeUniquenessValidator(
-		flowFactory, userSchemaService, entityProvider))
+		flowFactory, entityTypeService, entityProvider))
 	reg.RegisterExecutor(ExecutorNameSMSExecutor, newSMSExecutor(flowFactory, notifSenderSvc, templateService))
 	reg.RegisterExecutor(ExecutorNameFederatedAuthResolver, newFederatedAuthResolverExecutor(flowFactory))
 

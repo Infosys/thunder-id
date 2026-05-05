@@ -61,7 +61,7 @@ type AgentOAuthFlowsTestSuite struct {
 	suite.Suite
 	ouID         string
 	schemaID     string
-	userSchemaID string
+	entityTypeID string
 	userID       string
 	authFlowID   string
 }
@@ -79,7 +79,7 @@ func (ts *AgentOAuthFlowsTestSuite) SetupSuite() {
 	ts.Require().NoError(err, "Failed to create OU")
 	ts.ouID = ouID
 
-	schemaID, err := testutils.CreateUserType(testutils.UserSchema{
+	schemaID, err := testutils.CreateAgentType(testutils.UserType{
 		Name: "agent-oauth-flow-type",
 		OUID: ts.ouID,
 		Schema: map[string]interface{}{
@@ -89,7 +89,7 @@ func (ts *AgentOAuthFlowsTestSuite) SetupSuite() {
 	ts.Require().NoError(err, "Failed to create agent schema")
 	ts.schemaID = schemaID
 
-	userSchemaID, err := testutils.CreateUserType(testutils.UserSchema{
+	entityTypeID, err := testutils.CreateUserType(testutils.UserType{
 		Name: "agent-oauth-flow-person",
 		OUID: ts.ouID,
 		Schema: map[string]interface{}{
@@ -97,8 +97,8 @@ func (ts *AgentOAuthFlowsTestSuite) SetupSuite() {
 			"password": map[string]interface{}{"type": "string", "credential": true},
 		},
 	})
-	ts.Require().NoError(err, "Failed to create user schema")
-	ts.userSchemaID = userSchemaID
+	ts.Require().NoError(err, "Failed to create user type")
+	ts.entityTypeID = entityTypeID
 
 	attributesJSON, err := json.Marshal(map[string]interface{}{
 		"username": oauthFlowsTestUsername,
@@ -122,11 +122,11 @@ func (ts *AgentOAuthFlowsTestSuite) TearDownSuite() {
 	if ts.userID != "" {
 		_ = testutils.DeleteUser(ts.userID)
 	}
-	if ts.userSchemaID != "" {
-		_ = testutils.DeleteUserType(ts.userSchemaID)
+	if ts.entityTypeID != "" {
+		_ = testutils.DeleteUserType(ts.entityTypeID)
 	}
 	if ts.schemaID != "" {
-		_ = testutils.DeleteUserType(ts.schemaID)
+		_ = testutils.DeleteAgentType(ts.schemaID)
 	}
 	if ts.ouID != "" {
 		_ = testutils.DeleteOrganizationUnit(ts.ouID)
@@ -552,7 +552,7 @@ func (s *CCAgentAuthzTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 	s.ouID = ouID
 
-	schemaID, err := testutils.CreateUserType(testutils.UserSchema{
+	schemaID, err := testutils.CreateAgentType(testutils.UserType{
 		Name: "cc-authz-agent",
 		OUID: s.ouID,
 		Schema: map[string]interface{}{
@@ -640,7 +640,7 @@ func (s *CCAgentAuthzTestSuite) TearDownSuite() {
 		_ = testutils.DeleteResourceServer(s.resourceServerID)
 	}
 	if s.agentSchemaID != "" {
-		_ = testutils.DeleteUserType(s.agentSchemaID)
+		_ = testutils.DeleteAgentType(s.agentSchemaID)
 	}
 	if s.ouID != "" {
 		_ = testutils.DeleteOrganizationUnit(s.ouID)
@@ -789,7 +789,7 @@ type AgentTokenExchangeTestSuite struct {
 	suite.Suite
 	client         *http.Client
 	ouID           string
-	userSchemaID   string
+	entityTypeID   string
 	agentSchemaID  string
 	agentID        string
 	userID         string
@@ -811,7 +811,7 @@ func (s *AgentTokenExchangeTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 	s.ouID = ouID
 
-	agentSchemaID, err := testutils.CreateUserType(testutils.UserSchema{
+	agentSchemaID, err := testutils.CreateAgentType(testutils.UserType{
 		Name: "agent-te-type",
 		OUID: s.ouID,
 		Schema: map[string]interface{}{
@@ -821,7 +821,7 @@ func (s *AgentTokenExchangeTestSuite) SetupSuite() {
 	s.Require().NoError(err)
 	s.agentSchemaID = agentSchemaID
 
-	userSchemaID, err := testutils.CreateUserType(testutils.UserSchema{
+	entityTypeID, err := testutils.CreateUserType(testutils.UserType{
 		Name: "agent-te-person",
 		OUID: s.ouID,
 		Schema: map[string]interface{}{
@@ -830,7 +830,7 @@ func (s *AgentTokenExchangeTestSuite) SetupSuite() {
 		},
 	})
 	s.Require().NoError(err)
-	s.userSchemaID = userSchemaID
+	s.entityTypeID = entityTypeID
 
 	attributesJSON, err := json.Marshal(map[string]interface{}{
 		"username": agentTEUsername,
@@ -858,11 +858,11 @@ func (s *AgentTokenExchangeTestSuite) TearDownSuite() {
 	if s.userID != "" {
 		_ = testutils.DeleteUser(s.userID)
 	}
-	if s.userSchemaID != "" {
-		_ = testutils.DeleteUserType(s.userSchemaID)
+	if s.entityTypeID != "" {
+		_ = testutils.DeleteUserType(s.entityTypeID)
 	}
 	if s.agentSchemaID != "" {
-		_ = testutils.DeleteUserType(s.agentSchemaID)
+		_ = testutils.DeleteAgentType(s.agentSchemaID)
 	}
 	if s.ouID != "" {
 		_ = testutils.DeleteOrganizationUnit(s.ouID)

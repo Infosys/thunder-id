@@ -143,7 +143,7 @@ var (
 		Parent:      nil,
 	}
 
-	githubRegUserSchema = testutils.UserSchema{
+	githubRegEntityType = testutils.UserType{
 		Name: "github_reg_flow_user",
 		Schema: map[string]interface{}{
 			"username": map[string]interface{}{
@@ -265,7 +265,7 @@ var (
 		ClientID:                  "github_reg_flow_test_client",
 		ClientSecret:              "github_reg_flow_test_secret",
 		RedirectURIs:              []string{"http://localhost:3000/callback"},
-		AllowedUserTypes:          []string{githubRegUserSchema.Name},
+		AllowedUserTypes:          []string{githubRegEntityType.Name},
 		AssertionConfig: map[string]interface{}{
 			"userAttributes": []string{"userType", "ouId", "ouName", "ouHandle"},
 		},
@@ -285,7 +285,7 @@ type GithubRegistrationFlowTestSuite struct {
 	suite.Suite
 	mockGithubServer *testutils.MockGithubOAuthServer
 	idpID            string
-	userSchemaID     string
+	entityTypeID     string
 	config           *common.TestSuiteConfig
 }
 
@@ -329,12 +329,12 @@ func (ts *GithubRegistrationFlowTestSuite) SetupSuite() {
 	}
 	githubRegTestOUID = ouID
 
-	// Create user schema
-	githubRegUserSchema.OUID = githubRegTestOUID
-	githubRegUserSchema.AllowSelfRegistration = true
-	schemaID, err := testutils.CreateUserType(githubRegUserSchema)
-	ts.Require().NoError(err, "Failed to create GitHub user schema")
-	ts.userSchemaID = schemaID
+	// create user type
+	githubRegEntityType.OUID = githubRegTestOUID
+	githubRegEntityType.AllowSelfRegistration = true
+	schemaID, err := testutils.CreateUserType(githubRegEntityType)
+	ts.Require().NoError(err, "Failed to create GitHub user type")
+	ts.entityTypeID = schemaID
 
 	// Create GitHub IDP
 	githubIDP := testutils.IDP{
@@ -457,8 +457,8 @@ func (ts *GithubRegistrationFlowTestSuite) TearDownSuite() {
 		}
 	}
 
-	if ts.userSchemaID != "" {
-		_ = testutils.DeleteUserType(ts.userSchemaID)
+	if ts.entityTypeID != "" {
+		_ = testutils.DeleteUserType(ts.entityTypeID)
 	}
 
 	// Stop mock server
@@ -551,7 +551,7 @@ func (ts *GithubRegistrationFlowTestSuite) TestGithubRegistrationFlowCompleteSuc
 	ts.Require().NotNil(jwtClaims, "JWT claims should not be nil")
 
 	// Validate JWT contains expected user type and OU ID
-	ts.Require().Equal(githubRegUserSchema.Name, jwtClaims.UserType, "Expected userType to match created schema")
+	ts.Require().Equal(githubRegEntityType.Name, jwtClaims.UserType, "Expected userType to match created schema")
 	ts.Require().NotEmpty(jwtClaims.OUID, "Expected ouId to be present")
 	ts.Require().Equal(githubRegTestAppID, jwtClaims.Aud, "Expected aud to match the application ID")
 	ts.Require().NotEmpty(jwtClaims.Sub, "JWT subject should not be empty")

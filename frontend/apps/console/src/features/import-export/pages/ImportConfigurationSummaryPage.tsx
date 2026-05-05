@@ -194,7 +194,7 @@ export default function ImportConfigurationSummaryPage(): JSX.Element {
   const flowsCount = Array.isArray(configData?.flow) ? configData.flow.length : 0;
   const themesCount = Array.isArray(configData?.theme) ? configData.theme.length : 0;
   const orgUnitsCount = Array.isArray(configData?.organization_unit) ? configData.organization_unit.length : 0;
-  const userSchemasCount = Array.isArray(configData?.user_schema) ? configData.user_schema.length : 0;
+  const userTypesCount = Array.isArray(configData?.user_type) ? configData.user_type.length : 0;
   const translationsCount = Array.isArray(configData?.translation) ? configData.translation.length : 0;
   const identityProvidersCount = Array.isArray(configData?.identity_provider) ? configData.identity_provider.length : 0;
   const notificationSendersCount = Array.isArray(configData?.notification_sender)
@@ -894,18 +894,18 @@ export default function ImportConfigurationSummaryPage(): JSX.Element {
     });
   }
 
-  // 10. User Schemas
-  if (userSchemasCount > 0) {
+  // 10. User Types
+  if (userTypesCount > 0) {
     const schemas =
-      (configData?.user_schema as {name?: string; handle?: string; allow_self_registration?: boolean}[]) ?? [];
+      (configData?.user_type as {name?: string; handle?: string; allow_self_registration?: boolean}[]) ?? [];
     const displayedSchemas = expandedSchemas ? schemas : schemas.slice(0, 5);
     const remainingCount = schemas.length - 5;
 
     summaryItems.push({
-      id: 'user-schemas',
+      id: 'user-types',
       icon: <UserRoundCog size={16} />,
-      label: t('configureExport.labels.userSchemas'),
-      value: userSchemasCount,
+      label: t('configureExport.labels.userTypes'),
+      value: userTypesCount,
       content: (
         <Box sx={{px: 3, py: 2, bgcolor: 'background.default'}}>
           <Stack spacing={2}>

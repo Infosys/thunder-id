@@ -27,13 +27,13 @@ import (
 	authnoidc "github.com/asgardeo/thunder/internal/authn/oidc"
 	authnprovidermgr "github.com/asgardeo/thunder/internal/authnprovider/manager"
 	"github.com/asgardeo/thunder/internal/entityprovider"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	"github.com/asgardeo/thunder/internal/flow/core"
 	"github.com/asgardeo/thunder/internal/idp"
 	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
 	"github.com/asgardeo/thunder/internal/system/log"
 	systemutils "github.com/asgardeo/thunder/internal/system/utils"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 const (
@@ -65,7 +65,7 @@ func newOIDCAuthExecutor(
 	defaultInputs, prerequisites []common.Input,
 	flowFactory core.FlowFactoryInterface,
 	idpService idp.IDPServiceInterface,
-	userSchemaService userschema.UserSchemaServiceInterface,
+	entityTypeService entitytype.EntityTypeServiceInterface,
 	authService authnoidc.OIDCAuthnCoreServiceInterface,
 	authnProvider authnprovidermgr.AuthnProviderManagerInterface,
 	idpType idp.IDPType,
@@ -82,7 +82,7 @@ func newOIDCAuthExecutor(
 	}
 
 	base := newOAuthExecutor(name, defaultInputs, prerequisites,
-		flowFactory, idpService, userSchemaService, oauthSvcCast, authnProvider, idpType)
+		flowFactory, idpService, entityTypeService, oauthSvcCast, authnProvider, idpType)
 
 	return &oidcAuthExecutor{
 		oAuthExecutorInterface: base,

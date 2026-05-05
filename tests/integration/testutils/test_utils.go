@@ -422,7 +422,7 @@ func CopyDeclarativeResources(zipFilePattern string) error {
 		"resource_servers",
 		"roles",
 		"themes",
-		"user_schemas",
+		"user_types",
 		"users",
 	}
 

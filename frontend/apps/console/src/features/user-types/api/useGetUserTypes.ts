@@ -20,24 +20,24 @@ import {useAsgardeo} from '@asgardeo/react';
 import {useQuery, type UseQueryResult} from '@tanstack/react-query';
 import {useConfig} from '@thunderid/contexts';
 import UserTypeQueryKeys from '../constants/userTypeQueryKeys';
-import type {UserSchemaListParams, UserSchemaListResponse} from '../types/user-types';
+import type {UserTypeListParams, UserTypeListResponse} from '../types/user-types';
 
 /**
- * Custom React hook to fetch a paginated list of user schemas (user types) from the server.
+ * Custom React hook to fetch a paginated list of user types from the server.
  *
  * @param params - Optional pagination parameters
  * @param params.limit - Maximum number of records to return
  * @param params.offset - Number of records to skip for pagination
  * @returns TanStack Query result object containing user types list data, loading state, and error information
  */
-export default function useGetUserTypes(params?: UserSchemaListParams): UseQueryResult<UserSchemaListResponse> {
+export default function useGetUserTypes(params?: UserTypeListParams): UseQueryResult<UserTypeListResponse> {
   const {http} = useAsgardeo();
   const {getServerUrl} = useConfig();
   const {limit, offset} = params ?? {};
 
-  return useQuery<UserSchemaListResponse>({
+  return useQuery<UserTypeListResponse>({
     queryKey: [UserTypeQueryKeys.USER_TYPES, {limit, offset}],
-    queryFn: async (): Promise<UserSchemaListResponse> => {
+    queryFn: async (): Promise<UserTypeListResponse> => {
       const serverUrl: string = getServerUrl();
       const queryParams: URLSearchParams = new URLSearchParams();
 
@@ -50,10 +50,10 @@ export default function useGetUserTypes(params?: UserSchemaListParams): UseQuery
       queryParams.append('include', 'display');
 
       const queryString: string = queryParams.toString();
-      const url = `${serverUrl}/user-schemas${queryString ? `?${queryString}` : ''}`;
+      const url = `${serverUrl}/user-types${queryString ? `?${queryString}` : ''}`;
 
       const response: {
-        data: UserSchemaListResponse;
+        data: UserTypeListResponse;
       } = await http.request({
         url,
         method: 'GET',

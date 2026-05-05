@@ -267,8 +267,10 @@ func TestInitSystemPermissions_EmptyHandle(t *testing.T) {
 	assert.Equal(t, "system:user:view", p.UserView)
 	assert.Equal(t, "system:group", p.Group)
 	assert.Equal(t, "system:group:view", p.GroupView)
-	assert.Equal(t, "system:userschema", p.UserSchema)
-	assert.Equal(t, "system:userschema:view", p.UserSchemaView)
+	assert.Equal(t, "system:usertype", p.UserType)
+	assert.Equal(t, "system:usertype:view", p.UserTypeView)
+	assert.Equal(t, "system:agenttype", p.AgentType)
+	assert.Equal(t, "system:agenttype:view", p.AgentTypeView)
 }
 
 func TestInitSystemPermissions_NonEmptyHandle(t *testing.T) {
@@ -283,8 +285,10 @@ func TestInitSystemPermissions_NonEmptyHandle(t *testing.T) {
 	assert.Equal(t, "mgmt:system:user:view", p.UserView)
 	assert.Equal(t, "mgmt:system:group", p.Group)
 	assert.Equal(t, "mgmt:system:group:view", p.GroupView)
-	assert.Equal(t, "mgmt:system:userschema", p.UserSchema)
-	assert.Equal(t, "mgmt:system:userschema:view", p.UserSchemaView)
+	assert.Equal(t, "mgmt:system:usertype", p.UserType)
+	assert.Equal(t, "mgmt:system:usertype:view", p.UserTypeView)
+	assert.Equal(t, "mgmt:system:agenttype", p.AgentType)
+	assert.Equal(t, "mgmt:system:agenttype:view", p.AgentTypeView)
 
 	// Restore default for other tests.
 	InitSystemPermissions("")

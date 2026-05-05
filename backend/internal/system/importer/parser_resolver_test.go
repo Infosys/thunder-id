@@ -139,9 +139,9 @@ func TestClassifyResourceType_AdditionalResources(t *testing.T) {
 			expected: resourceTypeOrganizationUnit,
 		},
 		{
-			name:     "user schema",
+			name:     "user type",
 			yamlDoc:  "id: sch-1\nname: Schema\norganization_unit_id: ou-1\nschema: '{}'\n",
-			expected: resourceTypeUserSchema,
+			expected: resourceTypeEntityType,
 		},
 		{
 			name:     "resource server",

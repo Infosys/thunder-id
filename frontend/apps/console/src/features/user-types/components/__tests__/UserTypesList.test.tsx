@@ -23,7 +23,7 @@ import {type ReactElement, type ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import type useDeleteUserTypeHook from '../../api/useDeleteUserType';
 import type useGetUserTypesHook from '../../api/useGetUserTypes';
-import type {UserSchemaListResponse, UserSchemaListItem} from '../../types/user-types';
+import type {UserTypeListResponse, UserTypeListItem} from '../../types/user-types';
 import UserTypesList from '../UserTypesList';
 
 const {mockLoggerError} = vi.hoisted(() => ({
@@ -33,7 +33,7 @@ const {mockLoggerError} = vi.hoisted(() => ({
 const mockNavigate = vi.fn();
 const mockMutateAsync = vi.fn();
 
-type MockDataGridRow = UserSchemaListItem & Record<string, unknown>;
+type MockDataGridRow = UserTypeListItem & Record<string, unknown>;
 
 type MockDataGridColumn =
   | {
@@ -173,7 +173,7 @@ vi.mock('../../../organization-units/api/useGetOrganizationUnits', () => ({
 }));
 
 describe('UserTypesList', () => {
-  const mockUserTypesData: UserSchemaListResponse = {
+  const mockUserTypesData: UserTypeListResponse = {
     totalResults: 2,
     startIndex: 1,
     count: 2,

@@ -35,9 +35,9 @@ export interface ExportRequest {
    */
   notificationSenders?: string[];
   /**
-   * List of user schema IDs to export. Use `["*"]` to export all.
+   * List of user type IDs to export. Use `["*"]` to export all.
    */
-  userSchemas?: string[];
+  userTypes?: string[];
   /**
    * List of organization unit IDs to export. Use `["*"]` to export all.
    */

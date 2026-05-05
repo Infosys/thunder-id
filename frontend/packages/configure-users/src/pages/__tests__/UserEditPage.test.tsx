@@ -20,7 +20,7 @@ import {render, screen, waitFor, within, userEvent} from '@thunderid/test-utils'
 import type {User} from '@thunderid/types';
 import type {ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
-import type {ApiUserSchema, UserSchemaListResponse} from '../../models/users';
+import type {ApiUserType, UserTypeListResponse} from '../../models/users';
 import UserEditPage from '../UserEditPage';
 
 const {mockLoggerError} = vi.hoisted(() => ({
@@ -80,14 +80,14 @@ interface UseGetUserReturn {
   error: Error | null;
 }
 
-interface UseGetUserSchemasReturn {
-  data: UserSchemaListResponse | undefined;
+interface UseGetUserTypesReturn {
+  data: UserTypeListResponse | undefined;
   isLoading: boolean;
   error: Error | null;
 }
 
-interface UseGetUserSchemaReturn {
-  data: ApiUserSchema | undefined;
+interface UseGetUserTypeReturn {
+  data: ApiUserType | undefined;
   isLoading: boolean;
   error: Error | null;
 }
@@ -117,8 +117,8 @@ interface UseDeleteUserReturn {
 }
 
 const mockUseGetUser = vi.fn<() => UseGetUserReturn>();
-const mockUseGetUserSchemas = vi.fn<() => UseGetUserSchemasReturn>();
-const mockUseGetUserSchema = vi.fn<() => UseGetUserSchemaReturn>();
+const mockUseGetUserTypes = vi.fn<() => UseGetUserTypesReturn>();
+const mockUseGetUserType = vi.fn<() => UseGetUserTypeReturn>();
 const mockUseUpdateUser = vi.fn<() => UseUpdateUserReturn>();
 const mockUseDeleteUser = vi.fn<() => UseDeleteUserReturn>();
 
@@ -126,12 +126,12 @@ vi.mock('../../api/useGetUser', () => ({
   default: () => mockUseGetUser(),
 }));
 
-vi.mock('../../api/useGetUserSchemas', () => ({
-  default: () => mockUseGetUserSchemas(),
+vi.mock('../../api/useGetUserTypes', () => ({
+  default: () => mockUseGetUserTypes(),
 }));
 
-vi.mock('../../api/useGetUserSchema', () => ({
-  default: () => mockUseGetUserSchema(),
+vi.mock('../../api/useGetUserType', () => ({
+  default: () => mockUseGetUserType(),
 }));
 
 vi.mock('../../api/useUpdateUser', () => ({
@@ -155,14 +155,14 @@ describe('UserEditPage', () => {
     },
   };
 
-  const mockSchemasData: UserSchemaListResponse = {
+  const mockSchemasData: UserTypeListResponse = {
     totalResults: 1,
     startIndex: 1,
     count: 1,
     schemas: [{id: 'employee', name: 'Employee', ouId: 'test-ou'}],
   };
 
-  const mockSchemaData: ApiUserSchema = {
+  const mockSchemaData: ApiUserType = {
     id: 'employee',
     name: 'Employee',
     schema: {
@@ -221,12 +221,12 @@ describe('UserEditPage', () => {
       isLoading: false,
       error: null,
     });
-    mockUseGetUserSchemas.mockReturnValue({
+    mockUseGetUserTypes.mockReturnValue({
       data: mockSchemasData,
       isLoading: false,
       error: null,
     });
-    mockUseGetUserSchema.mockReturnValue({
+    mockUseGetUserType.mockReturnValue({
       data: mockSchemaData,
       isLoading: false,
       error: null,
@@ -249,7 +249,7 @@ describe('UserEditPage', () => {
     });
 
     it('displays loading spinner when schema is loading', () => {
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: undefined,
         isLoading: true,
         error: null,
@@ -298,7 +298,7 @@ describe('UserEditPage', () => {
     });
 
     it('displays error alert when schema fails to load', () => {
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: undefined,
         isLoading: false,
         error: new Error('Schema not found'),
@@ -510,7 +510,7 @@ describe('UserEditPage', () => {
         isLoading: false,
         error: null,
       });
-      mockUseGetUserSchemas.mockReturnValue({
+      mockUseGetUserTypes.mockReturnValue({
         data: {
           ...mockSchemasData,
           schemas: [{...mockSchemasData.schemas[0], ouId: ''}],
@@ -563,7 +563,7 @@ describe('UserEditPage', () => {
 
     it('filters out password field from schema in edit mode', async () => {
       const user = userEvent.setup();
-      const schemaWithPassword: ApiUserSchema = {
+      const schemaWithPassword: ApiUserType = {
         id: 'employee',
         name: 'Employee',
         schema: {
@@ -583,7 +583,7 @@ describe('UserEditPage', () => {
         },
       };
 
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: schemaWithPassword,
         isLoading: false,
         error: null,
@@ -603,7 +603,7 @@ describe('UserEditPage', () => {
 
     it('filters out all credential fields from schema in edit mode', async () => {
       const user = userEvent.setup();
-      const schemaWithMultipleCredentials: ApiUserSchema = {
+      const schemaWithMultipleCredentials: ApiUserType = {
         id: 'employee',
         name: 'Employee',
         schema: {
@@ -627,7 +627,7 @@ describe('UserEditPage', () => {
         },
       };
 
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: schemaWithMultipleCredentials,
         isLoading: false,
         error: null,
@@ -648,7 +648,7 @@ describe('UserEditPage', () => {
 
     it('does not filter non-credential fields with similar names', async () => {
       const user = userEvent.setup();
-      const schemaWithoutCredential: ApiUserSchema = {
+      const schemaWithoutCredential: ApiUserType = {
         id: 'employee',
         name: 'Employee',
         schema: {
@@ -663,7 +663,7 @@ describe('UserEditPage', () => {
         },
       };
 
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: schemaWithoutCredential,
         isLoading: false,
         error: null,
@@ -681,7 +681,7 @@ describe('UserEditPage', () => {
     });
 
     it('hides edit button when schema has only credential fields', () => {
-      const credentialOnlySchema: ApiUserSchema = {
+      const credentialOnlySchema: ApiUserType = {
         id: 'credential-only',
         name: 'CredentialOnly',
         schema: {
@@ -697,7 +697,7 @@ describe('UserEditPage', () => {
         },
       };
 
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: credentialOnlySchema,
         isLoading: false,
         error: null,
@@ -709,7 +709,7 @@ describe('UserEditPage', () => {
     });
 
     it('shows edit button when schema has at least one non-credential field', () => {
-      const mixedSchema: ApiUserSchema = {
+      const mixedSchema: ApiUserType = {
         id: 'mixed',
         name: 'Mixed',
         schema: {
@@ -725,7 +725,7 @@ describe('UserEditPage', () => {
         },
       };
 
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: mixedSchema,
         isLoading: false,
         error: null,
@@ -806,7 +806,7 @@ describe('UserEditPage', () => {
         isLoading: false,
         error: null,
       });
-      mockUseGetUserSchemas.mockReturnValue({
+      mockUseGetUserTypes.mockReturnValue({
         data: {
           ...mockSchemasData,
           schemas: [{...mockSchemasData.schemas[0], ouId: 'schema-ou'}],
@@ -829,7 +829,7 @@ describe('UserEditPage', () => {
 
     it('falls back to user organization unit when schema does not provide one', async () => {
       const user = userEvent.setup();
-      mockUseGetUserSchemas.mockReturnValue({
+      mockUseGetUserTypes.mockReturnValue({
         data: {
           ...mockSchemasData,
           schemas: [{...mockSchemasData.schemas[0], ouId: ''}],
@@ -1216,7 +1216,7 @@ describe('UserEditPage', () => {
         error: new Error(),
       });
 
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: undefined,
         isLoading: false,
         error: null,
@@ -1229,11 +1229,11 @@ describe('UserEditPage', () => {
     });
 
     it('hides edit button when schema is null', () => {
-      mockUseGetUserSchema.mockReturnValue({
+      mockUseGetUserType.mockReturnValue({
         data: {
           id: 'employee',
           name: 'Employee',
-          schema: null as unknown as ApiUserSchema['schema'],
+          schema: null as unknown as ApiUserType['schema'],
         },
         isLoading: false,
         error: null,

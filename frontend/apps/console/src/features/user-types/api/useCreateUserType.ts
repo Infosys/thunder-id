@@ -21,27 +21,27 @@ import {useMutation, useQueryClient, type UseMutationResult} from '@tanstack/rea
 import {useConfig, useToast} from '@thunderid/contexts';
 import {useTranslation} from 'react-i18next';
 import UserTypeQueryKeys from '../constants/userTypeQueryKeys';
-import type {ApiUserSchema, CreateUserSchemaRequest} from '../types/user-types';
+import type {ApiUserType, CreateUserTypeRequest} from '../types/user-types';
 
 /**
- * Custom React hook to create a new user schema (user type) in the server.
+ * Custom React hook to create a new user type in the server.
  *
  * @returns TanStack Query mutation object for creating user types
  */
-export default function useCreateUserType(): UseMutationResult<ApiUserSchema, Error, CreateUserSchemaRequest> {
+export default function useCreateUserType(): UseMutationResult<ApiUserType, Error, CreateUserTypeRequest> {
   const {http} = useAsgardeo();
   const {getServerUrl} = useConfig();
   const queryClient: ReturnType<typeof useQueryClient> = useQueryClient();
   const {t} = useTranslation('userTypes');
   const {showToast} = useToast();
 
-  return useMutation<ApiUserSchema, Error, CreateUserSchemaRequest>({
-    mutationFn: async (requestData: CreateUserSchemaRequest): Promise<ApiUserSchema> => {
+  return useMutation<ApiUserType, Error, CreateUserTypeRequest>({
+    mutationFn: async (requestData: CreateUserTypeRequest): Promise<ApiUserType> => {
       const serverUrl: string = getServerUrl();
       const response: {
-        data: ApiUserSchema;
+        data: ApiUserType;
       } = await http.request({
-        url: `${serverUrl}/user-schemas`,
+        url: `${serverUrl}/user-types`,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

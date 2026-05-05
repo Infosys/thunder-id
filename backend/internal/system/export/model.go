@@ -25,7 +25,7 @@ type ExportRequest struct {
 	Applications        []string `json:"applications,omitempty"`
 	IdentityProviders   []string `json:"identityProviders,omitempty"`
 	NotificationSenders []string `json:"notificationSenders,omitempty"`
-	UserSchemas         []string `json:"userSchemas,omitempty"`
+	EntityTypes         []string `json:"userTypes,omitempty"`
 	OrganizationUnits   []string `json:"organizationUnits,omitempty"`
 	Users               []string `json:"users,omitempty"`
 	ResourceServers     []string `json:"resourceServers,omitempty"`

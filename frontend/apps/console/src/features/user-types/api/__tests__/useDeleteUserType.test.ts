@@ -83,7 +83,7 @@ describe('useDeleteUserType', () => {
 
     expect(mockHttpRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: `https://api.test.com/user-schemas/${mockUserTypeId}`,
+        url: `https://api.test.com/user-types/${mockUserTypeId}`,
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

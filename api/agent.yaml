@@ -18,6 +18,8 @@ servers:
 tags:
   - name: agents
     description: Operations related to agent management
+  - name: agent-types
+    description: Operations related to agent type schema management
 
 security:
   - OAuth2: [system]
@@ -1016,6 +1018,377 @@ paths:
         "500":
           description: Internal server error
 
+  /agent-types:
+    get:
+      tags:
+        - agent-types
+      summary: List agent type schemas
+      description: |
+        Retrieves a list of all agent type schemas that define the structure
+        and attributes for different agent types.
+      parameters:
+        - $ref: '#/components/parameters/limitQueryParam'
+        - $ref: '#/components/parameters/offsetQueryParam'
+        - $ref: '#/components/parameters/includeQueryParam'
+      responses:
+        "200":
+          description: List of agent type schemas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentTypeListResponse'
+              example:
+                totalResults: 2
+                startIndex: 1
+                count: 2
+                schemas:
+                  - id: "660e8400-e29b-41d4-a716-446655440001"
+                    name: "service-agent"
+                    ouId: "a839f4bd-39dc-4eaa-b5cc-210d8ecaee87"
+                    allowSelfRegistration: false
+                    systemAttributes:
+                      display: "name"
+                  - id: "550e8400-e29b-41d4-a716-446655440000"
+                    name: "tool-agent"
+                    ouId: "26eec421-f1bb-4deb-a5d3-9ab6554c2ae6"
+                    allowSelfRegistration: false
+                    systemAttributes:
+                      display: "name"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              examples:
+                invalid-limit:
+                  summary: Invalid limit parameter
+                  value:
+                    code: "USRS-1005"
+                    message:
+                      key: "error.entitytypeservice.invalid_limit_parameter"
+                      defaultValue: "Invalid pagination parameter"
+                    description:
+                      key: "error.entitytypeservice.invalid_limit_parameter_description"
+                      defaultValue: "The limit parameter must be a positive integer"
+                invalid-offset:
+                  summary: Invalid offset parameter
+                  value:
+                    code: "USRS-1006"
+                    message:
+                      key: "error.entitytypeservice.invalid_offset_parameter"
+                      defaultValue: "Invalid pagination parameter"
+                    description:
+                      key: "error.entitytypeservice.invalid_offset_parameter_description"
+                      defaultValue: "The offset parameter must be a non-negative integer"
+        "500":
+          description: Internal server error
+
+    post:
+      tags:
+        - agent-types
+      summary: Create a new agent type schema
+      description: |
+        Creates a new agent type schema that defines the structure and attributes
+        for a specific agent type.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAgentTypeRequest'
+            example:
+              name: "tool-agent"
+              ouId: "26eec421-f1bb-4deb-a5d3-9ab6554c2ae6"
+              allowSelfRegistration: false
+              systemAttributes:
+                display: "name"
+              schema:
+                name:
+                  type: "string"
+                  required: true
+                  unique: true
+                description:
+                  type: "string"
+                model:
+                  type: "string"
+                  required: true
+                  enum: ["gpt-4", "gpt-4o", "claude-sonnet", "claude-opus"]
+                isActive:
+                  type: "boolean"
+      responses:
+        "201":
+          description: agent type created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentType'
+              example:
+                id: "880e8400-e29b-41d4-a716-446655440003"
+                name: "tool-agent"
+                ouId: "26eec421-f1bb-4deb-a5d3-9ab6554c2ae6"
+                allowSelfRegistration: false
+                systemAttributes:
+                  display: "name"
+                schema:
+                  name:
+                    type: "string"
+                    required: true
+                    unique: true
+                  description:
+                    type: "string"
+                  model:
+                    type: "string"
+                    required: true
+                    enum: ["gpt-4", "gpt-4o", "claude-sonnet", "claude-opus"]
+                  isActive:
+                    type: "boolean"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              examples:
+                invalid-request-format:
+                  summary: Invalid request format
+                  value:
+                    code: "USRS-1001"
+                    message:
+                      key: "error.entitytypeservice.invalid_request_format"
+                      defaultValue: "Invalid request format"
+                    description:
+                      key: "error.entitytypeservice.invalid_request_format_description"
+                      defaultValue: "The request body is malformed or contains invalid data"
+                invalid-attribute-definition:
+                  summary: Invalid attribute definition
+                  value:
+                    code: "USRS-1004"
+                    message:
+                      key: "error.entitytypeservice.invalid_agent_type_request"
+                      defaultValue: "Invalid agent type request"
+                    description:
+                      key: "error.entitytypeservice.invalid_agent_type_request_description"
+                      defaultValue: "The agent type request contains invalid or missing required fields"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              example:
+                code: "USRS-1003"
+                message:
+                  key: "error.entitytypeservice.agent_type_name_conflict"
+                  defaultValue: "Agent type name conflict"
+                description:
+                  key: "error.entitytypeservice.agent_type_name_conflict_description"
+                  defaultValue: "An agent type with the same name already exists"
+        "500":
+          description: Internal server error
+
+  /agent-types/{id}:
+    get:
+      tags:
+        - agent-types
+      summary: Get an agent type schema by ID
+      description: |
+        Retrieves the details of a specific agent type schema by its ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        - $ref: '#/components/parameters/includeQueryParam'
+      responses:
+        "200":
+          description: agent type details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentType'
+              example:
+                id: "660e8400-e29b-41d4-a716-446655440001"
+                name: "service-agent"
+                ouId: "a839f4bd-39dc-4eaa-b5cc-210d8ecaee87"
+                allowSelfRegistration: false
+                systemAttributes:
+                  display: "name"
+                schema:
+                  name:
+                    type: "string"
+                    required: true
+                    unique: true
+                  description:
+                    type: "string"
+                  model:
+                    type: "string"
+                    required: true
+                    enum: ["gpt-4", "gpt-4o", "claude-sonnet", "claude-opus"]
+                  capabilities:
+                    type: "array"
+                    items:
+                      type: "string"
+                      enum: ["chat", "tools", "vision", "code"]
+                  isActive:
+                    type: "boolean"
+        "404":
+          description: agent type not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              example:
+                code: "USRS-1002"
+                message:
+                  key: "error.entitytypeservice.agent_type_not_found"
+                  defaultValue: "Agent type not found"
+                description:
+                  key: "error.entitytypeservice.agent_type_not_found_description"
+                  defaultValue: "The agent type with the specified id does not exist"
+        "500":
+          description: Internal server error
+
+    put:
+      tags:
+        - agent-types
+      summary: Update an agent type schema by ID
+      description: |
+        Updates an existing agent type schema with new attribute definitions.
+        This operation replaces the entire schema definition.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAgentTypeRequest'
+            example:
+              name: "tool-agent"
+              ouId: "26eec421-f1bb-4deb-a5d3-9ab6554c2ae6"
+              allowSelfRegistration: false
+              systemAttributes:
+                display: "name"
+              schema:
+                name:
+                  type: "string"
+                  required: true
+                  unique: true
+                model:
+                  type: "string"
+                  required: true
+                temperature:
+                  type: "number"
+      responses:
+        "200":
+          description: agent type updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentType'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              examples:
+                invalid-request-format:
+                  summary: Invalid request format
+                  value:
+                    code: "USRS-1001"
+                    message:
+                      key: "error.entitytypeservice.invalid_request_format"
+                      defaultValue: "Invalid request format"
+                    description:
+                      key: "error.entitytypeservice.invalid_request_format_description"
+                      defaultValue: "The request body is malformed or contains invalid data"
+                invalid-attribute-definition:
+                  summary: Invalid attribute definition
+                  value:
+                    code: "USRS-1004"
+                    message:
+                      key: "error.entitytypeservice.invalid_agent_type_request"
+                      defaultValue: "Invalid agent type request"
+                    description:
+                      key: "error.entitytypeservice.invalid_agent_type_request_description"
+                      defaultValue: "The agent type request contains invalid or missing required fields"
+        "404":
+          description: agent type not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              example:
+                code: "USRS-1002"
+                message:
+                  key: "error.entitytypeservice.agent_type_not_found"
+                  defaultValue: "Agent type not found"
+                description:
+                  key: "error.entitytypeservice.agent_type_not_found_description"
+                  defaultValue: "The agent type with the specified id does not exist"
+        "409":
+          description: agent type name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              example:
+                code: "USRS-1003"
+                message:
+                  key: "error.entitytypeservice.agent_type_name_conflict"
+                  defaultValue: "Agent type name conflict"
+                description:
+                  key: "error.entitytypeservice.agent_type_name_conflict_description"
+                  defaultValue: "An agent type with the same name already exists"
+        "500":
+          description: Internal server error
+
+    delete:
+      tags:
+        - agent-types
+      summary: Delete an agent type schema by ID
+      description: |
+        Deletes an agent type schema. This operation will fail if there are
+        existing agents of this type.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+      responses:
+        "204":
+          description: agent type deleted
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityTypeError'
+              example:
+                code: "USRS-1004"
+                message:
+                  key: "error.entitytypeservice.invalid_agent_type_request"
+                  defaultValue: "Invalid agent type request"
+                description:
+                  key: "error.entitytypeservice.invalid_agent_type_request_description"
+                  defaultValue: "Cannot delete schema because agents of this type exist"
+        "500":
+          description: Internal server error
+
 components:
   securitySchemes:
     OAuth2:
@@ -1745,6 +2118,297 @@ components:
                 Never returned by GET endpoints. Absent for public clients
                 (`tokenEndpointAuthMethod: none`) and `private_key_jwt` clients.
               example: "s3cr3t_only_shown_once"
+
+    AgentType:
+      type: object
+      required: [id, name, ouId, schema]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "The unique identifier of the agent type"
+        name:
+          type: string
+          description: "The agent type this schema defines"
+        ouId:
+          type: string
+          format: uuid
+          description: "The root organization unit ID associated with this agent type schema"
+        ouHandle:
+          type: string
+          readOnly: true
+          description: "Human-readable handle of the organization unit (only included when include=display query parameter is used)."
+        allowSelfRegistration:
+          type: boolean
+          description: "Indicates whether agents of this type can perform self-registration flows"
+          default: false
+        systemAttributes:
+          type: object
+          description: "System-level metadata for the agent type"
+          properties:
+            display:
+              type: string
+              description: "The schema attribute to use as the human-readable display name for agents of this type"
+          additionalProperties: false
+        schema:
+          type: object
+          description: "JSON Schema definition for the agent type"
+          additionalProperties:
+            oneOf:
+              - type: object
+                description: "Leaf property - string or number"
+                required: [type]
+                properties:
+                  type:
+                    type: string
+                    enum: ["string", "number"]
+                    description: "Data type of the property"
+                  required:
+                    type: boolean
+                    default: false
+                    description: "Whether this attribute must be provided for the agent type"
+                  unique:
+                    type: boolean
+                    default: false
+                    description: "Whether this property must be unique across all agents"
+                  credential:
+                    type: boolean
+                    default: false
+                    description: "Whether this property should be treated as a credential attribute"
+                  enum:
+                    type: array
+                    items:
+                      type: string
+                    description: "List of allowed values for this property"
+                  regex:
+                    type: string
+                    description: "Regular expression pattern for validating the property value"
+                additionalProperties: false
+              - type: object
+                description: "Leaf property - boolean"
+                required: [type]
+                properties:
+                  type:
+                    type: string
+                    enum: ["boolean"]
+                    description: "Data type of the property"
+                  required:
+                    type: boolean
+                    default: false
+                    description: "Whether this attribute must be provided for the agent type"
+                additionalProperties: false
+              - type: object
+                description: "Object property definition"
+                required: [type, properties]
+                properties:
+                  type:
+                    type: string
+                    enum: ["object"]
+                    description: "Data type (object)"
+                  required:
+                    type: boolean
+                    default: false
+                    description: "Whether this attribute must be provided for the agent type"
+                  properties:
+                    type: object
+                    description: "Nested properties of the object"
+                    additionalProperties:
+                      $ref: "#/components/schemas/AgentType/properties/schema/additionalProperties"
+                additionalProperties: false
+              - type: object
+                description: "Array property definition"
+                required: [type, items]
+                properties:
+                  type:
+                    type: string
+                    enum: ["array"]
+                    description: "Data type (array)"
+                  required:
+                    type: boolean
+                    default: false
+                    description: "Whether this attribute must be provided for the agent type"
+                  items:
+                    oneOf:
+                      - type: object
+                        description: "Array of strings or numbers"
+                        required: [type]
+                        properties:
+                          type:
+                            type: string
+                            enum: ["string", "number"]
+                          enum:
+                            type: array
+                            items:
+                              type: string
+                        additionalProperties: false
+                      - type: object
+                        description: "Array of booleans"
+                        required: [type]
+                        properties:
+                          type:
+                            type: string
+                            enum: ["boolean"]
+                        additionalProperties: false
+                      - type: object
+                        description: "Array of objects"
+                        required: [type, properties]
+                        properties:
+                          type:
+                            type: string
+                            enum: ["object"]
+                          properties:
+                            type: object
+                            additionalProperties:
+                              $ref: "#/components/schemas/AgentType/properties/schema/additionalProperties"
+                        additionalProperties: false
+                additionalProperties: false
+          example:
+            name:
+              type: "string"
+              required: true
+              unique: true
+            description:
+              type: "string"
+            model:
+              type: "string"
+              required: true
+              enum: ["gpt-4", "gpt-4o", "claude-sonnet", "claude-opus"]
+            temperature:
+              type: "number"
+            isActive:
+              type: "boolean"
+            capabilities:
+              type: "array"
+              items:
+                type: "string"
+                enum: ["chat", "tools", "vision", "code"]
+
+    AgentTypeListResponse:
+      type: object
+      properties:
+        totalResults:
+          type: integer
+          description: "Number of results that match the listing operation."
+          example: 5
+        startIndex:
+          type: integer
+          description: "Index of the first element of the page, which will be equal to offset + 1."
+          example: 1
+        count:
+          type: integer
+          description: "Number of elements in the returned page."
+          example: 3
+        schemas:
+          type: array
+          items:
+            type: object
+            required: [id, name, ouId]
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: "The unique identifier of the agent type"
+              name:
+                type: string
+                description: "The agent type this schema defines"
+              ouId:
+                type: string
+                format: uuid
+                description: "The root organization unit ID associated with this agent type schema"
+              ouHandle:
+                type: string
+                readOnly: true
+                description: "Human-readable handle of the organization unit (only included when include=display query parameter is used)."
+              allowSelfRegistration:
+                type: boolean
+                description: "Indicates whether agents of this type can perform self-registration flows"
+                default: false
+              systemAttributes:
+                type: object
+                description: "System-level metadata for the agent type"
+                properties:
+                  display:
+                    type: string
+                    description: "The schema attribute to use as the human-readable display name for agents of this type"
+                additionalProperties: false
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+
+    CreateAgentTypeRequest:
+      type: object
+      required: [name, ouId, schema]
+      properties:
+        name:
+          type: string
+          description: "The agent type this schema will define"
+        ouId:
+          type: string
+          format: uuid
+          description: "The organization unit ID where this agent type schema is applicable"
+        allowSelfRegistration:
+          type: boolean
+          description: "Whether the agent type supports self-initiated registration"
+          default: false
+        systemAttributes:
+          $ref: "#/components/schemas/AgentType/properties/systemAttributes"
+        schema:
+          type: object
+          description: "JSON Schema definition for the agent type"
+          additionalProperties:
+            $ref: "#/components/schemas/AgentType/properties/schema/additionalProperties"
+
+    UpdateAgentTypeRequest:
+      type: object
+      required: [name, ouId, schema]
+      properties:
+        name:
+          type: string
+          description: "The agent type this schema defines"
+        ouId:
+          type: string
+          format: uuid
+          description: "The root organization unit ID where this agent type schema is applicable"
+        allowSelfRegistration:
+          type: boolean
+          description: "Whether the agent type supports self-initiated registration"
+          default: false
+        systemAttributes:
+          $ref: "#/components/schemas/AgentType/properties/systemAttributes"
+        schema:
+          type: object
+          description: "JSON Schema definition for the agent type"
+          additionalProperties:
+            $ref: "#/components/schemas/AgentType/properties/schema/additionalProperties"
+
+    EntityTypeError:
+      type: object
+      required: [code, message]
+      description: |
+        Internationalized error response returned by entity type management endpoints.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code (USRS-XXXX prefix shared with user-types).
+        message:
+          $ref: '#/components/schemas/I18nMessage'
+        description:
+          $ref: '#/components/schemas/I18nMessage'
+
+    I18nMessage:
+      type: object
+      description: Internationalized message with translation key and default value.
+      required:
+        - key
+        - defaultValue
+      properties:
+        key:
+          type: string
+          description: Translation key for fetching localized message.
+        defaultValue:
+          type: string
+          description: Default message in English (fallback).
 
     Link:
       type: object

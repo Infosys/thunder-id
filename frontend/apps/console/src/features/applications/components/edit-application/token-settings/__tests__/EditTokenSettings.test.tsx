@@ -392,7 +392,7 @@ describe('EditTokenSettings', () => {
   describe('Credential Attribute Filtering', () => {
     const mockSchemaRequest = (schema: Record<string, unknown>) => {
       mockHttp.request.mockImplementation(({url}: {url: string}) => {
-        if (url.includes('/user-schemas/schema-1')) {
+        if (url.includes('/user-types/schema-1')) {
           return Promise.resolve({
             data: {
               id: 'schema-1',

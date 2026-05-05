@@ -20,7 +20,7 @@ import {render, screen, waitFor, userEvent} from '@thunderid/test-utils';
 import type {ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import UserCreateProvider from '../../contexts/UserCreate/UserCreateProvider';
-import type {UserSchemaListResponse, ApiUserSchema, SchemaInterface} from '../../models/users';
+import type {UserTypeListResponse, ApiUserType, SchemaInterface} from '../../models/users';
 import UserCreatePage from '../UserCreatePage';
 
 const mockNavigate = vi.fn();
@@ -72,32 +72,32 @@ interface UseCreateUserReturn {
   reset: () => void;
 }
 
-interface UseGetUserSchemasReturn {
-  data: UserSchemaListResponse | undefined;
+interface UseGetUserTypesReturn {
+  data: UserTypeListResponse | undefined;
   isLoading: boolean;
   error: Error | null;
 }
 
-interface UseGetUserSchemaReturn {
-  data: ApiUserSchema | undefined;
+interface UseGetUserTypeReturn {
+  data: ApiUserType | undefined;
   isLoading: boolean;
   error: Error | null;
 }
 
 const mockUseCreateUser = vi.fn<() => UseCreateUserReturn>();
-const mockUseGetUserSchemas = vi.fn<() => UseGetUserSchemasReturn>();
-const mockUseGetUserSchema = vi.fn<() => UseGetUserSchemaReturn>();
+const mockUseGetUserTypes = vi.fn<() => UseGetUserTypesReturn>();
+const mockUseGetUserType = vi.fn<() => UseGetUserTypeReturn>();
 
 vi.mock('../../api/useCreateUser', () => ({
   default: () => mockUseCreateUser(),
 }));
 
-vi.mock('../../api/useGetUserSchemas', () => ({
-  default: () => mockUseGetUserSchemas(),
+vi.mock('../../api/useGetUserTypes', () => ({
+  default: () => mockUseGetUserTypes(),
 }));
 
-vi.mock('../../api/useGetUserSchema', () => ({
-  default: () => mockUseGetUserSchema(),
+vi.mock('../../api/useGetUserType', () => ({
+  default: () => mockUseGetUserType(),
 }));
 
 // Mock useGetChildOrganizationUnits — controls whether OU step appears
@@ -247,7 +247,7 @@ vi.mock('../../components/create-user/ConfigureUserDetails', () => ({
   ),
 }));
 
-const mockSchemasData: UserSchemaListResponse = {
+const mockSchemasData: UserTypeListResponse = {
   totalResults: 2,
   startIndex: 1,
   count: 2,
@@ -257,7 +257,7 @@ const mockSchemasData: UserSchemaListResponse = {
   ],
 };
 
-const mockSchemaData: ApiUserSchema = {
+const mockSchemaData: ApiUserType = {
   id: 'schema1',
   name: 'Employee',
   schema: {
@@ -310,12 +310,12 @@ describe('UserCreatePage', () => {
       isIdle: true,
       reset: mockReset,
     });
-    mockUseGetUserSchemas.mockReturnValue({
+    mockUseGetUserTypes.mockReturnValue({
       data: mockSchemasData,
       isLoading: false,
       error: null,
     });
-    mockUseGetUserSchema.mockReturnValue({
+    mockUseGetUserType.mockReturnValue({
       data: mockSchemaData,
       isLoading: false,
       error: null,
@@ -421,7 +421,7 @@ describe('UserCreatePage', () => {
   });
 
   it('shows loading state when schema is loading on step 2', async () => {
-    mockUseGetUserSchema.mockReturnValue({
+    mockUseGetUserType.mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
@@ -604,7 +604,7 @@ describe('UserCreatePage', () => {
   it('closes snackbar when dismissed', async () => {
     const user = userEvent.setup();
 
-    mockUseGetUserSchemas.mockReturnValue({
+    mockUseGetUserTypes.mockReturnValue({
       data: {
         ...mockSchemasData,
         schemas: [{id: 'schema1', name: 'Employee', ouId: ''}],
@@ -640,7 +640,7 @@ describe('UserCreatePage', () => {
   });
 
   it('renders null when schema details are not available on step 2', async () => {
-    mockUseGetUserSchema.mockReturnValue({
+    mockUseGetUserType.mockReturnValue({
       data: undefined,
       isLoading: false,
       error: null,
@@ -662,7 +662,7 @@ describe('UserCreatePage', () => {
   it('shows validation error when schema has missing ouId', async () => {
     const user = userEvent.setup();
 
-    mockUseGetUserSchemas.mockReturnValue({
+    mockUseGetUserTypes.mockReturnValue({
       data: {
         ...mockSchemasData,
         schemas: [{id: 'schema1', name: 'Employee', ouId: ''}],
@@ -690,7 +690,7 @@ describe('UserCreatePage', () => {
   });
 
   it('handles null schemas data gracefully', () => {
-    mockUseGetUserSchemas.mockReturnValue({
+    mockUseGetUserTypes.mockReturnValue({
       data: undefined,
       isLoading: false,
       error: null,

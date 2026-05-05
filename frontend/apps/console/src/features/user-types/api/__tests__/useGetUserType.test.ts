@@ -19,7 +19,7 @@
 import {waitFor, renderHook} from '@thunderid/test-utils';
 import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
 import UserTypeQueryKeys from '../../constants/userTypeQueryKeys';
-import type {ApiUserSchema} from '../../types/user-types';
+import type {ApiUserType} from '../../types/user-types';
 import useGetUserType from '../useGetUserType';
 
 // Mock the dependencies
@@ -42,7 +42,7 @@ describe('useGetUserType', () => {
   let mockHttpRequest: ReturnType<typeof vi.fn>;
   let mockGetServerUrl: ReturnType<typeof vi.fn>;
 
-  const mockUserSchema: ApiUserSchema = {
+  const mockUserType: ApiUserType = {
     id: '123',
     name: 'Person',
     ouId: 'ou-1',
@@ -100,7 +100,7 @@ describe('useGetUserType', () => {
 
   it('should successfully fetch a single user type', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     const {result} = renderHook(() => useGetUserType('123'));
@@ -109,7 +109,7 @@ describe('useGetUserType', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.data).toEqual(mockUserSchema);
+    expect(result.current.data).toEqual(mockUserType);
     expect(result.current.data?.id).toBe('123');
     expect(result.current.data?.name).toBe('Person');
   });
@@ -130,7 +130,7 @@ describe('useGetUserType', () => {
 
   it('should use correct server URL and endpoint', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     renderHook(() => useGetUserType('123'));
@@ -141,7 +141,7 @@ describe('useGetUserType', () => {
 
     expect(mockHttpRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: 'https://api.test.com/user-schemas/123?include=display',
+        url: 'https://api.test.com/user-types/123?include=display',
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ describe('useGetUserType', () => {
 
   it('should use correct query key', async () => {
     mockHttpRequest.mockResolvedValueOnce({
-      data: mockUserSchema,
+      data: mockUserType,
     });
 
     const {result, queryClient} = renderHook(() => useGetUserType('123'));
@@ -163,11 +163,11 @@ describe('useGetUserType', () => {
 
     const queryKey = [UserTypeQueryKeys.USER_TYPE, '123'];
     const cachedData = queryClient.getQueryData(queryKey);
-    expect(cachedData).toEqual(mockUserSchema);
+    expect(cachedData).toEqual(mockUserType);
   });
 
   it('should support refetching', async () => {
-    mockHttpRequest.mockResolvedValueOnce({data: mockUserSchema});
+    mockHttpRequest.mockResolvedValueOnce({data: mockUserType});
 
     const {result} = renderHook(() => useGetUserType('123'));
 
@@ -177,12 +177,12 @@ describe('useGetUserType', () => {
 
     expect(result.current.data?.name).toBe('Person');
 
-    const updatedUserSchema: ApiUserSchema = {
-      ...mockUserSchema,
+    const updatedUserType: ApiUserType = {
+      ...mockUserType,
       name: 'Updated Person',
     };
 
-    mockHttpRequest.mockResolvedValueOnce({data: updatedUserSchema});
+    mockHttpRequest.mockResolvedValueOnce({data: updatedUserType});
 
     await result.current.refetch();
 

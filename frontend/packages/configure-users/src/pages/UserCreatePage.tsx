@@ -36,8 +36,8 @@ import {useState, useCallback, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router';
 import useCreateUser from '../api/useCreateUser';
-import useGetUserSchema from '../api/useGetUserSchema';
-import useGetUserSchemas from '../api/useGetUserSchemas';
+import useGetUserType from '../api/useGetUserType';
+import useGetUserTypes from '../api/useGetUserTypes';
 import ConfigureOrganizationUnit from '../components/create-user/ConfigureOrganizationUnit';
 import ConfigureUserDetails from '../components/create-user/ConfigureUserDetails';
 import ConfigureUserType from '../components/create-user/ConfigureUserType';
@@ -63,8 +63,8 @@ export default function UserCreatePage(): JSX.Element {
     setError,
   } = useUserCreate();
 
-  const {data: userSchemasData} = useGetUserSchemas();
-  const {data: userSchemaDetails, isLoading: isSchemaLoading} = useGetUserSchema(selectedSchema?.id);
+  const {data: userTypesData} = useGetUserTypes();
+  const {data: userTypeDetails, isLoading: isSchemaLoading} = useGetUserType(selectedSchema?.id);
   const {
     data: childOuData,
     isLoading: isChildOuLoading,
@@ -77,7 +77,7 @@ export default function UserCreatePage(): JSX.Element {
   const tokenOuId = user?.ouId ?? null;
   const isChildOuForbidden = (childOuError as {response?: {status?: number}} | null)?.response?.status === 403;
   const isChildOuProbeFailed = !!childOuError && !isChildOuForbidden;
-  const userSchemas = useMemo(() => userSchemasData?.schemas ?? [], [userSchemasData]);
+  const userTypes = useMemo(() => userTypesData?.schemas ?? [], [userTypesData]);
   const hasChildOUs = !isChildOuLoading && !childOuError && (childOuData?.totalResults ?? 0) > 0;
 
   const activeSteps = useMemo((): UserCreateFlowStep[] => {
@@ -257,7 +257,7 @@ export default function UserCreatePage(): JSX.Element {
       case UserCreateFlowStep.USER_TYPE:
         return (
           <ConfigureUserType
-            schemas={userSchemas}
+            schemas={userTypes}
             selectedSchema={selectedSchema}
             onSchemaChange={handleSchemaChange}
             onReadyChange={handleUserTypeStepReadyChange}
@@ -289,13 +289,13 @@ export default function UserCreatePage(): JSX.Element {
             </Box>
           );
         }
-        if (!userSchemaDetails) {
+        if (!userTypeDetails) {
           return null;
         }
         return (
           <ConfigureUserDetails
             key={selectedSchema?.id}
-            schema={userSchemaDetails}
+            schema={userTypeDetails}
             defaultValues={formValues}
             onFormValuesChange={setFormValues}
             onReadyChange={handleUserDetailsStepReadyChange}
