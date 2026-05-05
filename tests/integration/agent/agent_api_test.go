@@ -44,9 +44,9 @@ var (
 		Parent:      nil,
 	}
 
-	// agentSchema is reused from the user-schema subsystem. Agents need a type that maps
-	// to a user schema so attribute validation and credential extraction work correctly.
-	agentSchema = testutils.UserSchema{
+	// agentSchema is reused from the entity type subsystem. Agents need a type that maps
+	// to a user type so attribute validation and credential extraction work correctly.
+	agentSchema = testutils.UserType{
 		Name: "test-agent-worker",
 		Schema: map[string]interface{}{
 			"description": map[string]interface{}{"type": "string"},
@@ -107,7 +107,7 @@ func TestAgentAPITestSuite(t *testing.T) {
 	suite.Run(t, new(AgentAPITestSuite))
 }
 
-// SetupSuite creates the shared OU, user schema, auth flow, and a primary entity-only agent
+// SetupSuite creates the shared OU, user type, auth flow, and a primary entity-only agent
 // that most CRUD tests operate against.
 func (ts *AgentAPITestSuite) SetupSuite() {
 	ouID, err := testutils.CreateOrganizationUnit(testOU)
@@ -115,7 +115,7 @@ func (ts *AgentAPITestSuite) SetupSuite() {
 	testOUID = ouID
 
 	agentSchema.OUID = testOUID
-	schemaID, err := testutils.CreateUserType(agentSchema)
+	schemaID, err := testutils.CreateAgentType(agentSchema)
 	ts.Require().NoError(err, "Failed to create agent schema (user type)")
 	agentSchemaID = schemaID
 
@@ -139,7 +139,7 @@ func (ts *AgentAPITestSuite) TearDownSuite() {
 		}
 	}
 	if agentSchemaID != "" {
-		if err := testutils.DeleteUserType(agentSchemaID); err != nil {
+		if err := testutils.DeleteAgentType(agentSchemaID); err != nil {
 			ts.T().Logf("Failed to delete agent schema during teardown: %v", err)
 		}
 	}
@@ -743,7 +743,7 @@ var (
 		Parent:      nil,
 	}
 
-	attrAgentSchema = testutils.UserSchema{
+	attrAgentSchema = testutils.UserType{
 		Name: "attr-test-agent",
 		Schema: map[string]interface{}{
 			"region": map[string]interface{}{"type": "string"},
@@ -769,14 +769,14 @@ func (ts *AgentAttributesTestSuite) SetupSuite() {
 	ts.ouID = ouID
 
 	attrAgentSchema.OUID = ts.ouID
-	schemaID, err := testutils.CreateUserType(attrAgentSchema)
+	schemaID, err := testutils.CreateAgentType(attrAgentSchema)
 	ts.Require().NoError(err, "Failed to create agent schema")
 	ts.schemaID = schemaID
 }
 
 func (ts *AgentAttributesTestSuite) TearDownSuite() {
 	if ts.schemaID != "" {
-		_ = testutils.DeleteUserType(ts.schemaID)
+		_ = testutils.DeleteAgentType(ts.schemaID)
 	}
 	if ts.ouID != "" {
 		_ = testutils.DeleteOrganizationUnit(ts.ouID)

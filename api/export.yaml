@@ -228,11 +228,11 @@ components:
           items:
             type: string
           description: IDs of notification senders to export, or ["*"] for all.
-        userSchemas:
+        userTypes:
           type: array
           items:
             type: string
-          description: IDs of user schemas to export, or ["*"] for all.
+          description: IDs of user types to export, or ["*"] for all.
         organizationUnits:
           type: array
           items:

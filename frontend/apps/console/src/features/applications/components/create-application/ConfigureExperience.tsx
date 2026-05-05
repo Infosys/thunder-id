@@ -37,7 +37,7 @@ import type {JSX, ChangeEvent} from 'react';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ApplicationCreateFlowSignInApproach} from '../../models/application-create-flow';
-import type {UserSchemaListItem} from '@/features/user-types/types/user-types';
+import type {UserTypeListItem} from '@/features/user-types/types/user-types';
 
 /**
  * Props for the {@link ConfigureExperience} component.
@@ -63,7 +63,7 @@ export interface ConfigureExperienceProps {
   /**
    * Optional array of available user types for selection
    */
-  userTypes?: UserSchemaListItem[];
+  userTypes?: UserTypeListItem[];
 
   /**
    * Optional array of currently selected user type names
@@ -344,9 +344,9 @@ export default function ConfigureExperience({
                 size="small"
                 options={userTypes}
                 getOptionLabel={(option) => option.name}
-                value={userTypes.filter((ut: UserSchemaListItem) => selectedUserTypes.includes(ut.name)) || []}
-                onChange={(_event, newValue: UserSchemaListItem[]): void => {
-                  const userTypeNames: string[] = newValue.map((item: UserSchemaListItem): string => item.name);
+                value={userTypes.filter((ut: UserTypeListItem) => selectedUserTypes.includes(ut.name)) || []}
+                onChange={(_event, newValue: UserTypeListItem[]): void => {
+                  const userTypeNames: string[] = newValue.map((item: UserTypeListItem): string => item.name);
                   onUserTypesChange(userTypeNames);
                 }}
                 renderInput={(params) => (
@@ -361,7 +361,7 @@ export default function ConfigureExperience({
                     }
                   />
                 )}
-                isOptionEqualToValue={(option: UserSchemaListItem, value: UserSchemaListItem): boolean =>
+                isOptionEqualToValue={(option: UserTypeListItem, value: UserTypeListItem): boolean =>
                   option.name === value.name
                 }
               />

@@ -34,9 +34,9 @@ import (
 	"github.com/asgardeo/thunder/internal/system/database/provider"
 	"github.com/asgardeo/thunder/tests/mocks/certmock"
 	"github.com/asgardeo/thunder/tests/mocks/entitymock"
+	"github.com/asgardeo/thunder/tests/mocks/entitytypemock"
 	"github.com/asgardeo/thunder/tests/mocks/flow/flowmgtmock"
 	"github.com/asgardeo/thunder/tests/mocks/inboundclientmock"
-	"github.com/asgardeo/thunder/tests/mocks/userschemamock"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -113,13 +113,13 @@ type InitTestSuite struct {
 	suite.Suite
 	mockCertService       *certmock.CertificateServiceInterfaceMock
 	mockFlowMgtService    *flowmgtmock.FlowMgtServiceInterfaceMock
-	mockUserSchemaService *userschemamock.UserSchemaServiceInterfaceMock
+	mockEntityTypeService *entitytypemock.EntityTypeServiceInterfaceMock
 }
 
 func (suite *InitTestSuite) SetupTest() {
 	suite.mockCertService = certmock.NewCertificateServiceInterfaceMock(suite.T())
 	suite.mockFlowMgtService = flowmgtmock.NewFlowMgtServiceInterfaceMock(suite.T())
-	suite.mockUserSchemaService = userschemamock.NewUserSchemaServiceInterfaceMock(suite.T())
+	suite.mockEntityTypeService = entitytypemock.NewEntityTypeServiceInterfaceMock(suite.T())
 }
 
 func (suite *InitTestSuite) TearDownTest() {

@@ -329,12 +329,12 @@ packages:
       pkgname: executormock
       filename: "{{.InterfaceName}}_mock.go"
 
-  github.com/asgardeo/thunder/internal/userschema:
+  github.com/asgardeo/thunder/internal/entitytype:
     config:
       all: true
-      dir: tests/mocks/userschemamock
+      dir: tests/mocks/entitytypemock
       structname: '{{.InterfaceName}}Mock'
-      pkgname: userschemamock
+      pkgname: entitytypemock
       filename: "{{.InterfaceName}}_mock.go"
 
   github.com/asgardeo/thunder/internal/group:

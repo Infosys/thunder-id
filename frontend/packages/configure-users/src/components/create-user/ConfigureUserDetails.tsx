@@ -22,7 +22,7 @@ import {useEffect} from 'react';
 import type {JSX} from 'react';
 import {useForm} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
-import type {ApiUserSchema} from '../../models/users';
+import type {ApiUserType} from '../../models/users';
 import renderSchemaField from '../../utils/renderSchemaField';
 
 /**
@@ -31,7 +31,7 @@ import renderSchemaField from '../../utils/renderSchemaField';
  * @public
  */
 export interface ConfigureUserDetailsProps {
-  schema: ApiUserSchema;
+  schema: ApiUserType;
   defaultValues: Record<string, unknown>;
   onFormValuesChange: (values: Record<string, unknown>) => void;
   onReadyChange?: (isReady: boolean) => void;

@@ -29,6 +29,7 @@ import (
 
 	"github.com/asgardeo/thunder/internal/cert"
 	"github.com/asgardeo/thunder/internal/entityprovider"
+	entitytypepkg "github.com/asgardeo/thunder/internal/entitytype"
 	flowcommon "github.com/asgardeo/thunder/internal/flow/common"
 	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
 	oauth2const "github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
@@ -37,13 +38,12 @@ import (
 	"github.com/asgardeo/thunder/internal/system/i18n/core"
 	"github.com/asgardeo/thunder/internal/system/log"
 	"github.com/asgardeo/thunder/internal/system/transaction"
-	userschemapkg "github.com/asgardeo/thunder/internal/userschema"
 	"github.com/asgardeo/thunder/tests/mocks/certmock"
 	"github.com/asgardeo/thunder/tests/mocks/design/layoutmock"
 	"github.com/asgardeo/thunder/tests/mocks/design/thememock"
 	"github.com/asgardeo/thunder/tests/mocks/entityprovidermock"
+	"github.com/asgardeo/thunder/tests/mocks/entitytypemock"
 	"github.com/asgardeo/thunder/tests/mocks/flow/flowmgtmock"
-	"github.com/asgardeo/thunder/tests/mocks/userschemamock"
 )
 
 type InboundClientServiceTestSuite struct {
@@ -645,18 +645,18 @@ func (suite *InboundClientServiceTestSuite) TestValidateTokenEndpointAuthMethod_
 
 // validateUserInfoConfig — happy paths
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_NilUserInfo() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_NilUserInfo() {
 	assert.NoError(suite.T(), validateUserInfoConfig(&inboundmodel.OAuthProfileData{}))
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_PlainJSON() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_PlainJSON() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{ResponseType: inboundmodel.UserInfoResponseTypeJSON},
 	}
 	assert.NoError(suite.T(), validateUserInfoConfig(p))
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWSHappy() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_JWSHappy() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{
 			ResponseType: inboundmodel.UserInfoResponseTypeJWS,
@@ -666,7 +666,7 @@ func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWSHappy(
 	assert.NoError(suite.T(), validateUserInfoConfig(p))
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWEHappy() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_JWEHappy() {
 	p := &inboundmodel.OAuthProfileData{
 		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
 		UserInfo: &inboundmodel.UserInfoConfig{
@@ -678,7 +678,7 @@ func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWEHappy(
 	assert.NoError(suite.T(), validateUserInfoConfig(p))
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_NestedJWTHappy() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_NestedJWTHappy() {
 	p := &inboundmodel.OAuthProfileData{
 		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
 		UserInfo: &inboundmodel.UserInfoConfig{
@@ -693,49 +693,49 @@ func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_NestedJWT
 
 // validateUserInfoConfig — error paths
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_UnsupportedSigningAlg() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_UnsupportedSigningAlg() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{SigningAlg: "BOGUS"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoUnsupportedSigningAlg)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_EncryptionEncWithoutAlg() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_EncryptionEncWithoutAlg() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{EncryptionEnc: "A256GCM"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoEncryptionEncRequiresAlg)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_UnsupportedEncryptionAlg() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_UnsupportedEncryptionAlg() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{EncryptionAlg: "BOGUS", EncryptionEnc: "A256GCM"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoUnsupportedEncryptionAlg)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_EncryptionAlgWithoutEnc() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_EncryptionAlgWithoutEnc() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{EncryptionAlg: "RSA-OAEP-256"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoEncryptionAlgRequiresEnc)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_UnsupportedEncryptionEnc() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_UnsupportedEncryptionEnc() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{EncryptionAlg: "RSA-OAEP-256", EncryptionEnc: "BOGUS"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoUnsupportedEncryptionEnc)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_EncryptionRequiresCertificate() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_EncryptionRequiresCertificate() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{EncryptionAlg: "RSA-OAEP-256", EncryptionEnc: "A256GCM"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoEncryptionRequiresCertificate)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWKSURISSRFRejection() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_JWKSURISSRFRejection() {
 	p := &inboundmodel.OAuthProfileData{
 		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKSURI, Value: "http://127.0.0.1/jwks"},
 		UserInfo: &inboundmodel.UserInfoConfig{
@@ -745,42 +745,42 @@ func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWKSURISS
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoJWKSURINotSSRFSafe)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWSMissingSigningAlg() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_JWSMissingSigningAlg() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{ResponseType: inboundmodel.UserInfoResponseTypeJWS},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoJWSRequiresSigningAlg)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_JWEMissingEncryption() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_JWEMissingEncryption() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{ResponseType: inboundmodel.UserInfoResponseTypeJWE},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoJWERequiresEncryption)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_NestedJWTMissingFields() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_NestedJWTMissingFields() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{ResponseType: inboundmodel.UserInfoResponseTypeNESTEDJWT},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoNestedJWTRequiresAll)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_UnsupportedResponseType() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_UnsupportedResponseType() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{ResponseType: "BOGUS"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoUnsupportedResponseType)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_SigningAlgRequiresResponseType() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_SigningAlgRequiresResponseType() {
 	p := &inboundmodel.OAuthProfileData{
 		UserInfo: &inboundmodel.UserInfoConfig{SigningAlg: "RS256"},
 	}
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoAlgRequiresResponseType)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_EncryptionAlgRequiresResponseType() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_EncryptionAlgRequiresResponseType() {
 	p := &inboundmodel.OAuthProfileData{
 		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
 		UserInfo: &inboundmodel.UserInfoConfig{
@@ -790,7 +790,7 @@ func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_Encryptio
 	assert.ErrorIs(suite.T(), validateUserInfoConfig(p), ErrOAuthUserInfoAlgRequiresResponseType)
 }
 
-func (suite *InboundClientServiceTestSuite) TestValidateUserInfoConfig_AllAlgsRequireResponseType() {
+func (suite *InboundClientServiceTestSuite) TestValidateEntityInfoConfig_AllAlgsRequireResponseType() {
 	p := &inboundmodel.OAuthProfileData{
 		Certificate: &inboundmodel.Certificate{Type: cert.CertificateTypeJWKS, Value: "{}"},
 		UserInfo: &inboundmodel.UserInfoConfig{
@@ -1100,41 +1100,41 @@ func (suite *InboundClientServiceTestSuite) TestValidateAllowedUserTypes_NoOpWhe
 }
 
 func (suite *InboundClientServiceTestSuite) TestValidateAllowedUserTypes_AllExist() {
-	us := userschemamock.NewUserSchemaServiceInterfaceMock(suite.T())
-	us.EXPECT().GetUserSchemaList(mock.Anything, mock.Anything, 0, false).Return(
-		&userschemapkg.UserSchemaListResponse{
+	us := entitytypemock.NewEntityTypeServiceInterfaceMock(suite.T())
+	us.EXPECT().GetEntityTypeList(mock.Anything, mock.Anything, mock.Anything, 0, false).Return(
+		&entitytypepkg.EntityTypeListResponse{
 			TotalResults: 1,
-			Schemas:      []userschemapkg.UserSchemaListItem{{Name: "person"}},
+			Schemas:      []entitytypepkg.EntityTypeListItem{{Name: "person"}},
 		}, nil)
-	svc := &inboundClientService{userSchema: us, logger: log.GetLogger()}
+	svc := &inboundClientService{entityType: us, logger: log.GetLogger()}
 	assert.NoError(suite.T(), svc.validateAllowedUserTypes(context.Background(), []string{"person"}))
 }
 
 func (suite *InboundClientServiceTestSuite) TestValidateAllowedUserTypes_MissingType() {
-	us := userschemamock.NewUserSchemaServiceInterfaceMock(suite.T())
-	us.EXPECT().GetUserSchemaList(mock.Anything, mock.Anything, 0, false).Return(
-		&userschemapkg.UserSchemaListResponse{
+	us := entitytypemock.NewEntityTypeServiceInterfaceMock(suite.T())
+	us.EXPECT().GetEntityTypeList(mock.Anything, mock.Anything, mock.Anything, 0, false).Return(
+		&entitytypepkg.EntityTypeListResponse{
 			TotalResults: 1,
-			Schemas:      []userschemapkg.UserSchemaListItem{{Name: "person"}},
+			Schemas:      []entitytypepkg.EntityTypeListItem{{Name: "person"}},
 		}, nil)
-	svc := &inboundClientService{userSchema: us, logger: log.GetLogger()}
+	svc := &inboundClientService{entityType: us, logger: log.GetLogger()}
 	err := svc.validateAllowedUserTypes(context.Background(), []string{"ghost"})
 	assert.ErrorIs(suite.T(), err, ErrFKInvalidUserType)
 }
 
 func (suite *InboundClientServiceTestSuite) TestValidateAllowedUserTypes_EmptyTypeRejected() {
-	us := userschemamock.NewUserSchemaServiceInterfaceMock(suite.T())
-	us.EXPECT().GetUserSchemaList(mock.Anything, mock.Anything, 0, false).Return(
-		&userschemapkg.UserSchemaListResponse{TotalResults: 0}, nil)
-	svc := &inboundClientService{userSchema: us, logger: log.GetLogger()}
+	us := entitytypemock.NewEntityTypeServiceInterfaceMock(suite.T())
+	us.EXPECT().GetEntityTypeList(mock.Anything, mock.Anything, mock.Anything, 0, false).Return(
+		&entitytypepkg.EntityTypeListResponse{TotalResults: 0}, nil)
+	svc := &inboundClientService{entityType: us, logger: log.GetLogger()}
 	assert.ErrorIs(suite.T(), svc.validateAllowedUserTypes(context.Background(), []string{""}), ErrFKInvalidUserType)
 }
 
 func (suite *InboundClientServiceTestSuite) TestValidateAllowedUserTypes_ServiceErrorPropagated() {
-	us := userschemamock.NewUserSchemaServiceInterfaceMock(suite.T())
-	us.EXPECT().GetUserSchemaList(mock.Anything, mock.Anything, 0, false).
+	us := entitytypemock.NewEntityTypeServiceInterfaceMock(suite.T())
+	us.EXPECT().GetEntityTypeList(mock.Anything, mock.Anything, mock.Anything, 0, false).
 		Return(nil, &serviceerror.ServiceError{Code: "ERR"})
-	svc := &inboundClientService{userSchema: us, logger: log.GetLogger()}
+	svc := &inboundClientService{entityType: us, logger: log.GetLogger()}
 	assert.ErrorIs(suite.T(), svc.validateAllowedUserTypes(context.Background(), []string{"a"}), ErrFKInvalidUserType)
 }
 

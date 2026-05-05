@@ -28,13 +28,13 @@ import (
 	authnoauth "github.com/asgardeo/thunder/internal/authn/oauth"
 	authnprovidermgr "github.com/asgardeo/thunder/internal/authnprovider/manager"
 	"github.com/asgardeo/thunder/internal/entityprovider"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	"github.com/asgardeo/thunder/internal/flow/core"
 	"github.com/asgardeo/thunder/internal/idp"
 	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
 	"github.com/asgardeo/thunder/internal/system/log"
 	systemutils "github.com/asgardeo/thunder/internal/system/utils"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 const (
@@ -73,7 +73,7 @@ type oAuthExecutor struct {
 	authnProvider     authnprovidermgr.AuthnProviderManagerInterface
 	idpType           idp.IDPType
 	idpService        idp.IDPServiceInterface
-	userSchemaService userschema.UserSchemaServiceInterface
+	entityTypeService entitytype.EntityTypeServiceInterface
 	logger            *log.Logger
 }
 
@@ -85,7 +85,7 @@ func newOAuthExecutor(
 	defaultInputs, prerequisites []common.Input,
 	flowFactory core.FlowFactoryInterface,
 	idpService idp.IDPServiceInterface,
-	userSchemaService userschema.UserSchemaServiceInterface,
+	entityTypeService entitytype.EntityTypeServiceInterface,
 	authService authnoauth.OAuthAuthnCoreServiceInterface,
 	authnProvider authnprovidermgr.AuthnProviderManagerInterface,
 	idpType idp.IDPType,
@@ -114,7 +114,7 @@ func newOAuthExecutor(
 		authnProvider:     authnProvider,
 		idpType:           idpType,
 		idpService:        idpService,
-		userSchemaService: userSchemaService,
+		entityTypeService: entityTypeService,
 		logger:            logger,
 	}
 }
@@ -489,9 +489,10 @@ func (o *oAuthExecutor) resolveUserTypeForAutoProvisioning(ctx *core.NodeContext
 	}
 
 	// Filter allowed user types to only those with self-registration enabled
-	selfRegEnabledSchemas := make([]userschema.UserSchema, 0)
+	selfRegEnabledSchemas := make([]entitytype.EntityType, 0)
 	for _, userType := range ctx.Application.AllowedUserTypes {
-		userSchema, svcErr := o.userSchemaService.GetUserSchemaByName(ctx.Context, userType)
+		entityType, svcErr := o.entityTypeService.GetEntityTypeByName(ctx.Context,
+			entitytype.TypeCategoryUser, userType)
 		if svcErr != nil {
 			if svcErr.Type == serviceerror.ClientErrorType {
 				execResp.Status = common.ExecFailure
@@ -499,12 +500,12 @@ func (o *oAuthExecutor) resolveUserTypeForAutoProvisioning(ctx *core.NodeContext
 				return nil
 			}
 
-			logger.Error("Error while retrieving user schema", log.String("errorCode", svcErr.Code),
+			logger.Error("Error while retrieving user type", log.String("errorCode", svcErr.Code),
 				log.String("description", svcErr.ErrorDescription.DefaultValue))
-			return errors.New("error while retrieving user schema")
+			return errors.New("error while retrieving user type")
 		}
-		if userSchema.AllowSelfRegistration {
-			selfRegEnabledSchemas = append(selfRegEnabledSchemas, *userSchema)
+		if entityType.AllowSelfRegistration {
+			selfRegEnabledSchemas = append(selfRegEnabledSchemas, *entityType)
 		}
 	}
 

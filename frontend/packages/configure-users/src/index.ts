@@ -21,8 +21,8 @@ export {default as useCreateUser} from './api/useCreateUser';
 export {default as useDeleteUser} from './api/useDeleteUser';
 export {default as useGetUser} from './api/useGetUser';
 export {default as useGetUsers} from './api/useGetUsers';
-export {default as useGetUserSchema} from './api/useGetUserSchema';
-export {default as useGetUserSchemas} from './api/useGetUserSchemas';
+export {default as useGetUserType} from './api/useGetUserType';
+export {default as useGetUserTypes} from './api/useGetUserTypes';
 export {default as useUpdateUser} from './api/useUpdateUser';
 export * from './api/useUpdateUser';
 

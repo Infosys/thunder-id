@@ -31,6 +31,7 @@ import (
 	layoutmgt "github.com/asgardeo/thunder/internal/design/layout/mgt"
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
 	"github.com/asgardeo/thunder/internal/entityprovider"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	flowcommon "github.com/asgardeo/thunder/internal/flow/common"
 	flowmgt "github.com/asgardeo/thunder/internal/flow/mgt"
 	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
@@ -43,7 +44,6 @@ import (
 	"github.com/asgardeo/thunder/internal/system/security"
 	"github.com/asgardeo/thunder/internal/system/transaction"
 	sysutils "github.com/asgardeo/thunder/internal/system/utils"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 // InboundClientServiceInterface is the public API of the inbound client subsystem.
@@ -88,7 +88,7 @@ type inboundClientService struct {
 	themeMgt       thememgt.ThemeMgtServiceInterface
 	layoutMgt      layoutmgt.LayoutMgtServiceInterface
 	flowMgt        flowmgt.FlowMgtServiceInterface
-	userSchema     userschema.UserSchemaServiceInterface
+	entityType     entitytype.EntityTypeServiceInterface
 	consentService consent.ConsentServiceInterface
 	logger         *log.Logger
 }
@@ -100,7 +100,7 @@ func newInboundClientService(store inboundClientStoreInterface, transactioner tr
 	themeMgt thememgt.ThemeMgtServiceInterface,
 	layoutMgt layoutmgt.LayoutMgtServiceInterface,
 	flowMgt flowmgt.FlowMgtServiceInterface,
-	userSchema userschema.UserSchemaServiceInterface,
+	entityType entitytype.EntityTypeServiceInterface,
 	consentService consent.ConsentServiceInterface,
 ) InboundClientServiceInterface {
 	return &inboundClientService{
@@ -111,7 +111,7 @@ func newInboundClientService(store inboundClientStoreInterface, transactioner tr
 		themeMgt:       themeMgt,
 		layoutMgt:      layoutMgt,
 		flowMgt:        flowMgt,
-		userSchema:     userSchema,
+		entityType:     entityType,
 		consentService: consentService,
 		logger:         log.GetLogger().With(log.String(log.LoggerKeyComponentName, "InboundClientService")),
 	}
@@ -890,30 +890,30 @@ func (s *inboundClientService) validateLayoutID(layoutID string) error {
 	return nil
 }
 
-// validateAllowedUserTypes validates that each allowed user type corresponds to an existing user schema.
+// validateAllowedUserTypes validates that each allowed user type corresponds to an existing user type.
 func (s *inboundClientService) validateAllowedUserTypes(
 	ctx context.Context, allowedUserTypes []string,
 ) error {
-	if len(allowedUserTypes) == 0 || s.userSchema == nil {
+	if len(allowedUserTypes) == 0 || s.entityType == nil {
 		return nil
 	}
 	existingUserTypes := make(map[string]bool)
 	limit := serverconst.MaxPageSize
 	offset := 0
 	for {
-		// Runtime context: skip authorization checks when fetching user schemas.
-		userSchemaList, svcErr := s.userSchema.GetUserSchemaList(
-			security.WithRuntimeContext(ctx), limit, offset, false)
+		// Runtime context: skip authorization checks when fetching entity types.
+		entityTypeList, svcErr := s.entityType.GetEntityTypeList(
+			security.WithRuntimeContext(ctx), entitytype.TypeCategoryUser, limit, offset, false)
 		if svcErr != nil {
-			s.logger.Error("Failed to retrieve user schema list for validation",
+			s.logger.Error("Failed to retrieve user type list for validation",
 				log.String("error", svcErr.Error.DefaultValue), log.String("code", svcErr.Code))
 			return ErrFKInvalidUserType
 		}
-		for _, schema := range userSchemaList.Schemas {
+		for _, schema := range entityTypeList.Schemas {
 			existingUserTypes[schema.Name] = true
 		}
-		if len(userSchemaList.Schemas) == 0 ||
-			offset+len(userSchemaList.Schemas) >= userSchemaList.TotalResults {
+		if len(entityTypeList.Schemas) == 0 ||
+			offset+len(entityTypeList.Schemas) >= entityTypeList.TotalResults {
 			break
 		}
 		offset += limit

@@ -44,6 +44,7 @@ import (
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
 	"github.com/asgardeo/thunder/internal/entity"
 	"github.com/asgardeo/thunder/internal/entityprovider"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	flowcore "github.com/asgardeo/thunder/internal/flow/core"
 	"github.com/asgardeo/thunder/internal/flow/executor"
 	"github.com/asgardeo/thunder/internal/flow/flowexec"
@@ -75,7 +76,6 @@ import (
 	"github.com/asgardeo/thunder/internal/system/sysauthz"
 	"github.com/asgardeo/thunder/internal/system/template"
 	"github.com/asgardeo/thunder/internal/user"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 // observabilitySvc is the observability service instance. This is used for graceful shutdown.
@@ -133,16 +133,16 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	// Initialize consent service
 	consentService := consent.Initialize()
 
-	// Initialize user schema service
-	userSchemaService, userSchemaExporter, err := userschema.Initialize(
+	// Initialize user type service
+	entityTypeService, entityTypeExporter, err := entitytype.Initialize(
 		mux, ouService, ouAuthzService, consentService)
 	if err != nil {
-		logger.Fatal("Failed to initialize UserSchemaService", log.Error(err))
+		logger.Fatal("Failed to initialize EntityTypeService", log.Error(err))
 	}
-	exporters = append(exporters, userSchemaExporter)
+	exporters = append(exporters, entityTypeExporter)
 
 	// Initialize entity service
-	entityService, err := entity.Initialize(hashService, userSchemaService, ouService)
+	entityService, err := entity.Initialize(hashService, entityTypeService, ouService)
 	if err != nil {
 		logger.Fatal("Failed to initialize EntityService", log.Error(err))
 	}
@@ -151,7 +151,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	entityProvider := entityprovider.InitializeEntityProvider(entityService)
 
 	userService, ouUserResolver, userExporter, err := user.Initialize(
-		mux, entityService, ouService, userSchemaService, ouAuthzService,
+		mux, entityService, ouService, entityTypeService, ouAuthzService,
 	)
 	if err != nil {
 		logger.Fatal("Failed to initialize UserService", log.Error(err))
@@ -159,7 +159,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	exporters = append(exporters, userExporter)
 
 	groupService, ouGroupResolver, err := group.Initialize(
-		mux, dbprovider.GetDBProvider(), ouService, entityService, userSchemaService, ouAuthzService,
+		mux, dbprovider.GetDBProvider(), ouService, entityService, entityTypeService, ouAuthzService,
 	)
 	if err != nil {
 		logger.Fatal("Failed to initialize GroupService", log.Error(err))
@@ -175,7 +175,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	}
 	exporters = append(exporters, resourceExporter)
 	roleService, roleExporter, err := role.Initialize(
-		mux, entityService, groupService, ouService, resourceService, userSchemaService,
+		mux, entityService, groupService, ouService, resourceService, entityTypeService,
 	)
 	if err != nil {
 		logger.Fatal("Failed to initialize RoleService", log.Error(err))
@@ -246,7 +246,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 		emailClient = nil
 	}
 	execRegistry := executor.Initialize(flowFactory, ouService, idpService, notifSenderSvc, jwtService, authAssertGen,
-		consentEnforcer, authnProvider, otpCoreService, passkeyService, authZService, userSchemaService,
+		consentEnforcer, authnProvider, otpCoreService, passkeyService, authZService, entityTypeService,
 		observabilitySvc, groupService, roleService, entityProvider, attributeCacheService, emailClient,
 		templateService, oauthAuthnService, oidcAuthnService, githubAuthnService, googleAuthnService)
 
@@ -275,7 +275,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 
 	inboundClientService, err := inboundclient.Initialize(
 		certservice, entityProvider,
-		themeMgtService, layoutMgtService, flowMgtService, userSchemaService, consentService)
+		themeMgtService, layoutMgtService, flowMgtService, entityTypeService, consentService)
 	if err != nil {
 		logger.Fatal("Failed to initialize InboundClientService", log.Error(err))
 	}
@@ -308,7 +308,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 		idpService,
 		flowMgtService,
 		ouService,
-		userSchemaService,
+		entityTypeService,
 		roleService,
 		resourceService,
 		themeMgtService,

@@ -20,27 +20,27 @@ import {useAsgardeo} from '@asgardeo/react';
 import {useQuery, type UseQueryResult} from '@tanstack/react-query';
 import {useConfig} from '@thunderid/contexts';
 import UserTypeQueryKeys from '../constants/userTypeQueryKeys';
-import type {ApiUserSchema} from '../types/user-types';
+import type {ApiUserType} from '../types/user-types';
 
 /**
- * Custom React hook to fetch a single user schema (user type) by ID from the server.
+ * Custom React hook to fetch a single user type by ID from the server.
  *
  * @param id - The unique identifier of the user type to fetch
  * @returns TanStack Query result object containing user type data, loading state, and error information
  */
-export default function useGetUserType(id?: string): UseQueryResult<ApiUserSchema> {
+export default function useGetUserType(id?: string): UseQueryResult<ApiUserType> {
   const {http} = useAsgardeo();
   const {getServerUrl} = useConfig();
 
-  return useQuery<ApiUserSchema>({
+  return useQuery<ApiUserType>({
     queryKey: [UserTypeQueryKeys.USER_TYPE, id],
-    queryFn: async (): Promise<ApiUserSchema> => {
+    queryFn: async (): Promise<ApiUserType> => {
       const serverUrl: string = getServerUrl();
 
       const response: {
-        data: ApiUserSchema;
+        data: ApiUserType;
       } = await http.request({
-        url: `${serverUrl}/user-schemas/${id}?include=display`,
+        url: `${serverUrl}/user-types/${id}?include=display`,
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

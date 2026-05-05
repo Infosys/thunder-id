@@ -24,6 +24,7 @@ import (
 	"github.com/asgardeo/thunder/internal/application"
 	layoutmgt "github.com/asgardeo/thunder/internal/design/layout/mgt"
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	flowmgt "github.com/asgardeo/thunder/internal/flow/mgt"
 	"github.com/asgardeo/thunder/internal/idp"
 	"github.com/asgardeo/thunder/internal/ou"
@@ -32,7 +33,6 @@ import (
 	i18nmgt "github.com/asgardeo/thunder/internal/system/i18n/mgt"
 	"github.com/asgardeo/thunder/internal/system/middleware"
 	"github.com/asgardeo/thunder/internal/user"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 // Initialize wires the importer service and registers its HTTP routes.
@@ -42,7 +42,7 @@ func Initialize(
 	idpService idp.IDPServiceInterface,
 	flowService flowmgt.FlowMgtServiceInterface,
 	ouService ou.OrganizationUnitServiceInterface,
-	userSchemaService userschema.UserSchemaServiceInterface,
+	entityTypeService entitytype.EntityTypeServiceInterface,
 	roleService role.RoleServiceInterface,
 	resourceService resource.ResourceServiceInterface,
 	themeService thememgt.ThemeMgtServiceInterface,
@@ -55,7 +55,7 @@ func Initialize(
 		idpService,
 		flowService,
 		ouService,
-		userSchemaService,
+		entityTypeService,
 		roleService,
 		resourceService,
 		themeService,

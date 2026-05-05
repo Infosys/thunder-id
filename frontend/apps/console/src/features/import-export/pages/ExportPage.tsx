@@ -42,7 +42,7 @@ export default function ExportPage(): JSX.Element {
       users: ['*'],
       organizationUnits: ['*'],
       notificationSenders: ['*'],
-      userSchemas: ['*'],
+      userTypes: ['*'],
       translations: ['*'],
       layouts: ['*'],
       resourceServers: ['*'],

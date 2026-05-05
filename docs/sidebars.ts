@@ -192,8 +192,8 @@ const sidebars: SidebarsConfig = {
             },
             {
               type: 'doc',
-              id: 'guides/guides/users/user-schema-reference',
-              label: 'User Schema Reference',
+              id: 'guides/guides/users/user-type-reference',
+              label: 'User Type Reference',
             },
           ],
         },

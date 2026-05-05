@@ -43,7 +43,7 @@ import useUpdateUserType from '../api/useUpdateUserType';
 import EditGeneralSettings from '../components/edit-user-type/general-settings/EditGeneralSettings';
 import EditSchemaSettings from '../components/edit-user-type/schema-settings/EditSchemaSettings';
 import UserTypeDeleteDialog from '../components/edit-user-type/UserTypeDeleteDialog';
-import type {PropertyDefinition, UserSchemaDefinition, PropertyType, SchemaPropertyInput} from '../types/user-types';
+import type {PropertyDefinition, UserTypeDefinition, PropertyType, SchemaPropertyInput} from '../types/user-types';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -68,7 +68,7 @@ function TabPanel({children = null, value, index, ...other}: TabPanelProps): JSX
 /**
  * Convert API schema to editable property inputs.
  */
-function convertSchemaToProperties(schema: UserSchemaDefinition): SchemaPropertyInput[] {
+function convertSchemaToProperties(schema: UserTypeDefinition): SchemaPropertyInput[] {
   return Object.entries(schema).map(([key, value], index) => ({
     id: `${index}`,
     name: key,
@@ -90,8 +90,8 @@ function convertSchemaToProperties(schema: UserSchemaDefinition): SchemaProperty
 /**
  * Convert editable property inputs back to API schema format.
  */
-function convertPropertiesToSchema(properties: SchemaPropertyInput[]): UserSchemaDefinition {
-  const schema: UserSchemaDefinition = {};
+function convertPropertiesToSchema(properties: SchemaPropertyInput[]): UserTypeDefinition {
+  const schema: UserTypeDefinition = {};
 
   properties
     .filter((prop) => prop.name.trim())

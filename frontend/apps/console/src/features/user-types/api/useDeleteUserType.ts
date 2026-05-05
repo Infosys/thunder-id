@@ -23,7 +23,7 @@ import {useTranslation} from 'react-i18next';
 import UserTypeQueryKeys from '../constants/userTypeQueryKeys';
 
 /**
- * Custom React hook to delete a user schema (user type) from the server.
+ * Custom React hook to delete a user type from the server.
  *
  * @returns TanStack Query mutation object for deleting user types
  */
@@ -38,7 +38,7 @@ export default function useDeleteUserType(): UseMutationResult<void, Error, stri
     mutationFn: async (userTypeId: string): Promise<void> => {
       const serverUrl: string = getServerUrl();
       await http.request({
-        url: `${serverUrl}/user-schemas/${userTypeId}`,
+        url: `${serverUrl}/user-types/${userTypeId}`,
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

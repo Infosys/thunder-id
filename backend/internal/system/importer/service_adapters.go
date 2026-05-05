@@ -23,6 +23,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/asgardeo/thunder/internal/entitytype"
 	"github.com/asgardeo/thunder/internal/ou"
 	"github.com/asgardeo/thunder/internal/resource"
 	"github.com/asgardeo/thunder/internal/role"
@@ -30,7 +31,6 @@ import (
 	"github.com/asgardeo/thunder/internal/system/i18n/core"
 	i18nmgt "github.com/asgardeo/thunder/internal/system/i18n/mgt"
 	"github.com/asgardeo/thunder/internal/user"
-	"github.com/asgardeo/thunder/internal/userschema"
 
 	layoutmgt "github.com/asgardeo/thunder/internal/design/layout/mgt"
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
@@ -53,12 +53,13 @@ type userDeclarativeYAML struct {
 	Credentials map[string]interface{} `yaml:"credentials,omitempty"`
 }
 
-type userSchemaDeclarativeYAML struct {
+type entityTypeDeclarativeYAML struct {
 	ID                    string                       `yaml:"id"`
+	Category              entitytype.TypeCategory      `yaml:"category,omitempty"`
 	Name                  string                       `yaml:"name"`
 	OUID                  string                       `yaml:"organization_unit_id"`
 	AllowSelfRegistration bool                         `yaml:"allow_self_registration,omitempty"`
-	SystemAttributes      *userschema.SystemAttributes `yaml:"system_attributes,omitempty"`
+	SystemAttributes      *entitytype.SystemAttributes `yaml:"system_attributes,omitempty"`
 	Schema                interface{}                  `yaml:"schema"`
 }
 
@@ -134,16 +135,16 @@ func (s *importService) importOrganizationUnit(
 	return successOutcome(resourceTypeOrganizationUnit, created.ID, created.Name, operationCreate)
 }
 
-func (s *importService) importUserSchema(
+func (s *importService) importEntityType(
 	ctx context.Context, doc parsedDocument, options *ImportOptions, dryRun bool,
 ) ImportItemOutcome {
-	if s.userSchemaService == nil {
-		return unsupportedAdapterOutcome(resourceTypeUserSchema, "user schema")
+	if s.entityTypeService == nil {
+		return unsupportedAdapterOutcome(resourceTypeEntityType, "user type")
 	}
 
-	var req userSchemaDeclarativeYAML
+	var req entityTypeDeclarativeYAML
 	if err := doc.Node.Decode(&req); err != nil {
-		return decodeErrorOutcome(resourceTypeUserSchema, req.ID, req.Name, err)
+		return decodeErrorOutcome(resourceTypeEntityType, req.ID, req.Name, err)
 	}
 
 	var (
@@ -157,7 +158,7 @@ func (s *importService) importUserSchema(
 		schemaBytes, err = json.Marshal(v)
 		if err != nil {
 			return ImportItemOutcome{
-				ResourceType: resourceTypeUserSchema,
+				ResourceType: resourceTypeEntityType,
 				ResourceID:   req.ID,
 				ResourceName: req.Name,
 				Status:       statusFailed,
@@ -167,7 +168,22 @@ func (s *importService) importUserSchema(
 		}
 	}
 
-	createReq := userschema.CreateUserSchemaRequestWithID{
+	category := req.Category
+	if category == "" {
+		category = entitytype.TypeCategoryUser
+	}
+	if !category.IsValid() {
+		return ImportItemOutcome{
+			ResourceType: resourceTypeEntityType,
+			ResourceID:   req.ID,
+			ResourceName: req.Name,
+			Status:       statusFailed,
+			Code:         ErrorInvalidYAMLContent.Code,
+			Message:      fmt.Sprintf("invalid entity type category %q", string(category)),
+		}
+	}
+
+	createReq := entitytype.CreateEntityTypeRequestWithID{
 		ID:                    req.ID,
 		Name:                  req.Name,
 		OUID:                  req.OUID,
@@ -175,7 +191,7 @@ func (s *importService) importUserSchema(
 		SystemAttributes:      req.SystemAttributes,
 		Schema:                schemaBytes,
 	}
-	updateReq := userschema.UpdateUserSchemaRequest{
+	updateReq := entitytype.UpdateEntityTypeRequest{
 		Name:                  createReq.Name,
 		OUID:                  createReq.OUID,
 		AllowSelfRegistration: createReq.AllowSelfRegistration,
@@ -185,41 +201,41 @@ func (s *importService) importUserSchema(
 
 	if dryRun {
 		if options.IsUpsertEnabled() && req.ID != "" {
-			_, svcErr := s.userSchemaService.GetUserSchema(ctx, req.ID, false)
+			_, svcErr := s.entityTypeService.GetEntityType(ctx, category, req.ID, false)
 			if svcErr == nil {
-				return successOutcome(resourceTypeUserSchema, req.ID, req.Name, operationUpdate)
+				return successOutcome(resourceTypeEntityType, req.ID, req.Name, operationUpdate)
 			}
 
 			if !isNotFoundServiceError(svcErr) {
-				return serviceErrorOutcome(resourceTypeUserSchema, req.ID, req.Name, operationUpdate, svcErr)
+				return serviceErrorOutcome(resourceTypeEntityType, req.ID, req.Name, operationUpdate, svcErr)
 			}
 		}
 
-		return successOutcome(resourceTypeUserSchema, req.ID, req.Name, operationCreate)
+		return successOutcome(resourceTypeEntityType, req.ID, req.Name, operationCreate)
 	}
 
 	if options.IsUpsertEnabled() && req.ID != "" {
-		updated, svcErr := s.userSchemaService.UpdateUserSchema(ctx, req.ID, updateReq)
+		updated, svcErr := s.entityTypeService.UpdateEntityType(ctx, category, req.ID, updateReq)
 		if svcErr == nil {
-			return successOutcome(resourceTypeUserSchema, updated.ID, updated.Name, operationUpdate)
+			return successOutcome(resourceTypeEntityType, updated.ID, updated.Name, operationUpdate)
 		}
 
 		if !isNotFoundServiceError(svcErr) {
-			return serviceErrorOutcome(resourceTypeUserSchema, req.ID, req.Name, operationUpdate, svcErr)
+			return serviceErrorOutcome(resourceTypeEntityType, req.ID, req.Name, operationUpdate, svcErr)
 		}
 
-		created, createErr := s.userSchemaService.CreateUserSchema(ctx, createReq)
+		created, createErr := s.entityTypeService.CreateEntityType(ctx, category, createReq)
 		if createErr != nil {
-			return serviceErrorOutcome(resourceTypeUserSchema, req.ID, req.Name, operationCreate, createErr)
+			return serviceErrorOutcome(resourceTypeEntityType, req.ID, req.Name, operationCreate, createErr)
 		}
-		return successOutcome(resourceTypeUserSchema, created.ID, created.Name, operationCreate)
+		return successOutcome(resourceTypeEntityType, created.ID, created.Name, operationCreate)
 	}
 
-	created, svcErr := s.userSchemaService.CreateUserSchema(ctx, createReq)
+	created, svcErr := s.entityTypeService.CreateEntityType(ctx, category, createReq)
 	if svcErr != nil {
-		return serviceErrorOutcome(resourceTypeUserSchema, req.ID, req.Name, operationCreate, svcErr)
+		return serviceErrorOutcome(resourceTypeEntityType, req.ID, req.Name, operationCreate, svcErr)
 	}
-	return successOutcome(resourceTypeUserSchema, created.ID, created.Name, operationCreate)
+	return successOutcome(resourceTypeEntityType, created.ID, created.Name, operationCreate)
 }
 
 func (s *importService) importRole(

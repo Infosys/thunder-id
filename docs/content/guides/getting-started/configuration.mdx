@@ -264,8 +264,8 @@ That means you can override only the fields you need. <ProductName /> continues 
 - `FlowByHandleCache`
 - `CertificateByIDCache`
 - `CertificateByReferenceCache`
-- `UserSchemaByIDCache`
-- `UserSchemaByNameCache`
+- `EntityTypeByIDCache`
+- `EntityTypeByNameCache`
 - `FlowGraphCache`
 
 :::note
@@ -350,7 +350,7 @@ User management settings.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `user.indexed_attributes` | `["username", "email", "mobileNumber", "sub"]` | User attributes that are indexed for fast lookups |
+| `user.indexed_attributes` | `["username", "email", "mobileNumber", "sub"]` | User attributes that are indexed for fast `lookups` |
 
 ## Declarative Resources
 
@@ -411,7 +411,7 @@ Authorization resource settings.
 
 ### System Resource Server
 
-The system resource server controls administrative permissions for Thunder Console operations such as managing users, groups, organization units, and user schemas. You can customize the handle and identifier to fit your deployment requirements.
+The system resource server controls administrative permissions for Thunder Console operations such as managing users, groups, organization units, and user types. You can customize the handle and identifier to fit your deployment requirements.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -437,8 +437,8 @@ With the handle set to `mgmt`, all system permissions change as follows:
 | `system:user:view` | `mgmt:system:user:view` |
 | `system:group` | `mgmt:system:group` |
 | `system:group:view` | `mgmt:system:group:view` |
-| `system:userschema` | `mgmt:system:userschema` |
-| `system:userschema:view` | `mgmt:system:userschema:view` |
+| `system:usertype` | `mgmt:system:usertype` |
+| `system:usertype:view` | `mgmt:system:usertype:view` |
 
 #### Update Console Scopes
 
@@ -462,7 +462,7 @@ scopes: [
   'mgmt:system:user',
   'mgmt:system:group',
   'mgmt:system:ou:view',
-  'mgmt:system:userschema:view',
+  'mgmt:system:usertype:view',
 ],
 ```
 

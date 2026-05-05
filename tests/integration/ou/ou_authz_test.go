@@ -89,8 +89,8 @@ const (
 	ouViewRoleName = "OU View Admin (authz-test)"
 )
 
-// authzUserSchemaID persists the schema ID across SetupSuite/TearDownSuite.
-var authzUserSchemaID string
+// authzEntityTypeID persists the entity type ID across SetupSuite/TearDownSuite.
+var authzEntityTypeID string
 
 func TestOUAuthzTestSuite(t *testing.T) {
 	suite.Run(t, new(OUAuthzTestSuite))
@@ -127,8 +127,8 @@ func (ts *OUAuthzTestSuite) SetupSuite() {
 	ts.Require().NoError(err, "create OU12 (child of OU1)")
 	ts.ou12ID = ou12
 
-	// ---- 2. Create a minimal user schema in OU1 ----
-	schema := testutils.UserSchema{
+	// ---- 2. Create a minimal user type in OU1 ----
+	schema := testutils.UserType{
 		Name:                  "ou-authz-admin-schema",
 		OUID:                  ts.ou1ID,
 		AllowSelfRegistration: false,
@@ -138,8 +138,8 @@ func (ts *OUAuthzTestSuite) SetupSuite() {
 		},
 	}
 	schemaID, err := testutils.CreateUserType(schema)
-	ts.Require().NoError(err, "create ou-admin user schema")
-	authzUserSchemaID = schemaID
+	ts.Require().NoError(err, "create ou-admin user type")
+	authzEntityTypeID = schemaID
 
 	// ---- 3. Create the OU-admin user in OU1 ----
 	userID, err := testutils.CreateUser(testutils.User{
@@ -207,9 +207,9 @@ func (ts *OUAuthzTestSuite) TearDownSuite() {
 			ts.T().Logf("teardown: delete ou-admin user: %v", err)
 		}
 	}
-	if authzUserSchemaID != "" {
-		if err := testutils.DeleteUserType(authzUserSchemaID); err != nil {
-			ts.T().Logf("teardown: delete user schema: %v", err)
+	if authzEntityTypeID != "" {
+		if err := testutils.DeleteUserType(authzEntityTypeID); err != nil {
+			ts.T().Logf("teardown: delete user type: %v", err)
 		}
 	}
 	// Delete child OU before parent.

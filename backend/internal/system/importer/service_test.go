@@ -29,6 +29,7 @@ import (
 	"github.com/asgardeo/thunder/internal/application"
 	"github.com/asgardeo/thunder/internal/application/model"
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	flowmgt "github.com/asgardeo/thunder/internal/flow/mgt"
 	"github.com/asgardeo/thunder/internal/idp"
@@ -39,7 +40,6 @@ import (
 	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
 	"github.com/asgardeo/thunder/internal/system/i18n/core"
 	"github.com/asgardeo/thunder/internal/user"
-	"github.com/asgardeo/thunder/internal/userschema"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -286,21 +286,21 @@ func (f *fakeThemeService) UpdateTheme(
 	return updated, nil
 }
 
-type fakeUserSchemaService struct {
-	created []userschema.CreateUserSchemaRequestWithID
-	updated []userschema.UpdateUserSchemaRequest
-	byID    map[string]*userschema.UserSchema
-	byName  map[string]*userschema.UserSchema
+type fakeEntityTypeService struct {
+	created []entitytype.CreateEntityTypeRequestWithID
+	updated []entitytype.UpdateEntityTypeRequest
+	byID    map[string]*entitytype.EntityType
+	byName  map[string]*entitytype.EntityType
 }
 
-func (f *fakeUserSchemaService) CreateUserSchema(
-	_ context.Context, request userschema.CreateUserSchemaRequestWithID,
-) (*userschema.UserSchema, *serviceerror.ServiceError) {
+func (f *fakeEntityTypeService) CreateEntityType(
+	_ context.Context, _ entitytype.TypeCategory, request entitytype.CreateEntityTypeRequestWithID,
+) (*entitytype.EntityType, *serviceerror.ServiceError) {
 	id := request.ID
 	if id == "" {
-		id = "generated-user-schema-id"
+		id = "generated-entity-type-id"
 	}
-	created := &userschema.UserSchema{
+	created := &entitytype.EntityType{
 		ID:                    id,
 		Name:                  request.Name,
 		OUID:                  request.OUID,
@@ -310,19 +310,19 @@ func (f *fakeUserSchemaService) CreateUserSchema(
 	}
 	f.created = append(f.created, request)
 	if f.byID == nil {
-		f.byID = map[string]*userschema.UserSchema{}
+		f.byID = map[string]*entitytype.EntityType{}
 	}
 	if f.byName == nil {
-		f.byName = map[string]*userschema.UserSchema{}
+		f.byName = map[string]*entitytype.EntityType{}
 	}
 	f.byID[created.ID] = created
 	f.byName[created.Name] = created
 	return created, nil
 }
 
-func (f *fakeUserSchemaService) GetUserSchema(
-	_ context.Context, schemaID string, _ bool,
-) (*userschema.UserSchema, *serviceerror.ServiceError) {
+func (f *fakeEntityTypeService) GetEntityType(
+	_ context.Context, _ entitytype.TypeCategory, schemaID string, _ bool,
+) (*entitytype.EntityType, *serviceerror.ServiceError) {
 	if existing, ok := f.byID[schemaID]; ok {
 		return existing, nil
 	}
@@ -334,9 +334,9 @@ func (f *fakeUserSchemaService) GetUserSchema(
 	}
 }
 
-func (f *fakeUserSchemaService) GetUserSchemaByName(
-	_ context.Context, schemaName string,
-) (*userschema.UserSchema, *serviceerror.ServiceError) {
+func (f *fakeEntityTypeService) GetEntityTypeByName(
+	_ context.Context, _ entitytype.TypeCategory, schemaName string,
+) (*entitytype.EntityType, *serviceerror.ServiceError) {
 	if existing, ok := f.byName[schemaName]; ok {
 		return existing, nil
 	}
@@ -348,9 +348,9 @@ func (f *fakeUserSchemaService) GetUserSchemaByName(
 	}
 }
 
-func (f *fakeUserSchemaService) UpdateUserSchema(
-	_ context.Context, schemaID string, request userschema.UpdateUserSchemaRequest,
-) (*userschema.UserSchema, *serviceerror.ServiceError) {
+func (f *fakeEntityTypeService) UpdateEntityType(
+	_ context.Context, _ entitytype.TypeCategory, schemaID string, request entitytype.UpdateEntityTypeRequest,
+) (*entitytype.EntityType, *serviceerror.ServiceError) {
 	if _, ok := f.byID[schemaID]; !ok {
 		return nil, &serviceerror.ServiceError{
 			Type:  serviceerror.ClientErrorType,
@@ -359,7 +359,7 @@ func (f *fakeUserSchemaService) UpdateUserSchema(
 		}
 	}
 
-	updated := &userschema.UserSchema{
+	updated := &entitytype.EntityType{
 		ID:                    schemaID,
 		Name:                  request.Name,
 		OUID:                  request.OUID,
@@ -1036,12 +1036,12 @@ func TestImportResources_ThemeUpsertCreatePreservesID(t *testing.T) {
 }
 
 //nolint:dupl // Test pattern repeated across resource types to verify ID preservation behavior
-func TestImportResources_UserSchemaUpsertCreatePreservesID(t *testing.T) {
-	userSchemaSvc := &fakeUserSchemaService{
-		byID:   map[string]*userschema.UserSchema{},
-		byName: map[string]*userschema.UserSchema{},
+func TestImportResources_EntityTypeUpsertCreatePreservesID(t *testing.T) {
+	entityTypeSvc := &fakeEntityTypeService{
+		byID:   map[string]*entitytype.EntityType{},
+		byName: map[string]*entitytype.EntityType{},
 	}
-	svc := newImportService(nil, nil, nil, nil, userSchemaSvc, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, nil, entityTypeSvc, nil, nil, nil, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: usrs-123",
@@ -1061,23 +1061,23 @@ func TestImportResources_UserSchemaUpsertCreatePreservesID(t *testing.T) {
 	assert.Equal(t, statusSuccess, resp.Results[0].Status)
 	assert.Equal(t, operationCreate, resp.Results[0].Operation)
 	assert.Equal(t, "usrs-123", resp.Results[0].ResourceID)
-	assert.Len(t, userSchemaSvc.created, 1)
-	assert.Equal(t, "usrs-123", userSchemaSvc.created[0].ID)
+	assert.Len(t, entityTypeSvc.created, 1)
+	assert.Equal(t, "usrs-123", entityTypeSvc.created[0].ID)
 }
 
 func TestImportResources_UpsertCreatePreservesIDsAcrossResourceTypes(t *testing.T) {
 	ouSvc := &fakeOUService{existing: map[string]ou.OrganizationUnit{}}
 	themeSvc := &fakeThemeService{byID: map[string]*thememgt.Theme{}, byHandle: map[string]*thememgt.Theme{}}
-	userSchemaSvc := &fakeUserSchemaService{
-		byID:   map[string]*userschema.UserSchema{},
-		byName: map[string]*userschema.UserSchema{},
+	entityTypeSvc := &fakeEntityTypeService{
+		byID:   map[string]*entitytype.EntityType{},
+		byName: map[string]*entitytype.EntityType{},
 	}
 	flowSvc := &fakeFlowService{
 		byID:  map[string]*flowmgt.CompleteFlowDefinition{},
 		byKey: map[string]*flowmgt.CompleteFlowDefinition{},
 	}
 
-	svc := newImportService(nil, nil, flowSvc, ouSvc, userSchemaSvc, nil, nil, themeSvc, nil, nil, nil)
+	svc := newImportService(nil, nil, flowSvc, ouSvc, entityTypeSvc, nil, nil, themeSvc, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: ou-123",
@@ -1138,8 +1138,8 @@ func TestImportResources_UpsertCreatePreservesIDsAcrossResourceTypes(t *testing.
 	require.Len(t, ouSvc.created, 1)
 	assert.Equal(t, "ou-123", ouSvc.created[0].ID)
 
-	require.Len(t, userSchemaSvc.created, 1)
-	assert.Equal(t, "usrs-123", userSchemaSvc.created[0].ID)
+	require.Len(t, entityTypeSvc.created, 1)
+	assert.Equal(t, "usrs-123", entityTypeSvc.created[0].ID)
 
 	require.Len(t, flowSvc.created, 1)
 	assert.Equal(t, "flow-123", flowSvc.created[0].ID)

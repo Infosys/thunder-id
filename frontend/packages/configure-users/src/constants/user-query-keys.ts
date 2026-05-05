@@ -29,13 +29,13 @@ const UserQueryKeys = {
    */
   USER: 'user',
   /**
-   * Base key for user schema list queries.
+   * Base key for user type list queries.
    */
-  USER_SCHEMAS: 'userSchemas',
+  USER_TYPES: 'userTypes',
   /**
-   * Key for a single user schema query.
+   * Key for a single user type query.
    */
-  USER_SCHEMA: 'userSchema',
+  USER_TYPE: 'userType',
 } as const;
 
 export default UserQueryKeys;

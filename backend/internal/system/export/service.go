@@ -45,7 +45,7 @@ const (
 	resourceTypeApplication        = "application"
 	resourceTypeIdentityProvider   = "identity_provider"
 	resourceTypeNotificationSender = "notification_sender"
-	resourceTypeUserSchema         = "user_schema"
+	resourceTypeEntityType         = "user_type"
 	resourceTypeOU                 = "organization_unit"
 	resourceTypeUser               = "user"
 	resourceTypeResourceServer     = "resource_server"
@@ -122,7 +122,7 @@ func (es *exportService) ExportResources(
 		resourceTypeApplication:        request.Applications,
 		resourceTypeIdentityProvider:   request.IdentityProviders,
 		resourceTypeNotificationSender: request.NotificationSenders,
-		resourceTypeUserSchema:         request.UserSchemas,
+		resourceTypeEntityType:         request.EntityTypes,
 		resourceTypeOU:                 request.OrganizationUnits,
 		resourceTypeUser:               request.Users,
 		resourceTypeResourceServer:     request.ResourceServers,

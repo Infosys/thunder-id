@@ -185,7 +185,7 @@ configuration:
   consoleClient:
     path: "/console"
     clientId: "CONSOLE"
-    scopes: "['openid', 'profile', 'email', 'ou', 'system', 'system:user', 'system:group', 'system:ou:view', 'system:userschema:view']"
+    scopes: "['openid', 'profile', 'email', 'ou', 'system', 'system:user', 'system:group', 'system:ou:view', 'system:usertype:view']"
     # Trusted issuer for console authentication (for federated/DP deployments).
     # When set, the console authenticates against this external server instead of
     # the local server.
@@ -195,7 +195,7 @@ configuration:
     #   httpOnly: false
     #   publicUrl: "https://cp.example.com"
     #   clientId: "FEDERATED_CONSOLE"
-    #   scopes: "['openid', 'profile', 'email', 'group', 'ou', 'system', 'system:user', 'system:group', 'system:ou:view', 'system:userschema:view']"
+    #   scopes: "['openid', 'profile', 'email', 'group', 'ou', 'system', 'system:user', 'system:group', 'system:ou:view', 'system:usertype:view']"
     #   # Type of external authorization server. Set to `generic` when the trusted
     #   # issuer is a generic OIDC provider. When `generic`, the console skips
     #   # ThunderID-specific bootstrap calls (flow metadata, branding preferences)

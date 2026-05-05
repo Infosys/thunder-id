@@ -411,9 +411,9 @@ type ApplicationConfig struct {
 	Store string `yaml:"store" json:"store"`
 }
 
-// UserSchemaConfig holds the user schema service configuration.
-type UserSchemaConfig struct {
-	// Store defines the storage mode for user schemas.
+// EntityTypeConfig holds the entity type service configuration.
+type EntityTypeConfig struct {
+	// Store defines the storage mode for entity types.
 	// Valid values: "mutable", "declarative", "composite" (hybrid mode)
 	// If not specified, falls back to global DeclarativeResources.Enabled setting:
 	//   - If DeclarativeResources.Enabled = true: behaves as "declarative"
@@ -594,7 +594,7 @@ type Config struct {
 	OrganizationUnit     OrganizationUnitConfig `yaml:"organization_unit" json:"organization_unit"`
 	IdentityProvider     IdentityProviderConfig `yaml:"identity_provider" json:"identity_provider"`
 	Application          ApplicationConfig      `yaml:"application" json:"application"`
-	UserSchema           UserSchemaConfig       `yaml:"user_schema" json:"user_schema"`
+	EntityType           EntityTypeConfig       `yaml:"user_type" json:"user_type"`
 	Observability        ObservabilityConfig    `yaml:"observability" json:"observability"`
 	Passkey              PasskeyConfig          `yaml:"passkey" json:"passkey"`
 	AuthnProvider        AuthnProviderConfig    `yaml:"authn_provider" json:"authn_provider"`

@@ -21,7 +21,7 @@ import {useMutation, useQueryClient, type UseMutationResult} from '@tanstack/rea
 import {useConfig, useToast} from '@thunderid/contexts';
 import {useTranslation} from 'react-i18next';
 import UserTypeQueryKeys from '../constants/userTypeQueryKeys';
-import type {ApiUserSchema, UpdateUserSchemaRequest} from '../types/user-types';
+import type {ApiUserType, UpdateUserTypeRequest} from '../types/user-types';
 
 /**
  * Variables for the {@link useUpdateUserType} mutation.
@@ -34,28 +34,28 @@ export interface UpdateUserTypeVariables {
   /**
    * The updated user type data
    */
-  data: UpdateUserSchemaRequest;
+  data: UpdateUserTypeRequest;
 }
 
 /**
- * Custom React hook to update an existing user schema (user type) in the server.
+ * Custom React hook to update an existing user type in the server.
  *
  * @returns TanStack Query mutation object for updating user types
  */
-export default function useUpdateUserType(): UseMutationResult<ApiUserSchema, Error, UpdateUserTypeVariables> {
+export default function useUpdateUserType(): UseMutationResult<ApiUserType, Error, UpdateUserTypeVariables> {
   const {http} = useAsgardeo();
   const {getServerUrl} = useConfig();
   const queryClient: ReturnType<typeof useQueryClient> = useQueryClient();
   const {t} = useTranslation('userTypes');
   const {showToast} = useToast();
 
-  return useMutation<ApiUserSchema, Error, UpdateUserTypeVariables>({
-    mutationFn: async ({userTypeId, data}: UpdateUserTypeVariables): Promise<ApiUserSchema> => {
+  return useMutation<ApiUserType, Error, UpdateUserTypeVariables>({
+    mutationFn: async ({userTypeId, data}: UpdateUserTypeVariables): Promise<ApiUserType> => {
       const serverUrl: string = getServerUrl();
       const response: {
-        data: ApiUserSchema;
+        data: ApiUserType;
       } = await http.request({
-        url: `${serverUrl}/user-schemas/${userTypeId}`,
+        url: `${serverUrl}/user-types/${userTypeId}`,
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

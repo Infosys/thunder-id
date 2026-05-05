@@ -19,12 +19,12 @@
 import type {ApiPaginationLink} from '@thunderid/types';
 
 /**
- * TypeScript types and interfaces for User Types (User Schemas) feature
- * Based on the OpenAPI specification for UserSchema endpoints
+ * TypeScript types and interfaces for User Types feature
+ * Based on the OpenAPI specification for UserType endpoints
  */
 
 /**
- * Base property definition types for user schema
+ * Base property definition types for user type
  */
 interface BasePropertyDefinition {
   required?: boolean;
@@ -97,34 +97,34 @@ export type PropertyDefinition =
   | ArrayPropertyDefinition;
 
 /**
- * User schema definition (key-value pairs of property definitions)
+ * User type schema definition (key-value pairs of property definitions)
  */
-export type UserSchemaDefinition = Record<string, PropertyDefinition>;
+export type UserTypeDefinition = Record<string, PropertyDefinition>;
 
 /**
- * System-level metadata for a user schema.
+ * System-level metadata for a user type.
  */
 export interface SystemAttributes {
   display?: string;
 }
 
 /**
- * Complete User Schema object as returned by API
+ * Complete User Type object as returned by API
  */
-export interface ApiUserSchema {
+export interface ApiUserType {
   id: string;
   name: string;
   ouId: string;
   ouHandle?: string;
   allowSelfRegistration: boolean;
   systemAttributes?: SystemAttributes;
-  schema: UserSchemaDefinition;
+  schema: UserTypeDefinition;
 }
 
 /**
- * User Schema list item (minimal representation)
+ * User Type list item (minimal representation)
  */
-export interface UserSchemaListItem {
+export interface UserTypeListItem {
   id: string;
   name: string;
   ouId: string;
@@ -134,42 +134,42 @@ export interface UserSchemaListItem {
 }
 
 /**
- * Response for GET /user-schemas (list with pagination)
+ * Response for GET /user-types (list with pagination)
  */
-export interface UserSchemaListResponse {
+export interface UserTypeListResponse {
   totalResults: number;
   startIndex: number;
   count: number;
-  schemas: UserSchemaListItem[];
+  schemas: UserTypeListItem[];
   links?: ApiPaginationLink[];
 }
 
 /**
- * Request body for POST /user-schemas (create)
+ * Request body for POST /user-types (create)
  */
-export interface CreateUserSchemaRequest {
+export interface CreateUserTypeRequest {
   name: string;
   ouId: string;
   allowSelfRegistration?: boolean;
   systemAttributes?: SystemAttributes;
-  schema: UserSchemaDefinition;
+  schema: UserTypeDefinition;
 }
 
 /**
- * Request body for PUT /user-schemas/{id} (update)
+ * Request body for PUT /user-types/{id} (update)
  */
-export interface UpdateUserSchemaRequest {
+export interface UpdateUserTypeRequest {
   name: string;
   ouId: string;
   allowSelfRegistration?: boolean;
   systemAttributes?: SystemAttributes;
-  schema: UserSchemaDefinition;
+  schema: UserTypeDefinition;
 }
 
 /**
- * Query parameters for listing user schemas
+ * Query parameters for listing user types
  */
-export interface UserSchemaListParams {
+export interface UserTypeListParams {
   limit?: number;
   offset?: number;
 }

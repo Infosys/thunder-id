@@ -1,7 +1,8 @@
--- Table to store User Schemas
-CREATE TABLE USER_SCHEMAS (
+-- Table to store Entity Schemas (user/agent categories)
+CREATE TABLE "ENTITY_TYPES" (
     DEPLOYMENT_ID   VARCHAR(255) NOT NULL,
     ID          VARCHAR(36) PRIMARY KEY,
+    CATEGORY    VARCHAR(50) NOT NULL,
     NAME        VARCHAR(100) NOT NULL,
     OU_ID       VARCHAR(36) NOT NULL,
     ALLOW_SELF_REGISTRATION BOOLEAN DEFAULT FALSE NOT NULL,
@@ -9,11 +10,11 @@ CREATE TABLE USER_SCHEMAS (
     SYSTEM_ATTRIBUTES JSONB,
     CREATED_AT  TIMESTAMPTZ DEFAULT NOW(),
     UPDATED_AT  TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE (NAME, DEPLOYMENT_ID)
+    UNIQUE (NAME, CATEGORY, DEPLOYMENT_ID)
 );
 
--- Composite index for deployment + OU-based user schema lookups
-CREATE INDEX idx_user_schemas_deployment_ou ON USER_SCHEMAS (DEPLOYMENT_ID, OU_ID);
+-- Composite index for deployment + category + OU-based entity type lookups
+CREATE INDEX idx_entity_schemas_deployment_category_ou ON "ENTITY_TYPES" (DEPLOYMENT_ID, CATEGORY, OU_ID);
 
 -- Table to store Roles
 CREATE TABLE "ROLE" (

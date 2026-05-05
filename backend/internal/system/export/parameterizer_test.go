@@ -1644,7 +1644,7 @@ func TestToParameterizedYAML_JSONRawMessageInvalid(t *testing.T) {
 	}
 
 	// Should return an error
-	result, _, err := p.ToParameterizedYAML(schema, "UserSchema", "TestSchema", nil)
+	result, _, err := p.ToParameterizedYAML(schema, "EntityType", "TestSchema", nil)
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid JSON in RawMessage")
@@ -1684,15 +1684,15 @@ func TestToParameterizedYAML_NestedStructWithInvalidJSON(t *testing.T) {
 }
 
 // =============================================================================
-// User Schema Import/Export Symmetry Tests
+// User Type Import/Export Symmetry Tests
 // =============================================================================
 
-// TestUserSchemaImportExportSymmetry verifies that exported user schemas can be re-imported
+// TestEntityTypeImportExportSymmetry verifies that exported entity types can be re-imported
 // This test ensures alignment between the export format and the import format used in
-// userschema.UserSchemaRequestWithID
-func TestUserSchemaImportExportSymmetry(t *testing.T) {
-	// Define the export format (UserSchema struct)
-	type UserSchema struct {
+// entitytype.EntityTypeRequestWithID
+func TestEntityTypeImportExportSymmetry(t *testing.T) {
+	// Define the export format (EntityType struct)
+	type EntityType struct {
 		ID                    string          `yaml:"id"`
 		Name                  string          `yaml:"name"`
 		OUID                  string          `yaml:"organization_unit_id"`
@@ -1700,8 +1700,8 @@ func TestUserSchemaImportExportSymmetry(t *testing.T) {
 		Schema                json.RawMessage `yaml:"schema"`
 	}
 
-	// Define the import format (UserSchemaRequestWithID struct)
-	type UserSchemaRequestWithID struct {
+	// Define the import format (EntityTypeRequestWithID struct)
+	type EntityTypeRequestWithID struct {
 		ID                    string `yaml:"id"`
 		Name                  string `yaml:"name"`
 		OUID                  string `yaml:"organization_unit_id"`
@@ -1710,7 +1710,7 @@ func TestUserSchemaImportExportSymmetry(t *testing.T) {
 	}
 
 	// Original schema with json.RawMessage
-	originalSchema := UserSchema{
+	originalSchema := EntityType{
 		ID:                    "93e861d5-531a-4495-b373-e3db5250e76a",
 		Name:                  "Person",
 		OUID:                  "14abcc09-4a7f-417e-be47-88e332148a82",
@@ -1721,13 +1721,13 @@ func TestUserSchemaImportExportSymmetry(t *testing.T) {
 
 	// Export using the parameterizer
 	p := newParameterizer(templatingRules{})
-	yamlOutput, _, err := p.ToParameterizedYAML(originalSchema, "UserSchema", "Person", nil)
+	yamlOutput, _, err := p.ToParameterizedYAML(originalSchema, "EntityType", "Person", nil)
 	require.NoError(t, err)
 
 	t.Logf("Exported YAML:\n%s", yamlOutput)
 
-	// Parse the exported YAML back as if importing (using UserSchemaRequestWithID format)
-	var importedSchema UserSchemaRequestWithID
+	// Parse the exported YAML back as if importing (using EntityTypeRequestWithID format)
+	var importedSchema EntityTypeRequestWithID
 	err = yaml.Unmarshal([]byte(yamlOutput), &importedSchema)
 	require.NoError(t, err)
 
@@ -1764,7 +1764,7 @@ func TestUserSchemaImportExportSymmetry(t *testing.T) {
 	assert.True(t, isString, "Schema should be exported as a string")
 }
 
-// TestUserSchemaExportFormat verifies the exact export format
+// TestEntityTypeExportFormat verifies the exact export format
 // TestRenderNode_I18nRefsInSequenceItemAreQuoted tests that i18n template references
 // (e.g. {{ t(key) }}) in sequence-item mapping values are quoted in the exported YAML
 // so that the output is valid YAML and can be re-imported without parse errors.
@@ -1851,8 +1851,8 @@ func TestRenderMappingValue_I18nRefsAreQuoted(t *testing.T) {
 	assert.Contains(t, result, `callbackUrl: {{.TEST_CALLBACK_URL}}`)
 }
 
-func TestUserSchemaExportFormat(t *testing.T) {
-	type UserSchema struct {
+func TestEntityTypeExportFormat(t *testing.T) {
+	type EntityType struct {
 		ID                    string          `yaml:"id"`
 		Name                  string          `yaml:"name"`
 		OUID                  string          `yaml:"organization_unit_id"`
@@ -1860,7 +1860,7 @@ func TestUserSchemaExportFormat(t *testing.T) {
 		Schema                json.RawMessage `yaml:"schema"`
 	}
 
-	schema := UserSchema{
+	schema := EntityType{
 		ID:                    "test-id",
 		Name:                  "TestSchema",
 		OUID:                  "test-ou",
@@ -1869,11 +1869,11 @@ func TestUserSchemaExportFormat(t *testing.T) {
 	}
 
 	p := newParameterizer(templatingRules{})
-	yamlOutput, _, err := p.ToParameterizedYAML(schema, "UserSchema", "TestSchema", nil)
+	yamlOutput, _, err := p.ToParameterizedYAML(schema, "EntityType", "TestSchema", nil)
 	require.NoError(t, err)
 
 	// Verify the schema field is a plain string in the YAML, not a structured object
-	// This ensures it can be imported using the string type in UserSchemaRequestWithID
+	// This ensures it can be imported using the string type in EntityTypeRequestWithID
 	assert.Contains(t, yamlOutput, `schema: '{"field1":"value1"}'`,
 		"Schema should be exported as a quoted JSON string")
 	assert.NotContains(t, yamlOutput, "schema:\n  field1:",

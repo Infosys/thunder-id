@@ -28,6 +28,7 @@ import (
 	appmodel "github.com/asgardeo/thunder/internal/application/model"
 	layoutmgt "github.com/asgardeo/thunder/internal/design/layout/mgt"
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	flowmgt "github.com/asgardeo/thunder/internal/flow/mgt"
 	"github.com/asgardeo/thunder/internal/idp"
@@ -40,7 +41,6 @@ import (
 	i18nmgt "github.com/asgardeo/thunder/internal/system/i18n/mgt"
 	"github.com/asgardeo/thunder/internal/system/log"
 	"github.com/asgardeo/thunder/internal/user"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 type applicationAdapter interface {
@@ -88,14 +88,18 @@ type ouAdapter interface {
 		*serviceerror.ServiceError)
 }
 
-type userSchemaAdapter interface {
-	CreateUserSchema(ctx context.Context, request userschema.CreateUserSchemaRequestWithID) (*userschema.UserSchema,
+type entityTypeAdapter interface {
+	CreateEntityType(ctx context.Context, category entitytype.TypeCategory,
+		request entitytype.CreateEntityTypeRequestWithID) (*entitytype.EntityType,
 		*serviceerror.ServiceError)
-	GetUserSchema(ctx context.Context, schemaID string, includeDisplay bool) (*userschema.UserSchema,
+	GetEntityType(ctx context.Context, category entitytype.TypeCategory, schemaID string,
+		includeDisplay bool) (*entitytype.EntityType,
 		*serviceerror.ServiceError)
-	GetUserSchemaByName(ctx context.Context, schemaName string) (*userschema.UserSchema, *serviceerror.ServiceError)
-	UpdateUserSchema(ctx context.Context, schemaID string, request userschema.UpdateUserSchemaRequest) (
-		*userschema.UserSchema,
+	GetEntityTypeByName(ctx context.Context, category entitytype.TypeCategory,
+		schemaName string) (*entitytype.EntityType, *serviceerror.ServiceError)
+	UpdateEntityType(ctx context.Context, category entitytype.TypeCategory, schemaID string,
+		request entitytype.UpdateEntityTypeRequest) (
+		*entitytype.EntityType,
 		*serviceerror.ServiceError)
 }
 
@@ -161,7 +165,7 @@ type importService struct {
 	idpService         idpAdapter
 	flowService        flowAdapter
 	ouService          ouAdapter
-	userSchemaService  userSchemaAdapter
+	entityTypeService  entityTypeAdapter
 	roleService        roleAdapter
 	resourceService    resourceServerAdapter
 	themeService       themeAdapter
@@ -175,7 +179,7 @@ func newImportService(
 	idpService idpAdapter,
 	flowService flowAdapter,
 	ouService ouAdapter,
-	userSchemaService userSchemaAdapter,
+	entityTypeService entityTypeAdapter,
 	roleService roleAdapter,
 	resourceService resourceServerAdapter,
 	themeService themeAdapter,
@@ -188,7 +192,7 @@ func newImportService(
 		idpService:         idpService,
 		flowService:        flowService,
 		ouService:          ouService,
-		userSchemaService:  userSchemaService,
+		entityTypeService:  entityTypeService,
 		roleService:        roleService,
 		resourceService:    resourceService,
 		themeService:       themeService,
@@ -330,8 +334,8 @@ func (s *importService) importDocument(
 		return s.importFlow(ctx, doc, options, dryRun)
 	case resourceTypeOrganizationUnit:
 		return s.importOrganizationUnit(ctx, doc, options, dryRun)
-	case resourceTypeUserSchema:
-		return s.importUserSchema(ctx, doc, options, dryRun)
+	case resourceTypeEntityType:
+		return s.importEntityType(ctx, doc, options, dryRun)
 	case resourceTypeRole:
 		return s.importRole(ctx, doc, options, dryRun)
 	case resourceTypeResourceServer:
@@ -583,7 +587,7 @@ func (s *importService) importFlow(
 
 var resourceDependencyOrder = []string{
 	resourceTypeOrganizationUnit,
-	resourceTypeUserSchema,
+	resourceTypeEntityType,
 	resourceTypeResourceServer,
 	resourceTypeRole,
 	resourceTypeIdentityProvider,

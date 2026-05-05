@@ -52,7 +52,7 @@ export interface EditSchemaSettingsProps {
 
 /**
  * Schema settings tab content for the User Type edit page.
- * Displays the property editor cards for defining user schema fields.
+ * Displays the property editor cards for defining user type schema fields.
  */
 export default function EditSchemaSettings({
   properties,

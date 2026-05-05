@@ -61,7 +61,6 @@ var publicPaths = []string{
 type ResourceType string
 
 // ResourceType defines the category of system resource being acted upon.
-// ResourceTypeOU, ResourceTypeUser, ResourceTypeGroup, and ResourceTypeUserSchema are the supported values.
 const (
 	// ResourceTypeOU identifies an organization unit resource.
 	ResourceTypeOU ResourceType = "ou"
@@ -69,8 +68,10 @@ const (
 	ResourceTypeUser ResourceType = "user"
 	// ResourceTypeGroup identifies a group resource.
 	ResourceTypeGroup ResourceType = "group"
-	// ResourceTypeUserSchema identifies a user schema resource.
-	ResourceTypeUserSchema ResourceType = "userschema"
+	// ResourceTypeUserType identifies a user-category entity type resource.
+	ResourceTypeUserType ResourceType = "usertype"
+	// ResourceTypeAgentType identifies an agent-category entity type resource.
+	ResourceTypeAgentType ResourceType = "agenttype"
 )
 
 // ---- Actions ----
@@ -114,16 +115,27 @@ const (
 	// ActionListGroups lists groups.
 	ActionListGroups Action = "group:list"
 
-	// ActionCreateUserSchema creates a new user schema.
-	ActionCreateUserSchema Action = "userschema:create"
-	// ActionReadUserSchema reads a user schema.
-	ActionReadUserSchema Action = "userschema:read"
-	// ActionUpdateUserSchema updates a user schema.
-	ActionUpdateUserSchema Action = "userschema:update"
-	// ActionDeleteUserSchema deletes a user schema.
-	ActionDeleteUserSchema Action = "userschema:delete"
-	// ActionListUserSchemas lists user schemas.
-	ActionListUserSchemas Action = "userschema:list"
+	// ActionCreateUserType creates a new user type.
+	ActionCreateUserType Action = "usertype:create"
+	// ActionReadUserType reads a user type.
+	ActionReadUserType Action = "usertype:read"
+	// ActionUpdateUserType updates a user type.
+	ActionUpdateUserType Action = "usertype:update"
+	// ActionDeleteUserType deletes a user type.
+	ActionDeleteUserType Action = "usertype:delete"
+	// ActionListUserTypes lists user types.
+	ActionListUserTypes Action = "usertype:list"
+
+	// ActionCreateAgentType creates a new agent type.
+	ActionCreateAgentType Action = "agenttype:create"
+	// ActionReadAgentType reads an agent type.
+	ActionReadAgentType Action = "agenttype:read"
+	// ActionUpdateAgentType updates an agent type.
+	ActionUpdateAgentType Action = "agenttype:update"
+	// ActionDeleteAgentType deletes an agent type.
+	ActionDeleteAgentType Action = "agenttype:delete"
+	// ActionListAgentTypes lists agent types.
+	ActionListAgentTypes Action = "agenttype:list"
 )
 
 // ---- Permissions ----
@@ -131,15 +143,17 @@ const (
 // SystemPermissions holds the runtime-resolved permission strings for the system resource server.
 // All values are set by InitSystemPermissions and must not be used before it is called.
 type SystemPermissions struct {
-	Root           string
-	OU             string
-	OUView         string
-	User           string
-	UserView       string
-	Group          string
-	GroupView      string
-	UserSchema     string
-	UserSchemaView string
+	Root          string
+	OU            string
+	OUView        string
+	User          string
+	UserView      string
+	Group         string
+	GroupView     string
+	UserType      string
+	UserTypeView  string
+	AgentType     string
+	AgentTypeView string
 }
 
 // sysPerms holds the active system permissions, initialized by InitSystemPermissions.
@@ -162,15 +176,17 @@ func buildPermission(parts ...string) string {
 // This function must be called once at startup before any service or middleware uses permissions.
 func InitSystemPermissions(handle string) {
 	p := &SystemPermissions{
-		Root:           buildPermission(handle, "system"),
-		OU:             buildPermission(handle, "system", "ou"),
-		OUView:         buildPermission(handle, "system", "ou", "view"),
-		User:           buildPermission(handle, "system", "user"),
-		UserView:       buildPermission(handle, "system", "user", "view"),
-		Group:          buildPermission(handle, "system", "group"),
-		GroupView:      buildPermission(handle, "system", "group", "view"),
-		UserSchema:     buildPermission(handle, "system", "userschema"),
-		UserSchemaView: buildPermission(handle, "system", "userschema", "view"),
+		Root:          buildPermission(handle, "system"),
+		OU:            buildPermission(handle, "system", "ou"),
+		OUView:        buildPermission(handle, "system", "ou", "view"),
+		User:          buildPermission(handle, "system", "user"),
+		UserView:      buildPermission(handle, "system", "user", "view"),
+		Group:         buildPermission(handle, "system", "group"),
+		GroupView:     buildPermission(handle, "system", "group", "view"),
+		UserType:      buildPermission(handle, "system", "usertype"),
+		UserTypeView:  buildPermission(handle, "system", "usertype", "view"),
+		AgentType:     buildPermission(handle, "system", "agenttype"),
+		AgentTypeView: buildPermission(handle, "system", "agenttype", "view"),
 	}
 	sysPerms = p
 
@@ -197,12 +213,19 @@ func InitSystemPermissions(handle string) {
 		ActionDeleteGroup: p.Group,
 		ActionListGroups:  p.GroupView,
 
-		// User schema actions.
-		ActionCreateUserSchema: p.UserSchema,
-		ActionReadUserSchema:   p.UserSchemaView,
-		ActionUpdateUserSchema: p.UserSchema,
-		ActionDeleteUserSchema: p.UserSchema,
-		ActionListUserSchemas:  p.UserSchemaView,
+		// User type actions.
+		ActionCreateUserType: p.UserType,
+		ActionReadUserType:   p.UserTypeView,
+		ActionUpdateUserType: p.UserType,
+		ActionDeleteUserType: p.UserType,
+		ActionListUserTypes:  p.UserTypeView,
+
+		// Agent schema actions.
+		ActionCreateAgentType: p.AgentType,
+		ActionReadAgentType:   p.AgentTypeView,
+		ActionUpdateAgentType: p.AgentType,
+		ActionDeleteAgentType: p.AgentType,
+		ActionListAgentTypes:  p.AgentTypeView,
 	}
 
 	apiPermissionEntries = []apiPermissionEntry{
@@ -241,12 +264,19 @@ func InitSystemPermissions(handle string) {
 		{"PUT /groups/**", p.Group},
 		{"DELETE /groups/**", p.Group},
 
-		// User schema APIs.
-		{"GET /user-schemas", p.UserSchemaView},
-		{"POST /user-schemas", p.UserSchema},
-		{"GET /user-schemas/**", p.UserSchemaView},
-		{"PUT /user-schemas/**", p.UserSchema},
-		{"DELETE /user-schemas/**", p.UserSchema},
+		// User type APIs.
+		{"GET /user-types", p.UserTypeView},
+		{"POST /user-types", p.UserType},
+		{"GET /user-types/**", p.UserTypeView},
+		{"PUT /user-types/**", p.UserType},
+		{"DELETE /user-types/**", p.UserType},
+
+		// Agent schema APIs.
+		{"GET /agent-types", p.AgentTypeView},
+		{"POST /agent-types", p.AgentType},
+		{"GET /agent-types/**", p.AgentTypeView},
+		{"PUT /agent-types/**", p.AgentType},
+		{"DELETE /agent-types/**", p.AgentType},
 
 		// Import APIs.
 		{"POST /import", p.Root},

@@ -19,10 +19,10 @@
 package entity
 
 import (
+	"github.com/asgardeo/thunder/internal/entitytype"
 	"github.com/asgardeo/thunder/internal/ou"
 	"github.com/asgardeo/thunder/internal/system/crypto/hash"
 	"github.com/asgardeo/thunder/internal/system/transaction"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 // Initialize initializes the entity service.
@@ -31,7 +31,7 @@ import (
 // based on their own store mode configuration.
 func Initialize(
 	hashService hash.HashServiceInterface,
-	userSchemaService userschema.UserSchemaServiceInterface,
+	entityTypeService entitytype.EntityTypeServiceInterface,
 	ouService ou.OrganizationUnitServiceInterface,
 ) (EntityServiceInterface, error) {
 	store, transactioner, err := initializeStore()
@@ -39,7 +39,7 @@ func Initialize(
 		return nil, err
 	}
 
-	svc := newEntityService(store, hashService, userSchemaService, ouService, transactioner)
+	svc := newEntityService(store, hashService, entityTypeService, ouService, transactioner)
 	return svc, nil
 }
 

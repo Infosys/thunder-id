@@ -20,7 +20,7 @@
 import {render, screen, waitFor, within, userEvent} from '@thunderid/test-utils';
 import type {ReactNode} from 'react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
-import type {ApiUserSchema, ApiError} from '../../types/user-types';
+import type {ApiUserType, ApiError} from '../../types/user-types';
 import ViewUserTypePage from '../ViewUserTypePage';
 
 vi.mock('@thunderid/components', async (importOriginal) => {
@@ -114,7 +114,7 @@ const goToSchemaTab = async (user: ReturnType<typeof userEvent.setup>) => {
 };
 
 describe('ViewUserTypePage', () => {
-  const mockUserType: ApiUserSchema = {
+  const mockUserType: ApiUserType = {
     id: 'schema-123',
     name: 'Employee Schema',
     ouId: 'root-ou',
@@ -326,7 +326,7 @@ describe('ViewUserTypePage', () => {
     });
 
     it('displays organization unit tree picker with empty value', () => {
-      const userTypeWithEmptyOu: ApiUserSchema = {
+      const userTypeWithEmptyOu: ApiUserType = {
         ...mockUserType,
         ouId: '',
       };
@@ -345,7 +345,7 @@ describe('ViewUserTypePage', () => {
     });
 
     it('displays organization unit id in tree picker when unit is not found in lookup', () => {
-      const userTypeWithUnknownOu: ApiUserSchema = {
+      const userTypeWithUnknownOu: ApiUserType = {
         ...mockUserType,
         ouId: 'unknown-ou-id',
       };
@@ -425,7 +425,7 @@ describe('ViewUserTypePage', () => {
 
     it('allows adding enum values', async () => {
       const user = userEvent.setup();
-      const userTypeWithString: ApiUserSchema = {
+      const userTypeWithString: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -466,7 +466,7 @@ describe('ViewUserTypePage', () => {
 
     it('allows adding enum value with Enter key', async () => {
       const user = userEvent.setup();
-      const userTypeWithString: ApiUserSchema = {
+      const userTypeWithString: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -504,7 +504,7 @@ describe('ViewUserTypePage', () => {
 
     it('allows removing enum values', async () => {
       const user = userEvent.setup();
-      const userTypeWithEnum: ApiUserSchema = {
+      const userTypeWithEnum: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -545,7 +545,7 @@ describe('ViewUserTypePage', () => {
 
     it('does not add empty enum value', async () => {
       const user = userEvent.setup();
-      const userTypeWithString: ApiUserSchema = {
+      const userTypeWithString: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -586,7 +586,7 @@ describe('ViewUserTypePage', () => {
 
     it('allows editing regex pattern', async () => {
       const user = userEvent.setup();
-      const userTypeWithString: ApiUserSchema = {
+      const userTypeWithString: ApiUserType = {
         ...mockUserType,
         schema: {
           username: {
@@ -616,7 +616,7 @@ describe('ViewUserTypePage', () => {
 
     it('allows toggling unique checkbox for number type', async () => {
       const user = userEvent.setup();
-      const userTypeWithNumber: ApiUserSchema = {
+      const userTypeWithNumber: ApiUserType = {
         ...mockUserType,
         schema: {
           employeeId: {
@@ -648,7 +648,7 @@ describe('ViewUserTypePage', () => {
 
     it('resets enum and regex when changing type from string to boolean', async () => {
       const user = userEvent.setup();
-      const userTypeWithString: ApiUserSchema = {
+      const userTypeWithString: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -871,7 +871,7 @@ describe('ViewUserTypePage', () => {
       const user = userEvent.setup();
       mockUpdateMutateAsync.mockResolvedValue(undefined);
 
-      const userTypeWithEnum: ApiUserSchema = {
+      const userTypeWithEnum: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -931,7 +931,7 @@ describe('ViewUserTypePage', () => {
 
     it('saves schema with array type properties', async () => {
       const user = userEvent.setup();
-      const userTypeWithArray: ApiUserSchema = {
+      const userTypeWithArray: ApiUserType = {
         ...mockUserType,
         schema: {
           tags: {
@@ -976,7 +976,7 @@ describe('ViewUserTypePage', () => {
 
     it('saves schema with object type properties', async () => {
       const user = userEvent.setup();
-      const userTypeWithObject: ApiUserSchema = {
+      const userTypeWithObject: ApiUserType = {
         ...mockUserType,
         schema: {
           address: {
@@ -1021,7 +1021,7 @@ describe('ViewUserTypePage', () => {
 
     it('preserves unique flag on boolean type during round-trip', async () => {
       const user = userEvent.setup();
-      const userTypeWithUniqueBoolean: ApiUserSchema = {
+      const userTypeWithUniqueBoolean: ApiUserType = {
         ...mockUserType,
         schema: {
           isVerified: {
@@ -1066,7 +1066,7 @@ describe('ViewUserTypePage', () => {
 
     it('saves schema with unique flag for number type', async () => {
       const user = userEvent.setup();
-      const userTypeWithUniqueNumber: ApiUserSchema = {
+      const userTypeWithUniqueNumber: ApiUserType = {
         ...mockUserType,
         schema: {
           employeeId: {
@@ -1111,7 +1111,7 @@ describe('ViewUserTypePage', () => {
 
     it('saves schema with regex pattern for string type', async () => {
       const user = userEvent.setup();
-      const userTypeWithRegex: ApiUserSchema = {
+      const userTypeWithRegex: ApiUserType = {
         ...mockUserType,
         schema: {
           username: {
@@ -1156,7 +1156,7 @@ describe('ViewUserTypePage', () => {
 
     it('saves schema with enum values for string type', async () => {
       const user = userEvent.setup();
-      const userTypeWithEnum: ApiUserSchema = {
+      const userTypeWithEnum: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -1218,7 +1218,7 @@ describe('ViewUserTypePage', () => {
 
     it('shows validation error when saving with empty organization unit', async () => {
       const user = userEvent.setup();
-      const userTypeWithEmptyOu: ApiUserSchema = {
+      const userTypeWithEmptyOu: ApiUserType = {
         ...mockUserType,
         ouId: '',
         schema: {
@@ -1316,7 +1316,7 @@ describe('ViewUserTypePage', () => {
     it('clears unique when credential is enabled', async () => {
       const user = userEvent.setup();
 
-      const userTypeWithUnique: ApiUserSchema = {
+      const userTypeWithUnique: ApiUserType = {
         ...mockUserType,
         schema: {
           email: {
@@ -1368,7 +1368,7 @@ describe('ViewUserTypePage', () => {
     it('saves schema with credential flag', async () => {
       const user = userEvent.setup();
 
-      const userTypeWithSingleString: ApiUserSchema = {
+      const userTypeWithSingleString: ApiUserType = {
         ...mockUserType,
         schema: {
           password: {
@@ -1415,7 +1415,7 @@ describe('ViewUserTypePage', () => {
   describe('Schema Property Handling with Enum Type', () => {
     it('saves schema with enum type converted to string', async () => {
       const user = userEvent.setup();
-      const userTypeWithEnum: ApiUserSchema = {
+      const userTypeWithEnum: ApiUserType = {
         ...mockUserType,
         schema: {
           status: {
@@ -1478,7 +1478,7 @@ describe('ViewUserTypePage', () => {
   describe('Display Attribute Eligibility', () => {
     it('clears display attribute when selected property becomes ineligible', async () => {
       const user = userEvent.setup();
-      const userTypeWithDisplay: ApiUserSchema = {
+      const userTypeWithDisplay: ApiUserType = {
         ...mockUserType,
         systemAttributes: {display: 'email'},
         schema: {
@@ -1522,7 +1522,7 @@ describe('ViewUserTypePage', () => {
 
     it('preserves display attribute when selected property remains eligible', async () => {
       const user = userEvent.setup();
-      const userTypeWithDisplay: ApiUserSchema = {
+      const userTypeWithDisplay: ApiUserType = {
         ...mockUserType,
         systemAttributes: {display: 'email'},
         schema: {

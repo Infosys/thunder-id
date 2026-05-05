@@ -20,10 +20,10 @@ import {SettingsCard} from '@thunderid/components';
 import {Stack, TextField, InputAdornment, Tooltip, IconButton, FormControl, FormLabel} from '@wso2/oxygen-ui';
 import {Copy, Check} from '@wso2/oxygen-ui-icons-react';
 import {useTranslation} from 'react-i18next';
-import type {ApiUserSchema} from '../../../types/user-types';
+import type {ApiUserType} from '../../../types/user-types';
 
 interface QuickCopySectionProps {
-  userType: ApiUserSchema;
+  userType: ApiUserType;
   copiedField: string | null;
   onCopyToClipboard: (text: string, fieldName: string) => Promise<void>;
 }

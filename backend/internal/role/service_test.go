@@ -35,10 +35,10 @@ import (
 	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
 	"github.com/asgardeo/thunder/internal/system/utils"
 	"github.com/asgardeo/thunder/tests/mocks/entitymock"
+	"github.com/asgardeo/thunder/tests/mocks/entitytypemock"
 	"github.com/asgardeo/thunder/tests/mocks/groupmock"
 	"github.com/asgardeo/thunder/tests/mocks/oumock"
 	"github.com/asgardeo/thunder/tests/mocks/resourcemock"
-	"github.com/asgardeo/thunder/tests/mocks/userschemamock"
 )
 
 const (
@@ -67,7 +67,7 @@ type RoleServiceTestSuite struct {
 	mockGroupService      *groupmock.GroupServiceInterfaceMock
 	mockOUService         *oumock.OrganizationUnitServiceInterfaceMock
 	mockResourceService   *resourcemock.ResourceServiceInterfaceMock
-	mockUserSchemaService *userschemamock.UserSchemaServiceInterfaceMock
+	mockEntityTypeService *entitytypemock.EntityTypeServiceInterfaceMock
 	transactioner         *fakeTransactioner
 	service               RoleServiceInterface
 }
@@ -94,7 +94,7 @@ func (suite *RoleServiceTestSuite) SetupTest() {
 	suite.mockGroupService = groupmock.NewGroupServiceInterfaceMock(suite.T())
 	suite.mockOUService = oumock.NewOrganizationUnitServiceInterfaceMock(suite.T())
 	suite.mockResourceService = resourcemock.NewResourceServiceInterfaceMock(suite.T())
-	suite.mockUserSchemaService = userschemamock.NewUserSchemaServiceInterfaceMock(suite.T())
+	suite.mockEntityTypeService = entitytypemock.NewEntityTypeServiceInterfaceMock(suite.T())
 	suite.transactioner = &fakeTransactioner{}
 	suite.service = newRoleService(
 		suite.mockStore,
@@ -102,7 +102,7 @@ func (suite *RoleServiceTestSuite) SetupTest() {
 		suite.mockGroupService,
 		suite.mockOUService,
 		suite.mockResourceService,
-		suite.mockUserSchemaService,
+		suite.mockEntityTypeService,
 		suite.transactioner,
 	)
 }
@@ -1302,7 +1302,7 @@ func (suite *RoleServiceTestSuite) TestGetRoleAssignments_WithDisplay_Success() 
 		[]string{"group1"}).Return(map[string]*group.Group{
 		"group1": {Name: "Test Group"},
 	}, (*serviceerror.ServiceError)(nil)).Once()
-	suite.mockUserSchemaService.On("GetDisplayAttributesByNames", mock.Anything,
+	suite.mockEntityTypeService.On("GetDisplayAttributesByNames", mock.Anything, mock.Anything,
 		[]string{"employee"}).Return(map[string]string{
 		"employee": "email",
 	}, (*serviceerror.ServiceError)(nil)).Once()
@@ -1426,7 +1426,7 @@ func (suite *RoleServiceTestSuite) TestGetRoleAssignments_WithDisplay_NestedDisp
 			Attributes: json.RawMessage(`{"profile":{"fullName":"Alice Smith"}}`),
 		},
 	}, nil).Once()
-	suite.mockUserSchemaService.On("GetDisplayAttributesByNames", mock.Anything,
+	suite.mockEntityTypeService.On("GetDisplayAttributesByNames", mock.Anything, mock.Anything,
 		[]string{"employee"}).Return(map[string]string{
 		"employee": "profile.fullName",
 	}, (*serviceerror.ServiceError)(nil)).Once()
@@ -1459,7 +1459,7 @@ func (suite *RoleServiceTestSuite) TestGetRoleAssignments_WithDisplay_SchemaServ
 		},
 	}, nil).Once()
 	// Schema service fails — should fall back to user ID
-	suite.mockUserSchemaService.On("GetDisplayAttributesByNames", mock.Anything,
+	suite.mockEntityTypeService.On("GetDisplayAttributesByNames", mock.Anything, mock.Anything,
 		[]string{"employee"}).Return(
 		(map[string]string)(nil), &serviceerror.ServiceError{Code: "INTERNAL_ERROR"},
 	).Once()

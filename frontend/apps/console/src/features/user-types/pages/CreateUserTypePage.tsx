@@ -39,7 +39,7 @@ import ConfigureName from '../components/create-user-type/ConfigureName';
 import ConfigureProperties from '../components/create-user-type/ConfigureProperties';
 import useUserTypeCreate from '../contexts/UserTypeCreate/useUserTypeCreate';
 import {UserTypeCreateFlowStep} from '../models/user-type-create-flow';
-import type {PropertyDefinition, UserSchemaDefinition, CreateUserSchemaRequest} from '../types/user-types';
+import type {PropertyDefinition, UserTypeDefinition, CreateUserTypeRequest} from '../types/user-types';
 
 export default function CreateUserTypePage(): JSX.Element {
   const {t} = useTranslation();
@@ -155,7 +155,7 @@ export default function CreateUserTypePage(): JSX.Element {
     }
 
     // Convert properties to schema definition
-    const schema: UserSchemaDefinition = {};
+    const schema: UserTypeDefinition = {};
     validProperties.forEach((prop) => {
       const actualType = prop.type === 'enum' ? 'string' : prop.type;
 
@@ -192,7 +192,7 @@ export default function CreateUserTypePage(): JSX.Element {
       schema[prop.name.trim()] = propDef as PropertyDefinition;
     });
 
-    const requestBody: CreateUserSchemaRequest = {
+    const requestBody: CreateUserTypeRequest = {
       name: name.trim(),
       ouId: trimmedOuId,
       schema,

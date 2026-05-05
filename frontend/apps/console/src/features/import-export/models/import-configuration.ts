@@ -62,7 +62,7 @@ export interface ProductConfig {
   application?: unknown[];
   identity_provider?: unknown[];
   notification_sender?: unknown[];
-  user_schema?: unknown[];
+  user_type?: unknown[];
   organization_unit?: unknown[];
   user?: unknown[];
   flow?: unknown[];

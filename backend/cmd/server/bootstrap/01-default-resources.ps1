@@ -41,7 +41,7 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 }
 
 # Bootstrap Script: Default Resources Setup
-# Creates default organization unit, user schema, admin user, system resource server, system action, admin role, and Console application
+# Creates default organization unit, user type, admin user, system resource server, system action, admin role, and Console application
 
 
 $ErrorActionPreference = 'Stop'
@@ -118,12 +118,12 @@ else {
 Write-Host ""
 
 # ============================================================================
-# Create Default User Schema
+# Create Default User Type
 # ============================================================================
 
-Log-Info "Creating default user schema (person)..."
+Log-Info "Creating default user type (person)..."
 
-$userSchemaData = ([ordered]@{
+$userTypeData = ([ordered]@{
     name = "Person"
     ouId = $DEFAULT_OU_ID
     schema = [ordered]@{
@@ -187,16 +187,16 @@ $userSchemaData = ([ordered]@{
     }
 } | ConvertTo-Json -Depth 5)
 
-$response = Invoke-Api -Method POST -Endpoint "/user-schemas" -Data $userSchemaData
+$response = Invoke-Api -Method POST -Endpoint "/user-types" -Data $userTypeData
 
 if ($response.StatusCode -eq 201 -or $response.StatusCode -eq 200) {
-    Log-Success "User schema created successfully"
+    Log-Success "User type created successfully"
 }
 elseif ($response.StatusCode -eq 409) {
-    Log-Warning "User schema already exists, skipping"
+    Log-Warning "User type already exists, skipping"
 }
 else {
-    Log-Error "Failed to create user schema (HTTP $($response.StatusCode))"
+    Log-Error "Failed to create user type (HTTP $($response.StatusCode))"
     exit 1
 }
 
@@ -357,8 +357,8 @@ Write-Host ""
 #           └── Action handle "view"       → permission "system:user:view"
 #       └── Resource handle "group"        → permission "system:group"
 #           └── Action handle "view"       → permission "system:group:view"
-#       └── Resource handle "userschema"   → permission "system:userschema"
-#           └── Action handle "view"       → permission "system:userschema:view"
+#       └── Resource handle "usertype"      → permission "system:usertype"
+#           └── Action handle "view"       → permission "system:usertype:view"
 # ============================================================================
 
 Log-Info "Creating 'system' resource under the system resource server..."
@@ -572,48 +572,48 @@ else {
     exit 1
 }
 
-Log-Info "Creating 'userschema' sub-resource under the 'system' resource..."
+Log-Info "Creating 'usertype' sub-resource under the 'system' resource..."
 
 if (-not $SYSTEM_RESOURCE_ID) {
-    Log-Error "System resource ID is not available. Cannot create user schema resource."
+    Log-Error "System resource ID is not available. Cannot create user type resource."
     exit 1
 }
 
-$userSchemaResourceData = @{
-    name        = "User Schema"
-    description = "User schema resource"
-    handle      = "userschema"
+$userTypeResourceData = @{
+    name        = "User Type"
+    description = "User type resource"
+    handle      = "usertype"
     parent      = $SYSTEM_RESOURCE_ID
 } | ConvertTo-Json -Depth 10
 
-$response = Invoke-Api -Method POST -Endpoint "/resource-servers/$SYSTEM_RS_ID/resources" -Data $userSchemaResourceData
+$response = Invoke-Api -Method POST -Endpoint "/resource-servers/$SYSTEM_RS_ID/resources" -Data $userTypeResourceData
 
 if ($response.StatusCode -eq 201 -or $response.StatusCode -eq 200) {
-    Log-Success "User schema resource created successfully (permission: system:userschema)"
+    Log-Success "User type resource created successfully (permission: system:usertype)"
     $body = $response.Body | ConvertFrom-Json
-    $USER_SCHEMA_RESOURCE_ID = $body.id
-    if ($USER_SCHEMA_RESOURCE_ID) {
-        Log-Info "User schema resource ID: $USER_SCHEMA_RESOURCE_ID"
+    $USER_TYPE_RESOURCE_ID = $body.id
+    if ($USER_TYPE_RESOURCE_ID) {
+        Log-Info "User type resource ID: $USER_TYPE_RESOURCE_ID"
     }
     else {
-        Log-Error "Could not extract user schema resource ID from response"
+        Log-Error "Could not extract user type resource ID from response"
         exit 1
     }
 }
 elseif ($response.StatusCode -eq 409) {
-    Log-Warning "User schema resource already exists, retrieving ID..."
+    Log-Warning "User type resource already exists, retrieving ID..."
     $response = Invoke-Api -Method GET -Endpoint "/resource-servers/$SYSTEM_RS_ID/resources?parentId=$SYSTEM_RESOURCE_ID"
 
     if ($response.StatusCode -eq 200) {
         $body = $response.Body | ConvertFrom-Json
-        $userSchemaResource = $body.resources | Where-Object { $_.handle -eq "userschema" } | Select-Object -First 1
+        $userTypeResource = $body.resources | Where-Object { $_.handle -eq "usertype" } | Select-Object -First 1
 
-        if ($userSchemaResource) {
-            $USER_SCHEMA_RESOURCE_ID = $userSchemaResource.id
-            Log-Success "Found user schema resource ID: $USER_SCHEMA_RESOURCE_ID"
+        if ($userTypeResource) {
+            $USER_TYPE_RESOURCE_ID = $userTypeResource.id
+            Log-Success "Found user type resource ID: $USER_TYPE_RESOURCE_ID"
         }
         else {
-            Log-Error "Could not find user schema resource in response"
+            Log-Error "Could not find user type resource in response"
             exit 1
         }
     }
@@ -623,29 +623,29 @@ elseif ($response.StatusCode -eq 409) {
     }
 }
 else {
-    Log-Error "Failed to create user schema resource (HTTP $($response.StatusCode))"
+    Log-Error "Failed to create user type resource (HTTP $($response.StatusCode))"
     Log-Error "Response: $($response.Body)"
     exit 1
 }
 
-Log-Info "Creating 'view' action under the 'userschema' resource..."
+Log-Info "Creating 'view' action under the 'usertype' resource..."
 
-$userSchemaViewActionData = @{
+$userTypeViewActionData = @{
     name        = "View"
-    description = "Read-only access to user schemas"
+    description = "Read-only access to user types"
     handle      = "view"
 } | ConvertTo-Json -Depth 10
 
-$response = Invoke-Api -Method POST -Endpoint "/resource-servers/$SYSTEM_RS_ID/resources/$USER_SCHEMA_RESOURCE_ID/actions" -Data $userSchemaViewActionData
+$response = Invoke-Api -Method POST -Endpoint "/resource-servers/$SYSTEM_RS_ID/resources/$USER_TYPE_RESOURCE_ID/actions" -Data $userTypeViewActionData
 
 if ($response.StatusCode -eq 201 -or $response.StatusCode -eq 200) {
-    Log-Success "User schema view action created successfully (permission: system:userschema:view)"
+    Log-Success "User type view action created successfully (permission: system:usertype:view)"
 }
 elseif ($response.StatusCode -eq 409) {
-    Log-Warning "User schema view action already exists, skipping"
+    Log-Warning "User type view action already exists, skipping"
 }
 else {
-    Log-Error "Failed to create user schema view action (HTTP $($response.StatusCode))"
+    Log-Error "Failed to create user type view action (HTTP $($response.StatusCode))"
     Log-Error "Response: $($response.Body)"
     exit 1
 }

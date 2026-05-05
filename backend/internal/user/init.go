@@ -23,13 +23,13 @@ import (
 	"strings"
 
 	"github.com/asgardeo/thunder/internal/entity"
+	"github.com/asgardeo/thunder/internal/entitytype"
 	oupkg "github.com/asgardeo/thunder/internal/ou"
 	"github.com/asgardeo/thunder/internal/system/config"
 	serverconst "github.com/asgardeo/thunder/internal/system/constants"
 	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
 	"github.com/asgardeo/thunder/internal/system/middleware"
 	"github.com/asgardeo/thunder/internal/system/sysauthz"
-	"github.com/asgardeo/thunder/internal/userschema"
 )
 
 // Initialize initializes the user service and registers its routes.
@@ -37,11 +37,11 @@ func Initialize(
 	mux *http.ServeMux,
 	entityService entity.EntityServiceInterface,
 	ouService oupkg.OrganizationUnitServiceInterface,
-	userSchemaService userschema.UserSchemaServiceInterface,
+	entityTypeService entitytype.EntityTypeServiceInterface,
 	authzService sysauthz.SystemAuthorizationServiceInterface,
 ) (UserServiceInterface, oupkg.OUUserResolver, declarativeresource.ResourceExporter, error) {
 	// Step 1: Create service with entity service
-	userService := newUserService(authzService, entityService, ouService, userSchemaService)
+	userService := newUserService(authzService, entityService, ouService, entityTypeService)
 
 	// Step 2: Load user-specific indexed attributes into the entity store.
 	if err := entityService.LoadIndexedAttributes(getUserIndexedAttributes()); err != nil {
@@ -60,7 +60,7 @@ func Initialize(
 	registerRoutes(mux, userHandler)
 
 	// Create resolver for OU package to query user data without cross-DB access
-	ouUserResolver := newOUUserResolver(entityService, userSchemaService)
+	ouUserResolver := newOUUserResolver(entityService, entityTypeService)
 
 	// Create and return exporter
 	exporter := newUserExporter(userService, entityService)
