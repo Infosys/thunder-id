@@ -31,8 +31,9 @@ import (
 	managerpkg "github.com/asgardeo/thunder/internal/authnprovider/manager"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	"github.com/asgardeo/thunder/internal/flow/core"
-	"github.com/asgardeo/thunder/internal/system/crypto"
-	"github.com/asgardeo/thunder/internal/system/crypto/runtime"
+	"github.com/asgardeo/thunder/internal/system/cryptolab"
+	"github.com/asgardeo/thunder/internal/system/kmprovider"
+	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm"
 )
 
 // EngineContext holds the overall context used by the flow engine during execution.
@@ -139,8 +140,12 @@ func (f *FlowContextDB) decrypt(ctx context.Context) error {
 	if !f.isEncrypted() {
 		return nil
 	}
-	decrypted, err := runtime.GetRuntimeCryptoService().Decrypt(
-		ctx, crypto.KeyRef{}, crypto.AlgorithmParams{Algorithm: crypto.AlgorithmAESGCM}, []byte(f.Context))
+	runtimeSvc, err := defaultkm.GetRuntimeCryptoService()
+	if err != nil {
+		return err
+	}
+	decrypted, err := runtimeSvc.Decrypt(
+		ctx, kmprovider.KeyRef{}, cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmAESGCM}, []byte(f.Context))
 	if err != nil {
 		return err
 	}
@@ -176,8 +181,12 @@ func (c *flowContextContent) encrypt(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	encrypted, _, err := runtime.GetRuntimeCryptoService().Encrypt(
-		ctx, crypto.KeyRef{}, crypto.AlgorithmParams{Algorithm: crypto.AlgorithmAESGCM}, data)
+	runtimeSvc, err := defaultkm.GetRuntimeCryptoService()
+	if err != nil {
+		return "", err
+	}
+	encrypted, _, err := runtimeSvc.Encrypt(
+		ctx, kmprovider.KeyRef{}, cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmAESGCM}, data)
 	if err != nil {
 		return "", err
 	}

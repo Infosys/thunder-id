@@ -35,12 +35,12 @@ import (
 	"time"
 
 	"github.com/asgardeo/thunder/internal/system/config"
-	syscrypto "github.com/asgardeo/thunder/internal/system/crypto"
-	"github.com/asgardeo/thunder/internal/system/crypto/pki"
-	"github.com/asgardeo/thunder/internal/system/crypto/sign"
+	"github.com/asgardeo/thunder/internal/system/cryptolab"
 	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
 	httpservice "github.com/asgardeo/thunder/internal/system/http"
 	"github.com/asgardeo/thunder/internal/system/jose/jws"
+	"github.com/asgardeo/thunder/internal/system/kmprovider"
+	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm/pkiservice"
 	"github.com/asgardeo/thunder/internal/system/log"
 	"github.com/asgardeo/thunder/internal/system/utils"
 )
@@ -66,10 +66,10 @@ type jwksCacheEntry struct {
 
 // jwtService implements the JWTServiceInterface for generating and managing JWT tokens.
 type jwtService struct {
-	cryptoProvider syscrypto.RuntimeCryptoProvider
-	keyRef         syscrypto.KeyRef
+	cryptoProvider kmprovider.RuntimeCryptoProvider
+	keyRef         kmprovider.KeyRef
 	publicKey      crypto.PublicKey
-	signAlg        sign.SignAlgorithm
+	signAlg        cryptolab.SignAlgorithm
 	jwsAlg         jws.Algorithm
 	kid            string
 	logger         *log.Logger
@@ -79,8 +79,8 @@ type jwtService struct {
 
 // newJWTService creates a new JWT service instance.
 func newJWTService(
-	pkiService pki.PKIServiceInterface,
-	httpClient httpservice.HTTPClientInterface, cryptoProvider syscrypto.RuntimeCryptoProvider,
+	pkiService pkiservice.PKIServiceInterface,
+	httpClient httpservice.HTTPClientInterface, cryptoProvider kmprovider.RuntimeCryptoProvider,
 ) (JWTServiceInterface, error) {
 	preferredKid := config.GetServerRuntime().Config.JWT.PreferredKeyID
 
@@ -90,7 +90,7 @@ func newJWTService(
 	}
 
 	kid := pkiService.GetCertThumbprint(preferredKid)
-	keyRef := syscrypto.KeyRef{KeyID: preferredKid}
+	keyRef := kmprovider.KeyRef{KeyID: preferredKid}
 	logger := log.GetLogger().With(log.String(log.LoggerKeyComponentName, "JWTService"))
 
 	// Get algorithm based on the type of private key
@@ -100,7 +100,7 @@ func newJWTService(
 			cryptoProvider: cryptoProvider,
 			keyRef:         keyRef,
 			publicKey:      &k.PublicKey,
-			signAlg:        sign.RSASHA256,
+			signAlg:        cryptolab.RSASHA256,
 			jwsAlg:         jws.RS256,
 			kid:            kid,
 			logger:         logger,
@@ -115,7 +115,7 @@ func newJWTService(
 				cryptoProvider: cryptoProvider,
 				keyRef:         keyRef,
 				publicKey:      &k.PublicKey,
-				signAlg:        sign.ECDSASHA256,
+				signAlg:        cryptolab.ECDSASHA256,
 				jwsAlg:         jws.ES256,
 				kid:            kid,
 				logger:         logger,
@@ -126,7 +126,7 @@ func newJWTService(
 				cryptoProvider: cryptoProvider,
 				keyRef:         keyRef,
 				publicKey:      &k.PublicKey,
-				signAlg:        sign.ECDSASHA384,
+				signAlg:        cryptolab.ECDSASHA384,
 				jwsAlg:         jws.ES384,
 				kid:            kid,
 				logger:         logger,
@@ -137,7 +137,7 @@ func newJWTService(
 				cryptoProvider: cryptoProvider,
 				keyRef:         keyRef,
 				publicKey:      &k.PublicKey,
-				signAlg:        sign.ECDSASHA512,
+				signAlg:        cryptolab.ECDSASHA512,
 				jwsAlg:         jws.ES512,
 				kid:            kid,
 				logger:         logger,
@@ -151,7 +151,7 @@ func newJWTService(
 			cryptoProvider: cryptoProvider,
 			keyRef:         keyRef,
 			publicKey:      k.Public(),
-			signAlg:        sign.ED25519,
+			signAlg:        cryptolab.ED25519,
 			jwsAlg:         jws.EdDSA,
 			kid:            kid,
 			logger:         logger,
@@ -268,7 +268,7 @@ func (js *jwtService) GenerateJWT(
 
 	// Create the signing input and sign it with the crypto provider.
 	signingInput := headerBase64 + "." + payloadBase64
-	signature, err := js.cryptoProvider.Sign(ctx, js.keyRef, syscrypto.Algorithm(jwsAlg), []byte(signingInput))
+	signature, err := js.cryptoProvider.Sign(ctx, js.keyRef, js.signAlg, []byte(signingInput))
 	if err != nil {
 		js.logger.Error("Failed to sign JWT: " + err.Error())
 		return "", 0, &serviceerror.InternalServerError
@@ -343,7 +343,7 @@ func (js *jwtService) VerifyJWTSignature(jwtToken string) *serviceerror.ServiceE
 	signingInput := parts[0] + "." + parts[1]
 
 	// Verify the signature using the configured algorithm
-	err = sign.Verify([]byte(signingInput), signature, js.signAlg, js.publicKey)
+	err = cryptolab.Verify([]byte(signingInput), signature, js.signAlg, js.publicKey)
 	if err != nil {
 		return &ErrorInvalidTokenSignature
 	}
@@ -379,7 +379,7 @@ func (js *jwtService) VerifyJWTSignatureWithPublicKey(jwtToken string,
 	}
 
 	// Verify the signature
-	err = sign.Verify([]byte(signingInput), signature, alg, jwtPublicKey)
+	err = cryptolab.Verify([]byte(signingInput), signature, alg, jwtPublicKey)
 	if err != nil {
 		return &ErrorInvalidTokenSignature
 	}

@@ -147,7 +147,6 @@ func (suite *InitTestSuite) TestInitialize_PrivateKeyRetrievalError() {
 	err := config.InitializeServerRuntime("", testConfig)
 	assert.NoError(suite.T(), err)
 
-	// Create mock PKI service that returns error
 	pkiMock := pkimock.NewPKIServiceInterfaceMock(suite.T())
 	testErr := serviceerror.CustomServiceError(serviceerror.InternalServerError, core.I18nMessage{
 		Key:          "error.test.jwt_init",

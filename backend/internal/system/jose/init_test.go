@@ -61,6 +61,11 @@ func (suite *JOSEInitTestSuite) SetupTest() {
 			ValidityPeriod: 3600,
 			Leeway:         300,
 		},
+		Crypto: config.CryptoConfig{
+			Encryption: config.EncryptionConfig{
+				Key: "0579f866ac7c9273580d0ff163fa01a7b2401a7ff3ddc3e3b14ae3136fa6025e",
+			},
+		},
 	}
 	err = config.InitializeServerRuntime("/tmp/test", testConfig)
 	assert.NoError(suite.T(), err)

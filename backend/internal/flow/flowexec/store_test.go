@@ -32,8 +32,9 @@ import (
 	managerpkg "github.com/asgardeo/thunder/internal/authnprovider/manager"
 	"github.com/asgardeo/thunder/internal/flow/common"
 	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/crypto"
-	cryptoruntime "github.com/asgardeo/thunder/internal/system/crypto/runtime"
+	"github.com/asgardeo/thunder/internal/system/cryptolab"
+	"github.com/asgardeo/thunder/internal/system/kmprovider"
+	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm"
 
 	"github.com/asgardeo/thunder/tests/mocks/database/providermock"
 	"github.com/asgardeo/thunder/tests/mocks/flow/coremock"
@@ -301,8 +302,14 @@ func (s *StoreTestSuite) TestGetFlowContext_WithoutToken() {
 		GraphID:         "test-graph-id",
 	})
 	s.NoError(err)
-	encryptedContextBytes, _, err := cryptoruntime.GetRuntimeCryptoService().Encrypt(
-		context.Background(), crypto.KeyRef{}, crypto.AlgorithmParams{Algorithm: crypto.AlgorithmAESGCM}, contextJSON)
+	cryptoSvc, err := defaultkm.GetRuntimeCryptoService()
+	s.Require().NoError(err)
+	encryptedContextBytes, _, err := cryptoSvc.Encrypt(
+		context.Background(),
+		kmprovider.KeyRef{},
+		cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmAESGCM},
+		contextJSON,
+	)
 	s.NoError(err)
 	encryptedContext := string(encryptedContextBytes)
 

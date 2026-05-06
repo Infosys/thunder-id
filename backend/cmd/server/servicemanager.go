@@ -20,7 +20,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/asgardeo/thunder/internal/agent"
 	"github.com/asgardeo/thunder/internal/application"
@@ -58,8 +60,8 @@ import (
 	"github.com/asgardeo/thunder/internal/ou"
 	"github.com/asgardeo/thunder/internal/resource"
 	"github.com/asgardeo/thunder/internal/role"
-	"github.com/asgardeo/thunder/internal/system/crypto/hash"
-	"github.com/asgardeo/thunder/internal/system/crypto/pki"
+	"github.com/asgardeo/thunder/internal/system/config"
+	"github.com/asgardeo/thunder/internal/system/cryptolab/hash"
 	dbprovider "github.com/asgardeo/thunder/internal/system/database/provider"
 	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
 	"github.com/asgardeo/thunder/internal/system/email"
@@ -69,6 +71,7 @@ import (
 	"github.com/asgardeo/thunder/internal/system/importer"
 	"github.com/asgardeo/thunder/internal/system/jose"
 	"github.com/asgardeo/thunder/internal/system/jose/jwt"
+	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm/pkiservice"
 	"github.com/asgardeo/thunder/internal/system/log"
 	"github.com/asgardeo/thunder/internal/system/mcp"
 	"github.com/asgardeo/thunder/internal/system/observability"
@@ -86,7 +89,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	logger := log.GetLogger()
 
 	// Load the server's private key for signing JWTs.
-	pkiService, err := pki.Initialize()
+	pkiService, err := pkiservice.Initialize()
 	if err != nil {
 		logger.Fatal("Failed to initialize certificate service", log.Error(err))
 	}
@@ -125,7 +128,11 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	// would arise if sysauthz were to directly import the ou package.
 	ouAuthzService.SetOUHierarchyResolver(ouHierarchyResolver)
 
-	hashService, err := hash.Initialize()
+	hashCfg, err := buildHashConfig()
+	if err != nil {
+		logger.Fatal("Failed to build HashService config", log.Error(err))
+	}
+	hashService, err := hash.Initialize(hashCfg)
 	if err != nil {
 		logger.Fatal("Failed to initialize HashService", log.Error(err))
 	}
@@ -341,4 +348,23 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 // unregisterServices unregisters all services that require cleanup during shutdown.
 func unregisterServices() {
 	observabilitySvc.Shutdown()
+}
+
+// buildHashConfig constructs a hash.HashConfig from the server configuration.
+func buildHashConfig() (hash.HashConfig, error) {
+	cfg := config.GetServerRuntime().Config.Crypto.PasswordHashing
+	alg := hash.CredAlgorithm(strings.ToUpper(cfg.Algorithm))
+	switch alg {
+	case "", hash.SHA256:
+		return hash.HashConfig{Algorithm: hash.SHA256, SaltSize: cfg.SHA256.SaltSize}, nil
+	case hash.PBKDF2:
+		return hash.HashConfig{Algorithm: alg, SaltSize: cfg.PBKDF2.SaltSize,
+			Iterations: cfg.PBKDF2.Iterations, KeySize: cfg.PBKDF2.KeySize}, nil
+	case hash.ARGON2ID:
+		return hash.HashConfig{Algorithm: alg, SaltSize: cfg.Argon2ID.SaltSize,
+			Iterations: cfg.Argon2ID.Iterations, Memory: cfg.Argon2ID.Memory,
+			Parallelism: cfg.Argon2ID.Parallelism, KeySize: cfg.Argon2ID.KeySize}, nil
+	default:
+		return hash.HashConfig{}, fmt.Errorf("unrecognized password hashing algorithm %q", cfg.Algorithm)
+	}
 }

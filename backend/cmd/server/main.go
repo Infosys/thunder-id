@@ -37,9 +37,9 @@ import (
 	"github.com/asgardeo/thunder/internal/system/config"
 	"github.com/asgardeo/thunder/internal/system/constants"
 	"github.com/asgardeo/thunder/internal/system/cors"
-	"github.com/asgardeo/thunder/internal/system/crypto/pki"
 	"github.com/asgardeo/thunder/internal/system/database/provider"
 	"github.com/asgardeo/thunder/internal/system/jose/jwt"
+	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm/pkiservice"
 	"github.com/asgardeo/thunder/internal/system/log"
 	"github.com/asgardeo/thunder/internal/system/middleware"
 	"github.com/asgardeo/thunder/internal/system/security"
@@ -180,7 +180,7 @@ func loadCertConfig(logger *log.Logger, cfg *config.Config, serverHome string) *
 	keyFilePath := path.Join(serverHome, cfg.TLS.KeyFile)
 
 	// Load TLS configuration
-	tlsConfig, err := pki.LoadTLSConfig(cfg, certFilePath, keyFilePath)
+	tlsConfig, err := pkiservice.LoadTLSConfig(cfg, certFilePath, keyFilePath)
 	if err != nil {
 		logger.Fatal("Failed to load TLS configuration", log.Error(err))
 	}

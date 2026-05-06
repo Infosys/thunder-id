@@ -24,8 +24,8 @@ import (
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/pkce"
 	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/crypto/pki"
 	"github.com/asgardeo/thunder/internal/system/jose/jwe"
+	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm/pkiservice"
 )
 
 var (
@@ -42,11 +42,11 @@ type DiscoveryServiceInterface interface {
 // discoveryService implements DiscoveryServiceInterface
 type discoveryService struct {
 	baseURL    string
-	pkiService pki.PKIServiceInterface
+	pkiService pkiservice.PKIServiceInterface
 }
 
 // newDiscoveryService creates a new discovery service instance
-func newDiscoveryService(pkiService pki.PKIServiceInterface) DiscoveryServiceInterface {
+func newDiscoveryService(pkiService pkiservice.PKIServiceInterface) DiscoveryServiceInterface {
 	runtime := config.GetServerRuntime()
 	ds := &discoveryService{pkiService: pkiService}
 	ds.baseURL = config.GetServerURL(&runtime.Config.Server)
