@@ -158,12 +158,13 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	}
 	exporters = append(exporters, userExporter)
 
-	groupService, ouGroupResolver, err := group.Initialize(
+	groupService, ouGroupResolver, groupExporter, err := group.Initialize(
 		mux, dbprovider.GetDBProvider(), ouService, entityService, entityTypeService, ouAuthzService,
 	)
 	if err != nil {
 		logger.Fatal("Failed to initialize GroupService", log.Error(err))
 	}
+	exporters = append(exporters, groupExporter)
 
 	// Two-phase initialization: inject user/group resolvers into OU service.
 	ouService.SetOUUserResolver(ouUserResolver)
@@ -310,6 +311,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 		ouService,
 		entityTypeService,
 		roleService,
+		groupService,
 		resourceService,
 		themeMgtService,
 		layoutMgtService,

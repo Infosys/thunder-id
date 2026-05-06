@@ -624,6 +624,7 @@ func newTestImportService(appSvc *fakeApplicationService) ImportServiceInterface
 		nil,
 		nil,
 		nil,
+		nil,
 	)
 }
 
@@ -800,7 +801,7 @@ func TestImportResources_PreservesExplicitFalseOptions(t *testing.T) {
 }
 
 func TestImportResources_ApplicationAdapterNotConfigured(t *testing.T) {
-	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	resp, err := svc.ImportResources(context.Background(), &ImportRequest{
 		Content: "id: app-1\nname: My App\nauth_flow_id: flow-1\n",
@@ -814,9 +815,9 @@ func TestImportResources_ApplicationAdapterNotConfigured(t *testing.T) {
 	assert.Equal(t, "application adapter not configured", resp.Results[0].Message)
 }
 
-func TestImportResources_RoleUpsertRejectsAssignments(t *testing.T) {
+func TestImportResources_RoleImportDropsAssignments(t *testing.T) {
 	roleSvc := &fakeRoleService{}
-	svc := newImportService(nil, nil, nil, nil, nil, roleSvc, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, nil, nil, roleSvc, nil, nil, nil, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: role-1",
@@ -837,15 +838,13 @@ func TestImportResources_RoleUpsertRejectsAssignments(t *testing.T) {
 	require.Nil(t, err)
 	require.NotNil(t, resp)
 	require.Len(t, resp.Results, 1)
-	assert.Equal(t, statusFailed, resp.Results[0].Status)
-	assert.Equal(t, ErrorInvalidImportRequest.Code, resp.Results[0].Code)
-	assert.Contains(t, resp.Results[0].Message, "role assignment updates are not supported")
-	assert.Len(t, roleSvc.updated, 0)
+	assert.Equal(t, statusSuccess, resp.Results[0].Status)
+	assert.Equal(t, operationUpdate, resp.Results[0].Operation)
 }
 
 func TestImportResources_UserCredentialFailureRollsBackCreate(t *testing.T) {
 	userSvc := &fakeUserService{updateCredentialsShouldFail: true}
-	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, userSvc, nil)
+	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, userSvc, nil)
 
 	content := strings.Join([]string{
 		"id: user-1",
@@ -870,7 +869,7 @@ func TestImportResources_UserCredentialFailureRollsBackCreate(t *testing.T) {
 
 func TestImportResources_OrganizationUnitUpsertCreatePreservesID(t *testing.T) {
 	ouSvc := &fakeOUService{existing: map[string]ou.OrganizationUnit{}}
-	svc := newImportService(nil, nil, nil, ouSvc, nil, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, ouSvc, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: ou-123",
@@ -898,7 +897,7 @@ func TestImportResources_FlowUpsertCreatePreservesID(t *testing.T) {
 		byKey: map[string]*flowmgt.CompleteFlowDefinition{},
 	}
 
-	svc := newImportService(nil, nil, flowSvc, nil, nil, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, flowSvc, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: missing-flow-id",
@@ -936,7 +935,7 @@ func TestImportResources_FlowUpsertDuplicateHandleFallsBackToHandleUpdate(t *tes
 	}
 	flowSvc.byKey[string(common.FlowTypeRegistration)+":registration-flow"] = flowSvc.byID["existing-flow-id"]
 
-	svc := newImportService(nil, nil, flowSvc, nil, nil, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, flowSvc, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: missing-flow-id",
@@ -976,7 +975,7 @@ func TestImportResources_ApplicationFlowReferencesAreRemappedFromFlowAlias(t *te
 		flowSvc.byID["existing-registration-flow-id"]
 
 	appSvc := &fakeApplicationService{existing: map[string]*model.Application{}}
-	svc := newImportService(appSvc, nil, flowSvc, nil, nil, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(appSvc, nil, flowSvc, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"# resource_type: flow",
@@ -1011,7 +1010,7 @@ func TestImportResources_ApplicationFlowReferencesAreRemappedFromFlowAlias(t *te
 //nolint:dupl // Test pattern repeated across resource types to verify ID preservation behavior
 func TestImportResources_ThemeUpsertCreatePreservesID(t *testing.T) {
 	themeSvc := &fakeThemeService{byID: map[string]*thememgt.Theme{}, byHandle: map[string]*thememgt.Theme{}}
-	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, themeSvc, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, themeSvc, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: thm-123",
@@ -1041,7 +1040,7 @@ func TestImportResources_EntityTypeUpsertCreatePreservesID(t *testing.T) {
 		byID:   map[string]*entitytype.EntityType{},
 		byName: map[string]*entitytype.EntityType{},
 	}
-	svc := newImportService(nil, nil, nil, nil, entityTypeSvc, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, nil, entityTypeSvc, nil, nil, nil, nil, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: usrs-123",
@@ -1077,7 +1076,7 @@ func TestImportResources_UpsertCreatePreservesIDsAcrossResourceTypes(t *testing.
 		byKey: map[string]*flowmgt.CompleteFlowDefinition{},
 	}
 
-	svc := newImportService(nil, nil, flowSvc, ouSvc, entityTypeSvc, nil, nil, themeSvc, nil, nil, nil)
+	svc := newImportService(nil, nil, flowSvc, ouSvc, entityTypeSvc, nil, nil, nil, themeSvc, nil, nil, nil)
 
 	content := strings.Join([]string{
 		"id: ou-123",
@@ -1234,7 +1233,7 @@ func TestImportResources_FileTargetReturnsError(t *testing.T) {
 		DeclarativeResources: config.DeclarativeResources{Enabled: true},
 	}))
 
-	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	resp, err := svc.ImportResources(context.Background(), &ImportRequest{
 		Content: "id: app-1\nname: My App\nauth_flow_id: flow-1\n",
@@ -1256,7 +1255,7 @@ func TestDeleteResource_RemovesDeclarativeFile(t *testing.T) {
 		DeclarativeResources: config.DeclarativeResources{Enabled: true},
 	}))
 
-	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+	svc := newImportService(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 	resourceDir := filepath.Join(tempHome, "repository", "resources", "applications")
 	require.NoError(t, os.MkdirAll(resourceDir, 0o750))

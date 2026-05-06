@@ -28,6 +28,7 @@ type ExportRequest struct {
 	EntityTypes         []string `json:"userTypes,omitempty"`
 	OrganizationUnits   []string `json:"organizationUnits,omitempty"`
 	Users               []string `json:"users,omitempty"`
+	Groups              []string `json:"groups,omitempty"`
 	ResourceServers     []string `json:"resourceServers,omitempty"`
 	Roles               []string `json:"roles,omitempty"`
 	Flows               []string `json:"flows,omitempty"`

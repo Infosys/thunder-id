@@ -317,9 +317,13 @@ func (gs *groupService) CreateGroup(ctx context.Context, request CreateGroupRequ
 			return err
 		}
 
-		groupDaoID, err := utils.GenerateUUIDv7()
-		if err != nil {
-			return err
+		groupDaoID := request.ID
+		if groupDaoID == "" {
+			var genErr error
+			groupDaoID, genErr = utils.GenerateUUIDv7()
+			if genErr != nil {
+				return genErr
+			}
 		}
 
 		groupDAO := GroupDAO{

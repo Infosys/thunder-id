@@ -33,6 +33,7 @@ import {
   Server,
   Terminal,
   UserRoundCog,
+  Users,
   UsersRound,
   Workflow,
 } from '@wso2/oxygen-ui-icons-react';
@@ -111,6 +112,7 @@ export default function ConfigureExport({
   const [expandedLayouts, setExpandedLayouts] = useState(false);
   const [expandedResourceServers, setExpandedResourceServers] = useState(false);
   const [expandedRoles, setExpandedRoles] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState(false);
 
   const nextSteps = [
     t('importExport:configureExport.nextSteps.startWithConfig', {productName}),
@@ -310,6 +312,7 @@ export default function ConfigureExport({
     resourceCounts?.resource_server ??
     (Array.isArray(configData?.resource_server) ? configData.resource_server.length : 0);
   const rolesCount = resourceCounts?.role ?? (Array.isArray(configData?.role) ? configData.role.length : 0);
+  const groupsCount = resourceCounts?.group ?? (Array.isArray(configData?.group) ? configData.group.length : 0);
 
   const items: ConfigSummaryItem[] = [];
 
@@ -1010,6 +1013,60 @@ export default function ConfigureExport({
                   size="small"
                   variant="outlined"
                   onClick={() => setExpandedRoles(!expandedRoles)}
+                  sx={{cursor: 'pointer'}}
+                />
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      ),
+    });
+  }
+
+  // Add groups if present
+  if (groupsCount > 0) {
+    const groups = (configData?.group as {name?: string; description?: string}[]) ?? [];
+    const displayedGroups = expandedGroups ? groups : groups.slice(0, 5);
+    const remainingCount = groups.length - 5;
+
+    items.push({
+      id: 'groups',
+      label: t('importExport:configureExport.labels.groups'),
+      icon: <Users size={16} />,
+      value: groupsCount,
+      status: 'ready',
+      dependencyCount: 0,
+      content: (
+        <Box sx={{px: 3, py: 2, bgcolor: 'background.default'}}>
+          <Stack spacing={2}>
+            <Stack spacing={2} divider={<Box sx={{borderBottom: 1, borderColor: 'divider'}} />}>
+              {displayedGroups.map((group, idx) => (
+                <Stack key={group.name ?? `group-${idx}`} spacing={0.5}>
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <Users size={14} />
+                    <Typography variant="body2" fontWeight={600}>
+                      {group.name ?? t('importExport:configureExport.fallback.unnamedGroup')}
+                    </Typography>
+                  </Stack>
+                  {group.description && (
+                    <Typography variant="caption" color="text.secondary" sx={{pl: 2.5}}>
+                      {group.description}
+                    </Typography>
+                  )}
+                </Stack>
+              ))}
+            </Stack>
+            {remainingCount > 0 && (
+              <Box sx={{pt: 1, textAlign: 'center'}}>
+                <Chip
+                  label={
+                    expandedGroups
+                      ? t('importExport:configureExport.actions.showLess')
+                      : t('importExport:configureExport.actions.more', {count: remainingCount})
+                  }
+                  size="small"
+                  variant="outlined"
+                  onClick={() => setExpandedGroups(!expandedGroups)}
                   sx={{cursor: 'pointer'}}
                 />
               </Box>

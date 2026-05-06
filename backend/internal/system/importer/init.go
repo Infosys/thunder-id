@@ -26,6 +26,7 @@ import (
 	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
 	"github.com/asgardeo/thunder/internal/entitytype"
 	flowmgt "github.com/asgardeo/thunder/internal/flow/mgt"
+	"github.com/asgardeo/thunder/internal/group"
 	"github.com/asgardeo/thunder/internal/idp"
 	"github.com/asgardeo/thunder/internal/ou"
 	"github.com/asgardeo/thunder/internal/resource"
@@ -44,6 +45,7 @@ func Initialize(
 	ouService ou.OrganizationUnitServiceInterface,
 	entityTypeService entitytype.EntityTypeServiceInterface,
 	roleService role.RoleServiceInterface,
+	groupService group.GroupServiceInterface,
 	resourceService resource.ResourceServiceInterface,
 	themeService thememgt.ThemeMgtServiceInterface,
 	layoutService layoutmgt.LayoutMgtServiceInterface,
@@ -57,6 +59,7 @@ func Initialize(
 		ouService,
 		entityTypeService,
 		roleService,
+		groupService,
 		resourceService,
 		themeService,
 		layoutService,
