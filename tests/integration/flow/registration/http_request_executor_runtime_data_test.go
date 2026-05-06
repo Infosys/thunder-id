@@ -522,12 +522,12 @@ func (ts *HTTPRequestRuntimeDataRegistrationFlowTestSuite) TestHTTPRequestRuntim
 	ts.Require().Equal("REDIRECTION", flowStep.Type)
 	ts.Require().NotEmpty(flowStep.Data.RedirectURL)
 
-	authCode, err := testutils.SimulateFederatedOAuthFlow(flowStep.Data.RedirectURL)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(flowStep.Data.RedirectURL)
 	ts.Require().NoError(err, "Failed to simulate Google authorization for runtime data flow")
 	ts.Require().NotEmpty(authCode, "Authorization code should not be empty")
 
 	flowStep, err = common.CompleteFlow(flowStep.ExecutionID, map[string]string{
-		"code": authCode,
+		"code": authCode, "state": state,
 	}, "", flowStep.ChallengeToken)
 	ts.Require().NoError(err, "Failed to complete runtime data flow with authorization code")
 	ts.Require().Equal("INCOMPLETE", flowStep.FlowStatus)

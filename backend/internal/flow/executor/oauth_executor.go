@@ -184,12 +184,20 @@ func (o *oAuthExecutor) BuildAuthorizeFlow(ctx *core.NodeContext, execResp *comm
 		return fmt.Errorf("failed to get idp name: %w", err)
 	}
 
+	// Generate a random state parameter for CSRF protection and append it to the authorize URL.
+	state := systemutils.GenerateUUID()
+	authorizeURL = authorizeURL + "&" + "state=" + state
+
 	// Set the response to redirect the user to the authorization URL.
 	execResp.Status = common.ExecExternalRedirection
 	execResp.RedirectURL = authorizeURL
 	execResp.AdditionalData = map[string]string{
 		common.DataIDPName: idpName,
 	}
+	if execResp.RuntimeData == nil {
+		execResp.RuntimeData = make(map[string]string)
+	}
+	execResp.RuntimeData[common.RuntimeKeyOAuthState] = state
 
 	return nil
 }
@@ -206,6 +214,20 @@ func (o *oAuthExecutor) ProcessAuthFlowResponse(ctx *core.NodeContext,
 			IsAuthenticated: false,
 		}
 		return nil
+	}
+
+	// Validate the OAuth state parameter to prevent CSRF attacks.
+	// State is validated only when the client sends it back. Clients that handle CSRF
+	// protection client-side (e.g., via sessionStorage) may omit it.
+	if returnedState, ok := ctx.UserInputs[userInputState]; ok && returnedState != "" {
+		expectedState := ctx.RuntimeData[common.RuntimeKeyOAuthState]
+		if returnedState != expectedState {
+			logger.Debug("OAuth state mismatch")
+			execResp.Status = common.ExecFailure
+			execResp.FailureReason = "Invalid OAuth state parameter"
+			return nil
+		}
+		delete(ctx.RuntimeData, common.RuntimeKeyOAuthState)
 	}
 
 	idpID, err := o.GetIdpID(ctx)

@@ -384,12 +384,13 @@ func (ts *ConditionalExecAuthFlowTestSuite) TestSkipConditionalNodes() {
 	redirectURLStr := flowStep.Data.RedirectURL
 
 	// Step 2: Simulate user authorization at Google
-	authCode, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
 	ts.Require().NoError(err, "Failed to simulate Google authorization")
 
 	// Step 3: Complete the flow with the authorization code
 	inputs := map[string]string{
-		"code": authCode,
+		"code":  authCode,
+		"state": state,
 	}
 	flowStep, err = common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)
 	ts.Require().NoError(err, "Failed to complete authentication flow")
@@ -430,13 +431,14 @@ func (ts *ConditionalExecAuthFlowTestSuite) TestExecuteConditionalNodes() {
 	ts.Require().NotEmpty(redirectURLStr, "Redirect URL should not be empty")
 
 	// Step 2: Simulate user authorization at Google
-	authCode, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
 	ts.Require().NoError(err, "Failed to simulate Google authorization")
 	ts.Require().NotEmpty(authCode, "Authorization code should not be empty")
 
 	// Step 3: Continue the flow with the authorization code
 	inputs := map[string]string{
-		"code": authCode,
+		"code":  authCode,
+		"state": state,
 	}
 	flowStep, err = common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)
 	ts.Require().NoError(err, "Failed to complete authentication flow")

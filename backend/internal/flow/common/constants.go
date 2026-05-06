@@ -209,6 +209,8 @@ const (
 	// RuntimeKeySMSOTPPhoneAttr holds the schema attribute name used to look up the mobile number.
 	// TODO: Revisit when the generic OTP executor is implemented.
 	RuntimeKeySMSOTPPhoneAttr = "smsOTPPhoneAttr"
+	// RuntimeKeyOAuthState holds the generated OAuth state parameter for CSRF validation.
+	RuntimeKeyOAuthState = "oauthState"
 )
 
 // TODO: Define a go type for InputType when formalizing input types

@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@asgardeo/react':
-      specifier: 0.23.1
-      version: 0.23.1
+      specifier: 0.23.4
+      version: 0.23.4
     '@asgardeo/react-router':
       specifier: 2.0.0
       version: 2.0.0
@@ -264,10 +264,10 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@asgardeo/react-router':
         specifier: 'catalog:'
-        version: 2.0.0(@asgardeo/react@0.23.1(@types/react@19.2.7)(react@19.2.3))(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+        version: 2.0.0(@asgardeo/react@0.23.4(@types/react@19.2.7)(react@19.2.3))(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
       '@dnd-kit/abstract':
         specifier: 0.4.0
         version: 0.4.0
@@ -502,10 +502,10 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@asgardeo/react-router':
         specifier: 'catalog:'
-        version: 2.0.0(@asgardeo/react@0.23.1(@types/react@19.2.7)(react@19.2.3))(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+        version: 2.0.0(@asgardeo/react@0.23.4(@types/react@19.2.7)(react@19.2.3))(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
       '@fontsource-variable/inter':
         specifier: 5.2.8
         version: 5.2.8
@@ -617,7 +617,7 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.90.5(react@19.2.3)
@@ -702,7 +702,7 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@hookform/resolvers':
         specifier: 'catalog:'
         version: 5.2.2(react-hook-form@7.65.0(react@19.2.3))(zod@4.3.6)
@@ -808,7 +808,7 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@monaco-editor/react':
         specifier: 'catalog:'
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -899,7 +899,7 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@hookform/resolvers':
         specifier: 'catalog:'
         version: 5.2.2(react-hook-form@7.65.0(react@19.2.3))(zod@4.3.6)
@@ -1115,7 +1115,7 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.90.5(react@19.2.3)
@@ -1364,7 +1364,7 @@ importers:
     dependencies:
       '@asgardeo/react':
         specifier: 'catalog:'
-        version: 0.23.1(@types/react@19.2.7)(react@19.2.3)
+        version: 0.23.4(@types/react@19.2.7)(react@19.2.3)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.90.5(react@19.2.3)
@@ -1744,14 +1744,14 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@asgardeo/browser@0.7.0':
-    resolution: {integrity: sha512-TaUkzBHxMMDiLeO1JRZmMeL9JCOceCt9TBomph4cv8JUfIlvT8O7szxMVjMhHhMBCOjf57/C5yfX+JFht7Z9dg==}
+  '@asgardeo/browser@0.7.2':
+    resolution: {integrity: sha512-n9J153vQ0WehoSHZeMI/rBYgA/EAKnZiKSlik3+UPgmE+ZW/4TIPqcp/hLHGaF1nP1yz/d80nJpwDPYwcylKqA==}
 
   '@asgardeo/i18n@0.4.5':
     resolution: {integrity: sha512-p1DVVI7lNu7KeDqhRNgAuSrHvVgCbbVXc04koyiiwjDx+sJaXychuC9pwVJ2PDUnIyEp3Xgdb3KqMq+Sx4e7xA==}
 
-  '@asgardeo/javascript@0.19.0':
-    resolution: {integrity: sha512-zlveJbY/oQrfokn2PHpOJlHlih5MOq6F4WHcd60oLw0II6nmjw1WTI3drJQsj6W+2emB5gYv257vYjdLcYbYAA==}
+  '@asgardeo/javascript@0.19.1':
+    resolution: {integrity: sha512-HWthqx9aIPqwA0fAUbqmN9+oy9UCunYkSnRFRYr+I8m5iTkvRl7A+nY5J37ohhUIYWZ2Phhj/SLPR13z57x7hw==}
 
   '@asgardeo/react-router@2.0.0':
     resolution: {integrity: sha512-RvHol3VgjV466y7RhpmPosER89Yz1prREvjWjhu95X9e4l761+3n8bRSQR5lpP1tasAVKtVH6RzWvWoPST7+Zg==}
@@ -1760,8 +1760,8 @@ packages:
       react: '>=16.8.0'
       react-router: '>=6.30.1'
 
-  '@asgardeo/react@0.23.1':
-    resolution: {integrity: sha512-rmfNT/TUknevNLrLZdjq/XSUIMLkuybyB6kAyTyArqqfHqgoZdetl/ug3p8PeKyMgrnE9Av21aCRPH1rcK1amQ==}
+  '@asgardeo/react@0.23.4':
+    resolution: {integrity: sha512-JPpPfsyAPIp00U5f7JA0czhz9oSEqmGBdK8p16tNmgfrxSsJnh/4zokfeNbOnKLhB8blKRaRlKjq2wbkcEQGBA==}
     peerDependencies:
       '@types/react': '>=16.8.0'
       react: '>=16.8.0'
@@ -11838,9 +11838,9 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@asgardeo/browser@0.7.0':
+  '@asgardeo/browser@0.7.2':
     dependencies:
-      '@asgardeo/javascript': 0.19.0
+      '@asgardeo/javascript': 0.19.1
       base64url: 3.0.1
       buffer: 6.0.3
       core-js: 3.42.0
@@ -11856,22 +11856,22 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@asgardeo/javascript@0.19.0':
+  '@asgardeo/javascript@0.19.1':
     dependencies:
       '@asgardeo/i18n': 0.4.5
       jose: 5.10.0
       tslib: 2.8.1
 
-  '@asgardeo/react-router@2.0.0(@asgardeo/react@0.23.1(@types/react@19.2.7)(react@19.2.3))(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)':
+  '@asgardeo/react-router@2.0.0(@asgardeo/react@0.23.4(@types/react@19.2.7)(react@19.2.3))(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@asgardeo/react': 0.23.1(@types/react@19.2.7)(react@19.2.3)
+      '@asgardeo/react': 0.23.4(@types/react@19.2.7)(react@19.2.3)
       react: 19.2.3
       react-router: 7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       tslib: 2.8.1
 
-  '@asgardeo/react@0.23.1(@types/react@19.2.7)(react@19.2.3)':
+  '@asgardeo/react@0.23.4(@types/react@19.2.7)(react@19.2.3)':
     dependencies:
-      '@asgardeo/browser': 0.7.0
+      '@asgardeo/browser': 0.7.2
       '@asgardeo/i18n': 0.4.5
       '@emotion/css': 11.13.5
       '@floating-ui/react': 0.27.12(react-dom@19.2.4(react@19.2.3))(react@19.2.3)

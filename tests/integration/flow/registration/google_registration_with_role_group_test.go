@@ -443,12 +443,12 @@ func (ts *GoogleRegistrationGroupRoleTestSuite) TestGoogleRegistrationWithGroupA
 	ts.Require().NotEmpty(redirectURLStr, "Redirect URL should not be empty")
 
 	// Step 2: Simulate OAuth flow
-	authCode, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
 	ts.Require().NoError(err, "Failed to simulate OAuth flow")
 	ts.Require().NotEmpty(authCode, "Authorization code should not be empty")
 
 	// Step 3: Complete the flow
-	inputs := map[string]string{"code": authCode}
+	inputs := map[string]string{"code": authCode, "state": state}
 	completeFlowStep, err := common.CompleteFlow(flowStep.ExecutionID, inputs, "", flowStep.ChallengeToken)
 	ts.Require().NoError(err, "Failed to complete flow")
 

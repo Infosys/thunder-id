@@ -901,8 +901,8 @@ func removeRoleAssignments(roleID string, assignments []Assignment, client *http
 }
 
 // SimulateFederatedOAuthFlow simulates a federated OAuth flow (Google, GitHub, etc.) by
-// following the redirect URL and extracting the authorization code.
-func SimulateFederatedOAuthFlow(redirectURL string) (string, error) {
+// following the redirect URL and extracting the authorization code and state parameter.
+func SimulateFederatedOAuthFlow(redirectURL string) (string, string, error) {
 	// Create HTTP client that doesn't follow redirects automatically
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -916,7 +916,7 @@ func SimulateFederatedOAuthFlow(redirectURL string) (string, error) {
 	// Make request to the authorization endpoint
 	resp, err := client.Get(redirectURL)
 	if err != nil {
-		return "", fmt.Errorf("failed to make authorization request: %w", err)
+		return "", "", fmt.Errorf("failed to make authorization request: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -924,29 +924,42 @@ func SimulateFederatedOAuthFlow(redirectURL string) (string, error) {
 	if resp.StatusCode != http.StatusFound && resp.StatusCode != http.StatusSeeOther &&
 		resp.StatusCode != http.StatusTemporaryRedirect {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return "", fmt.Errorf("expected redirect response, got status %d: %s",
+		return "", "", fmt.Errorf("expected redirect response, got status %d: %s",
 			resp.StatusCode, string(bodyBytes))
 	}
 
 	// Extract the Location header which contains the callback URL with the code
 	location := resp.Header.Get("Location")
 	if location == "" {
-		return "", fmt.Errorf("no Location header in redirect response")
+		return "", "", fmt.Errorf("no Location header in redirect response")
 	}
 
 	// Parse the location URL to extract the authorization code
 	locationURL, err := url.Parse(location)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse location URL: %w", err)
+		return "", "", fmt.Errorf("failed to parse location URL: %w", err)
 	}
 
 	// Extract the code parameter
 	code := locationURL.Query().Get("code")
 	if code == "" {
-		return "", fmt.Errorf("no authorization code found in callback URL")
+		return "", "", fmt.Errorf("no authorization code found in callback URL")
 	}
 
-	return code, nil
+	// Extract the state parameter
+	state := locationURL.Query().Get("state")
+
+	return code, state, nil
+}
+
+// ExtractStateFromRedirectURL extracts the OAuth state parameter from a redirect URL.
+func ExtractStateFromRedirectURL(redirectURL string) string {
+	parsedURL, err := url.Parse(redirectURL)
+	if err != nil {
+		return ""
+	}
+
+	return parsedURL.Query().Get("state")
 }
 
 // CreateResourceServerWithActions creates a resource server and multiple actions, returning the resource server ID

@@ -65,8 +65,10 @@ const (
 	userAttributeGroups   = "groups"
 	userAttributeSub      = "sub"
 
-	userInputCode             = "code"
-	userInputNonce            = "nonce"
+	userInputCode  = "code"
+	userInputNonce = "nonce"
+	userInputState = "state"
+
 	userInputOuName           = "ouName"
 	userInputOuHandle         = "ouHandle"
 	userInputOuDesc           = "ouDescription"

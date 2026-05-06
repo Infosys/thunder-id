@@ -390,7 +390,7 @@ func (ts *GoogleAuthFlowTestSuite) TestGoogleAuthFlowCompleteSuccess() {
 	ts.Require().NotEmpty(redirectURLStr, "Redirect URL should not be empty")
 
 	// Step 2: Simulate user authorization at Google (get authorization code)
-	authCode, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
 	if err != nil {
 		ts.T().Fatalf("Failed to simulate Google authorization: %v", err)
 	}
@@ -398,7 +398,8 @@ func (ts *GoogleAuthFlowTestSuite) TestGoogleAuthFlowCompleteSuccess() {
 
 	// Step 3: Complete the flow with the authorization code
 	inputs := map[string]string{
-		"code": authCode,
+		"code":  authCode,
+		"state": state,
 	}
 
 	completeFlowStep, err := common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)
@@ -431,10 +432,12 @@ func (ts *GoogleAuthFlowTestSuite) TestGoogleAuthFlowCompleteWithInvalidCode() {
 	}
 
 	ExecutionID := flowStep.ExecutionID
+	state := testutils.ExtractStateFromRedirectURL(flowStep.Data.RedirectURL)
 
 	// Step 2: Try to complete with invalid authorization code
 	inputs := map[string]string{
-		"code": "invalid-auth-code-12345",
+		"code":  "invalid-auth-code-12345",
+		"state": state,
 	}
 
 	_, err = common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)
@@ -487,14 +490,15 @@ func (ts *GoogleAuthFlowTestSuite) TestGoogleAuthFlowMultipleUsersSuccess() {
 	redirectURLStr := flowStep.Data.RedirectURL
 
 	// Step 2: Simulate user authorization at Google
-	authCode, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
 	if err != nil {
 		ts.T().Fatalf("Failed to simulate Google authorization: %v", err)
 	}
 
 	// Step 3: Complete the flow with the authorization code
 	inputs := map[string]string{
-		"code": authCode,
+		"code":  authCode,
+		"state": state,
 	}
 
 	completeFlowStep, err := common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)

@@ -418,12 +418,12 @@ func (ts *MultiActionInputBindingTestSuite) TestGoogleAuthFlowComplete() {
 	ts.Require().NotEmpty(redirectURL)
 
 	// Simulate Google OAuth flow
-	authCode, err := testutils.SimulateFederatedOAuthFlow(redirectURL)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(redirectURL)
 	ts.Require().NoError(err, "Failed to simulate Google authorization")
 	ts.Require().NotEmpty(authCode)
 
 	// Complete flow with authorization code
-	inputs := map[string]string{"code": authCode}
+	inputs := map[string]string{"code": authCode, "state": state}
 	flowStep, err = common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)
 	ts.Require().NoError(err, "Failed to complete flow with auth code")
 

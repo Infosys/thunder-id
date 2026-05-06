@@ -99,8 +99,10 @@ func (suite *OAuthExecutorTestSuite) TestExecute_CodeNotProvided_BuildsAuthorize
 	assert.NoError(suite.T(), err)
 	assert.NotNil(suite.T(), resp)
 	assert.Equal(suite.T(), common.ExecExternalRedirection, resp.Status)
-	assert.Equal(suite.T(), "https://oauth.provider.com/authorize?client_id=abc", resp.RedirectURL)
+	assert.Contains(suite.T(), resp.RedirectURL, "https://oauth.provider.com/authorize?client_id=abc")
+	assert.Contains(suite.T(), resp.RedirectURL, "state=")
 	assert.Equal(suite.T(), "TestIDP", resp.AdditionalData[common.DataIDPName])
+	assert.NotEmpty(suite.T(), resp.RuntimeData[common.RuntimeKeyOAuthState])
 	suite.mockOAuthService.AssertExpectations(suite.T())
 	suite.mockIDPService.AssertExpectations(suite.T())
 }
@@ -164,8 +166,10 @@ func (suite *OAuthExecutorTestSuite) TestBuildAuthorizeFlow_Success() {
 
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), common.ExecExternalRedirection, execResp.Status)
-	assert.Equal(suite.T(), "https://oauth.provider.com/authorize", execResp.RedirectURL)
+	assert.Contains(suite.T(), execResp.RedirectURL, "https://oauth.provider.com/authorize")
+	assert.Contains(suite.T(), execResp.RedirectURL, "state=")
 	assert.Equal(suite.T(), "GoogleIDP", execResp.AdditionalData[common.DataIDPName])
+	assert.NotEmpty(suite.T(), execResp.RuntimeData[common.RuntimeKeyOAuthState])
 	suite.mockOAuthService.AssertExpectations(suite.T())
 	suite.mockIDPService.AssertExpectations(suite.T())
 }

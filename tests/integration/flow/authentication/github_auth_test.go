@@ -375,7 +375,7 @@ func (ts *GithubAuthFlowTestSuite) TestGithubAuthFlowCompleteSuccess() {
 	ts.Require().NotEmpty(redirectURLStr, "Redirect URL should not be empty")
 
 	// Step 2: Simulate user authorization at GitHub (get authorization code)
-	authCode, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
+	authCode, state, err := testutils.SimulateFederatedOAuthFlow(redirectURLStr)
 	if err != nil {
 		ts.T().Fatalf("Failed to simulate GitHub authorization: %v", err)
 	}
@@ -383,7 +383,8 @@ func (ts *GithubAuthFlowTestSuite) TestGithubAuthFlowCompleteSuccess() {
 
 	// Step 3: Complete the flow with the authorization code
 	inputs := map[string]string{
-		"code": authCode,
+		"code":  authCode,
+		"state": state,
 	}
 
 	completeFlowStep, err := common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)
@@ -416,10 +417,12 @@ func (ts *GithubAuthFlowTestSuite) TestGithubAuthFlowCompleteWithInvalidCode() {
 	}
 
 	ExecutionID := flowStep.ExecutionID
+	state := testutils.ExtractStateFromRedirectURL(flowStep.Data.RedirectURL)
 
 	// Step 2: Try to complete with invalid authorization code
 	inputs := map[string]string{
-		"code": "invalid-auth-code-12345",
+		"code":  "invalid-auth-code-12345",
+		"state": state,
 	}
 
 	_, err = common.CompleteFlow(ExecutionID, inputs, "", flowStep.ChallengeToken)

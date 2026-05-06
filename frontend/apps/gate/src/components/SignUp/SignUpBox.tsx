@@ -21,7 +21,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import {SignUp, useAsgardeo, type EmbeddedFlowComponent} from '@asgardeo/react';
+import {EmbeddedFlowEventType, SignUp, useAsgardeo, type EmbeddedFlowComponent} from '@asgardeo/react';
 import {FlowComponentRenderer, AuthCardLayout, useDesign} from '@thunderid/design';
 import {Box, Button, Alert, Typography, AlertTitle, CircularProgress} from '@wso2/oxygen-ui';
 import type {JSX} from 'react';
@@ -70,7 +70,8 @@ export default function SignUpBox(): JSX.Element {
               onInputChange={handleInputChange}
               onSubmit={(action, inputs) => {
                 setFlowError(null);
-                void handleSubmit(action, inputs);
+                const isTrigger = action.eventType === EmbeddedFlowEventType.Trigger || action.eventType === 'TRIGGER';
+                void handleSubmit(action, inputs, isTrigger);
               }}
             />
           ))}
