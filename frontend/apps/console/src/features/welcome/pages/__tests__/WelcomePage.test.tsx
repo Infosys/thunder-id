@@ -27,7 +27,12 @@ vi.mock('@thunderid/contexts', async (importOriginal) => {
   return {
     ...actual,
     useConfig: () => ({
-      config: {brand: {product_name: 'ThunderID'}},
+      config: {
+        brand: {
+          product_name: 'ThunderID',
+          favicon: {light: 'assets/images/favicon.ico', dark: 'assets/images/favicon-inverted.ico'},
+        },
+      },
     }),
   };
 });

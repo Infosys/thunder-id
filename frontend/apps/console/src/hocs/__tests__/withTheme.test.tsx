@@ -20,6 +20,15 @@ import {render, screen} from '@testing-library/react';
 import {describe, it, expect, vi, beforeEach} from 'vitest';
 import withTheme from '../withTheme';
 
+const mockUseConfig = vi.hoisted(() => vi.fn());
+vi.mock('@thunderid/contexts', () => ({
+  useConfig: mockUseConfig,
+}));
+
+vi.mock('../../components/Head', () => ({
+  default: () => <div data-testid="head" />,
+}));
+
 let capturedTheme: unknown;
 
 function MockChild() {
@@ -27,24 +36,36 @@ function MockChild() {
 }
 const WithThemeComponent = withTheme(MockChild);
 
-vi.mock('@wso2/oxygen-ui', () => ({
-  AcrylicOrangeTheme: {palette: {primary: {main: '#ff5700'}}},
-  OxygenUIThemeProvider: ({
-    children,
-    theme = {palette: {primary: {main: '#ff5700'}}},
-  }: {
-    children: React.ReactNode;
-    theme?: unknown;
-  }) => {
-    capturedTheme = theme;
-    return <div data-testid="theme-provider">{children}</div>;
-  },
-}));
+vi.mock('@wso2/oxygen-ui', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@wso2/oxygen-ui')>();
+  return {
+    ...actual,
+    AcrylicOrangeTheme: {palette: {primary: {main: '#ff5700'}}},
+    OxygenUIThemeProvider: ({
+      children,
+      theme = {palette: {primary: {main: '#ff5700'}}},
+    }: {
+      children: React.ReactNode;
+      theme?: unknown;
+    }) => {
+      capturedTheme = theme;
+      return <div data-testid="theme-provider">{children}</div>;
+    },
+  };
+});
 
 describe('withTheme (console)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedTheme = undefined;
+    mockUseConfig.mockReturnValue({
+      config: {
+        brand: {
+          product_name: 'ThunderID',
+          favicon: {light: 'assets/images/favicon.ico', dark: 'assets/images/favicon-inverted.ico'},
+        },
+      },
+    });
   });
 
   it('renders without crashing', () => {
@@ -86,5 +107,10 @@ describe('withTheme (console)', () => {
 
     render(<WrappedWithProps label="test-label" />);
     expect(screen.getByTestId('props-child')).toHaveTextContent('test-label');
+  });
+
+  it('renders Head', () => {
+    render(<WithThemeComponent />);
+    expect(screen.getByTestId('head')).toBeInTheDocument();
   });
 });

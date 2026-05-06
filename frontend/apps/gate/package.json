@@ -39,6 +39,7 @@
     "@fontsource-variable/inter": "5.2.8",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-query-devtools": "catalog:",
+    "@thunderid/components": "workspace:^",
     "@thunderid/contexts": "workspace:^",
     "@thunderid/logger": "workspace:^",
     "@thunderid/design": "workspace:^",

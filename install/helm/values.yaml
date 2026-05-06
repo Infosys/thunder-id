@@ -181,6 +181,16 @@ configuration:
     scheme: "https"
     path: "/gate"
 
+  # Branding configuration for the Console and Gate frontends.
+  # productName: Display name shown in the browser tab and UI.
+  # favicon: Path or URL to the favicon icons. Use an object with `light` and `dark`
+  #          keys for color-scheme-aware icons (both keys are required).
+  brand:
+    productName: "ThunderID"
+    favicon:
+      light: "assets/images/favicon.ico"
+      dark: "assets/images/favicon-inverted.ico"
+
   # Console client configuration
   consoleClient:
     path: "/console"

@@ -63,7 +63,13 @@ vi.mock('@thunderid/contexts', async (importOriginal) => {
   return {
     ...actual,
     useConfig: () => ({
-      config: {brand: {product_name: 'ThunderID'}, client: {client_id: 'CONSOLE'}},
+      config: {
+        brand: {
+          product_name: 'ThunderID',
+          favicon: {light: 'assets/images/favicon.ico', dark: 'assets/images/favicon-inverted.ico'},
+        },
+        client: {client_id: 'CONSOLE'},
+      },
       isTrustedIssuerGenericOidc: () => mockIsTrustedIssuerGenericOidc,
       getTrustedIssuerClientId: () => 'test-client-id',
       getClientUrl: () => 'https://localhost:5191/console',

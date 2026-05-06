@@ -31,13 +31,16 @@ import {
 } from '@wso2/oxygen-ui';
 import {ChevronDown} from '@wso2/oxygen-ui-icons-react';
 import {useState, type JSX, type ComponentType, type MouseEvent} from 'react';
+import Head from '../components/Head';
 
 export default function withTheme<P extends object>(WrappedComponent: ComponentType<P>) {
   return function WithTheme(props: P): JSX.Element {
     const {theme, isLoading} = useDesign(AcrylicOrangeTheme as Theme);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
     return (
       <OxygenUIThemeProvider theme={theme}>
+        <Head />
         <StylesheetInjector />
         <GoogleFontLoader />
         <ColorSchemeToggle

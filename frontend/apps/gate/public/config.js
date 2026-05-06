@@ -19,6 +19,10 @@
 window.__THUNDERID_RUNTIME_CONFIG__ = {
   brand: {
     product_name: 'ThunderID',
+    favicon: {
+      light: 'assets/images/favicon.ico',
+      dark: 'assets/images/favicon-inverted.ico',
+    },
   },
   client: {
     base: '/gate',

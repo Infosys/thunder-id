@@ -139,6 +139,12 @@ export interface BrandConfig {
   product_name: string;
 
   /**
+   * Favicon image paths for light and dark color schemes.
+   * @example { light: "assets/images/favicon.ico", dark: "assets/images/favicon-inverted.ico" }
+   */
+  favicon: {light: string; dark: string};
+
+  /**
    * Design configuration for theming and UI customization.
    */
   design?: DesignConfig;

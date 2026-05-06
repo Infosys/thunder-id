@@ -19,6 +19,8 @@
 /* -------------------------- LAB -------------------------- */
 
 // Components
+export {default as Helmet} from './Helmet/Helmet';
+export type {HelmetProps} from './Helmet/Helmet';
 export {default as BuilderFloatingPanel} from './lab/components/BuilderLayout/BuilderFloatingPanel';
 export {default as BuilderLayout} from './lab/components/BuilderLayout/BuilderLayout';
 export {default as BuilderPanelHeader} from './lab/components/BuilderLayout/BuilderPanelHeader';

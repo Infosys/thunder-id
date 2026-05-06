@@ -71,10 +71,11 @@ vi.mock('@asgardeo/react', () => ({
   ),
 }));
 
-// Mock OxygenUI (used by withTheme)
+// Mock OxygenUI (used by withTheme and Head)
 vi.mock('@wso2/oxygen-ui', () => ({
   AcrylicOrangeTheme: {palette: {primary: {main: '#ff5700'}}},
   OxygenUIThemeProvider: ({children}: {children: ReactNode}) => <div data-testid="theme-provider">{children}</div>,
+  useColorScheme: () => ({mode: 'light', systemMode: 'light'}),
 }));
 
 // Mock i18next top-level await in withI18n
@@ -108,6 +109,7 @@ describe('AppWithDecorators', () => {
     vi.clearAllMocks();
     // Reset the mock config object (preserving the same reference so the vi.mock closure keeps working).
     Object.keys(mockConfig).forEach((key) => delete mockConfig[key]);
+    mockConfig.brand = {favicon: {light: 'assets/images/favicon.ico', dark: 'assets/images/favicon-inverted.ico'}};
     // Set up default environment variables
     import.meta.env.VITE_ASGARDEO_BASE_URL = 'https://default-base.example.com';
     import.meta.env.VITE_ASGARDEO_CLIENT_ID = 'default-client-id';

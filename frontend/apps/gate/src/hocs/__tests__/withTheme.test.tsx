@@ -39,6 +39,15 @@ vi.mock('@thunderid/design', () => ({
   GoogleFontLoader: () => null,
 }));
 
+const mockUseConfig = vi.hoisted(() => vi.fn());
+vi.mock('@thunderid/contexts', () => ({
+  useConfig: mockUseConfig,
+}));
+
+vi.mock('../../components/Head', () => ({
+  default: () => <div data-testid="head" />,
+}));
+
 // Track LanguageSwitcher render function props
 let mockLanguageSwitcherProps: {
   languages: {code: string; displayName: string; emoji: string}[];
@@ -104,6 +113,14 @@ describe('withTheme', () => {
     mockUseDesign.mockReturnValue({
       transformedTheme: null,
       isLoading: false,
+    });
+    mockUseConfig.mockReturnValue({
+      config: {
+        brand: {
+          product_name: 'ThunderID',
+          favicon: {light: 'assets/images/favicon.ico', dark: 'assets/images/favicon-inverted.ico'},
+        },
+      },
     });
     mockLanguageSwitcherProps = {
       languages: [],
@@ -258,6 +275,11 @@ describe('withTheme', () => {
     render(<WithThemeComponent />);
     expect(screen.getByTestId('circular-progress')).toBeInTheDocument();
     expect(screen.queryByTestId('mock-child')).not.toBeInTheDocument();
+  });
+
+  it('renders Head', () => {
+    render(<WithThemeComponent />);
+    expect(screen.getByTestId('head')).toBeInTheDocument();
   });
 
   it('wraps different components correctly', () => {

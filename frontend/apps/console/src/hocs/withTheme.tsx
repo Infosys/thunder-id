@@ -18,11 +18,13 @@
 
 import {AcrylicOrangeTheme, OxygenUIThemeProvider} from '@wso2/oxygen-ui';
 import type {JSX, ComponentType} from 'react';
+import Head from '../components/Head';
 
 export default function withTheme<P extends object>(WrappedComponent: ComponentType<P>) {
   return function WithTheme(props: P): JSX.Element {
     return (
       <OxygenUIThemeProvider theme={AcrylicOrangeTheme}>
+        <Head />
         <WrappedComponent {...props} />
       </OxygenUIThemeProvider>
     );
