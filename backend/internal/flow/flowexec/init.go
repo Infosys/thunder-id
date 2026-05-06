@@ -21,9 +21,10 @@ package flowexec
 import (
 	"net/http"
 
-	"github.com/asgardeo/thunder/internal/application"
+	"github.com/asgardeo/thunder/internal/entityprovider"
 	"github.com/asgardeo/thunder/internal/flow/executor"
 	flowmgt "github.com/asgardeo/thunder/internal/flow/mgt"
+	"github.com/asgardeo/thunder/internal/inboundclient"
 	"github.com/asgardeo/thunder/internal/system/config"
 	dbprovider "github.com/asgardeo/thunder/internal/system/database/provider"
 	"github.com/asgardeo/thunder/internal/system/kmprovider"
@@ -37,7 +38,8 @@ import (
 func Initialize(
 	mux *http.ServeMux,
 	flowMgtService flowmgt.FlowMgtServiceInterface,
-	applicationService application.ApplicationServiceInterface,
+	inboundClientService inboundclient.InboundClientServiceInterface,
+	entityProvider entityprovider.EntityProviderInterface,
 	executorRegistry executor.ExecutorRegistryInterface,
 	observabilitySvc observability.ObservabilityServiceInterface,
 	cryptoSvc kmprovider.RuntimeCryptoProvider,
@@ -58,8 +60,8 @@ func Initialize(
 		flowStore = newFlowStore(dbProvider)
 	}
 	flowEngine := newFlowEngine(executorRegistry, observabilitySvc)
-	flowExecService := newFlowExecService(flowMgtService, flowStore, flowEngine, applicationService,
-		observabilitySvc, transactioner, cryptoSvc)
+	flowExecService := newFlowExecService(flowMgtService, flowStore, flowEngine,
+		inboundClientService, entityProvider, observabilitySvc, transactioner, cryptoSvc)
 
 	handler := newFlowExecutionHandler(flowExecService)
 	registerRoutes(mux, handler)
