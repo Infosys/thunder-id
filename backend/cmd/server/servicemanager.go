@@ -33,6 +33,7 @@ import (
 	authnConsent "github.com/asgardeo/thunder/internal/authn/consent"
 	"github.com/asgardeo/thunder/internal/authn/github"
 	"github.com/asgardeo/thunder/internal/authn/google"
+	"github.com/asgardeo/thunder/internal/authn/magiclink"
 	authnOAuth "github.com/asgardeo/thunder/internal/authn/oauth"
 	authnOIDC "github.com/asgardeo/thunder/internal/authn/oidc"
 	"github.com/asgardeo/thunder/internal/authn/otp"
@@ -214,6 +215,9 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	// Initialize passkey service
 	passkeyService := passkey.Initialize(entityService)
 
+	// Initialize magic link service
+	magicLinkService := magiclink.Initialize(jwtService, entityProvider)
+
 	// Initialize otp core service
 	otpCoreService := otp.Initialize(otpService, entityProvider)
 
@@ -239,7 +243,7 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 	consentEnforcer := authnConsent.Initialize(consentService, jwtService)
 
 	authn.Initialize(mux, mcpServer, idpService, jwtService, authnProvider, authAssertGen, passkeyService,
-		otpCoreService, oauthAuthnService, oidcAuthnService, googleAuthnService, githubAuthnService)
+		otpCoreService, magicLinkService, oauthAuthnService, oidcAuthnService, googleAuthnService, githubAuthnService)
 
 	attributeCacheService := attributecache.Initialize()
 
@@ -253,8 +257,8 @@ func registerServices(mux *http.ServeMux) jwt.JWTServiceInterface {
 		emailClient = nil
 	}
 	execRegistry := executor.Initialize(flowFactory, ouService, idpService, notifSenderSvc, jwtService, authAssertGen,
-		consentEnforcer, authnProvider, otpCoreService, passkeyService, authZService, entityTypeService,
-		observabilitySvc, groupService, roleService, entityProvider, attributeCacheService, emailClient,
+		consentEnforcer, authnProvider, otpCoreService, passkeyService, magicLinkService, authZService,
+		entityTypeService, groupService, roleService, entityProvider, attributeCacheService, emailClient,
 		templateService, oauthAuthnService, oidcAuthnService, githubAuthnService, googleAuthnService)
 
 	flowMgtService, flowMgtExporter, err := flowmgt.Initialize(mux, mcpServer, flowFactory, execRegistry, graphCache)

@@ -24,6 +24,7 @@ import (
 	"github.com/asgardeo/thunder/internal/authn/consent"
 	"github.com/asgardeo/thunder/internal/authn/github"
 	"github.com/asgardeo/thunder/internal/authn/google"
+	"github.com/asgardeo/thunder/internal/authn/magiclink"
 	"github.com/asgardeo/thunder/internal/authn/oauth"
 	"github.com/asgardeo/thunder/internal/authn/oidc"
 	"github.com/asgardeo/thunder/internal/authn/otp"
@@ -40,7 +41,6 @@ import (
 	"github.com/asgardeo/thunder/internal/role"
 	"github.com/asgardeo/thunder/internal/system/email"
 	"github.com/asgardeo/thunder/internal/system/jose/jwt"
-	"github.com/asgardeo/thunder/internal/system/observability"
 	"github.com/asgardeo/thunder/internal/system/template"
 
 	"github.com/asgardeo/thunder/internal/entitytype"
@@ -58,9 +58,9 @@ func Initialize(
 	authnProvider authnprovidermgr.AuthnProviderManagerInterface,
 	otpService otp.OTPAuthnServiceInterface,
 	passkeyService passkey.PasskeyServiceInterface,
+	magicLinkService magiclink.MagicLinkAuthnServiceInterface,
 	authZService authz.AuthorizationServiceInterface,
 	entityTypeService entitytype.EntityTypeServiceInterface,
-	observabilitySvc observability.ObservabilityServiceInterface,
 	groupService group.GroupServiceInterface,
 	roleService role.RoleServiceInterface,
 	entityProvider entityprovider.EntityProviderInterface,
@@ -79,7 +79,8 @@ func Initialize(
 		flowFactory, otpService, authnProvider, entityProvider))
 	reg.RegisterExecutor(ExecutorNamePasskeyAuth, newPasskeyAuthExecutor(
 		flowFactory, passkeyService, authnProvider, entityProvider))
-
+	reg.RegisterExecutor(ExecutorNameMagicLinkAuth, newMagicLinkAuthExecutor(
+		flowFactory, magicLinkService, entityProvider))
 	reg.RegisterExecutor(ExecutorNameOAuth, newOAuthExecutor(
 		"", []common.Input{}, []common.Input{}, flowFactory, idpService, entityTypeService,
 		oauthSvc, authnProvider, idp.IDPTypeOAuth))

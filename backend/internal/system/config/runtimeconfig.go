@@ -19,13 +19,17 @@
 package config
 
 import (
+	"fmt"
+	"net/url"
+	"strings"
 	"sync"
 )
 
 // ServerRuntime holds the runtime configuration for the server.
 type ServerRuntime struct {
-	ServerHome string `yaml:"server_home"`
-	Config     Config `yaml:"config"`
+	ServerHome         string `yaml:"server_home"`
+	GateClientLoginURL *url.URL
+	Config             Config `yaml:"config"`
 }
 
 var (
@@ -36,12 +40,23 @@ var (
 // InitializeServerRuntime initializes the server runtime configurations.
 func InitializeServerRuntime(serverHome string, config *Config) error {
 	once.Do(func() {
+		loginPath := config.GateClient.LoginPath
+		if strings.TrimSpace(loginPath) == "" {
+			loginPath = "/signin"
+		}
+		rawURL := fmt.Sprintf("%s://%s:%d%s",
+			config.GateClient.Scheme,
+			config.GateClient.Hostname,
+			config.GateClient.Port,
+			loginPath,
+		)
+		parsedURL, _ := url.Parse(rawURL)
 		runtimeConfig = &ServerRuntime{
-			ServerHome: serverHome,
-			Config:     *config,
+			ServerHome:         serverHome,
+			GateClientLoginURL: parsedURL,
+			Config:             *config,
 		}
 	})
-
 	return nil
 }
 
