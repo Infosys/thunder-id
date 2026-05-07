@@ -31,6 +31,7 @@ import (
 	"github.com/asgardeo/thunder/internal/authn/common"
 	"github.com/asgardeo/thunder/internal/authn/github"
 	"github.com/asgardeo/thunder/internal/authn/google"
+	"github.com/asgardeo/thunder/internal/authn/magiclink"
 	"github.com/asgardeo/thunder/internal/authn/oauth"
 	"github.com/asgardeo/thunder/internal/authn/oidc"
 	"github.com/asgardeo/thunder/internal/authn/otp"
@@ -89,6 +90,7 @@ type authenticationService struct {
 	authAssertionGenerator assert.AuthAssertGeneratorInterface
 	authnProvider          authnprovidermgr.AuthnProviderManagerInterface
 	otpService             otp.OTPAuthnServiceInterface
+	magicLinkService       magiclink.MagicLinkAuthnServiceInterface
 	oauthService           oauth.OAuthAuthnServiceInterface
 	oidcService            oidc.OIDCAuthnServiceInterface
 	googleService          google.GoogleOIDCAuthnServiceInterface
@@ -103,6 +105,7 @@ func newAuthenticationService(
 	authAssertGen assert.AuthAssertGeneratorInterface,
 	authnProvider authnprovidermgr.AuthnProviderManagerInterface,
 	otpAuthnSvc otp.OTPAuthnServiceInterface,
+	magicLinkSvc magiclink.MagicLinkAuthnServiceInterface,
 	oauthAuthnSvc oauth.OAuthAuthnServiceInterface,
 	oidcAuthnSvc oidc.OIDCAuthnServiceInterface,
 	googleAuthnSvc google.GoogleOIDCAuthnServiceInterface,
@@ -115,6 +118,7 @@ func newAuthenticationService(
 		authAssertionGenerator: authAssertGen,
 		authnProvider:          authnProvider,
 		otpService:             otpAuthnSvc,
+		magicLinkService:       magicLinkSvc,
 		oauthService:           oauthAuthnSvc,
 		oidcService:            oidcAuthnSvc,
 		googleService:          googleAuthnSvc,
