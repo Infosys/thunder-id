@@ -72,9 +72,24 @@ type AccessTokenConfig struct {
 
 // IDTokenConfig is the ID token configuration.
 type IDTokenConfig struct {
-	ValidityPeriod int64    `json:"validityPeriod,omitempty" yaml:"validity_period,omitempty" jsonschema:"ID token validity period in seconds."`
-	UserAttributes []string `json:"userAttributes,omitempty" yaml:"user_attributes,omitempty" jsonschema:"User attributes to embed in the ID token."`
+	ValidityPeriod int64               `json:"validityPeriod,omitempty" yaml:"validity_period,omitempty" jsonschema:"ID token validity period in seconds."`
+	UserAttributes []string            `json:"userAttributes,omitempty" yaml:"user_attributes,omitempty" jsonschema:"User attributes to embed in the ID token."`
+	ResponseType   IDTokenResponseType `json:"responseType,omitempty"   yaml:"response_type,omitempty"   jsonschema:"ID token response type (JWT, JWE, NESTED_JWT). Defaults to JWT."`
+	EncryptionAlg  string              `json:"encryptionAlg,omitempty"  yaml:"encryption_alg,omitempty"  jsonschema:"JWE key-management algorithm. Required when responseType is JWE or NESTED_JWT."`
+	EncryptionEnc  string              `json:"encryptionEnc,omitempty"  yaml:"encryption_enc,omitempty"  jsonschema:"JWE content-encryption algorithm. Required when responseType is JWE or NESTED_JWT."`
 }
+
+// IDTokenResponseType is the response format of the ID token.
+type IDTokenResponseType string
+
+const (
+	// IDTokenResponseTypeJWT is the standard signed JWT response type (default).
+	IDTokenResponseTypeJWT IDTokenResponseType = "JWT"
+	// IDTokenResponseTypeJWE is the encrypted JWT response type.
+	IDTokenResponseTypeJWE IDTokenResponseType = "JWE"
+	// IDTokenResponseTypeNESTEDJWT is the sign-then-encrypt (Nested JWT) response type.
+	IDTokenResponseTypeNESTEDJWT IDTokenResponseType = "NESTED_JWT" //nolint:gosec // not a credential
+)
 
 // UserInfoConfig is the user info endpoint configuration.
 type UserInfoConfig struct {
@@ -111,6 +126,12 @@ var SupportedUserInfoEncryptionAlgs = []string{string(jwe.RSAOAEP), string(jwe.R
 
 // SupportedUserInfoEncryptionEncs lists JWE content-encryption algorithms supported for userinfo encryption.
 var SupportedUserInfoEncryptionEncs = []string{string(jwe.A128CBCHS256), string(jwe.A256GCM)}
+
+// SupportedIDTokenEncryptionAlgs lists JWE key-management algorithms supported for ID token encryption.
+var SupportedIDTokenEncryptionAlgs = []string{string(jwe.RSAOAEP), string(jwe.RSAOAEP256)}
+
+// SupportedIDTokenEncryptionEncs lists JWE content-encryption algorithms supported for ID token encryption.
+var SupportedIDTokenEncryptionEncs = []string{string(jwe.A128CBCHS256), string(jwe.A256GCM)}
 
 // OAuthClient is the resolved OAuth-client view used by the OAuth machinery (token
 // issuance, grant handlers, userinfo, authz, dcr). Both application and agent services

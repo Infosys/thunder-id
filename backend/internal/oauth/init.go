@@ -34,6 +34,7 @@ import (
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/discovery"
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/granthandlers"
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/introspect"
+	"github.com/asgardeo/thunder/internal/oauth/oauth2/jwksresolver"
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/par"
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/token"
 	"github.com/asgardeo/thunder/internal/oauth/oauth2/tokenservice"
@@ -75,7 +76,11 @@ func Initialize(
 	}
 
 	jwks.Initialize(mux, pkiService)
-	tokenBuilder, tokenValidator := tokenservice.Initialize(jwtService)
+	httpClient := syshttp.NewHTTPClientWithCheckRedirect(func(req *http.Request, _ []*http.Request) error {
+		return syshttp.IsSSRFSafeURL(req.URL.String())
+	})
+	resolver := jwksresolver.Initialize(httpClient)
+	tokenBuilder, tokenValidator := tokenservice.Initialize(jwtService, jweService, resolver)
 	scopeValidator := scope.Initialize()
 	discoveryService := discovery.Initialize(mux, pkiService)
 	parService := par.Initialize(mux, inboundClient, authnProvider, jwtService, discoveryService,
@@ -89,10 +94,7 @@ func Initialize(
 	token.Initialize(mux, jwtService, inboundClient, authnProvider, grantHandlerProvider,
 		scopeValidator, observabilitySvc, discoveryService, transactioner)
 	introspect.Initialize(mux, jwtService, inboundClient, authnProvider, discoveryService)
-	userinfo.Initialize(mux, jwtService, jweService,
-		syshttp.NewHTTPClientWithCheckRedirect(func(req *http.Request, _ []*http.Request) error {
-			return syshttp.IsSSRFSafeURL(req.URL.String())
-		}),
+	userinfo.Initialize(mux, jwtService, jweService, resolver,
 		tokenValidator, inboundClient, ouService, attributeCacheSvc, transactioner)
 	dcr.Initialize(mux, applicationService, ouService, i18nService, transactioner)
 	return nil

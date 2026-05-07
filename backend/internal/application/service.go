@@ -1075,6 +1075,46 @@ func translateUserInfoValidationError(err error) *serviceerror.ServiceError {
 			Key:          "error.applicationservice.userinfo_nested_jwt_requires_all_description",
 			DefaultValue: "signingAlg, encryptionAlg, and encryptionEnc are required when responseType is NESTED_JWT",
 		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenEncryptionFieldsNotAllowed):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_encryption_fields_not_allowed_description",
+			DefaultValue: "idToken encryptionAlg and encryptionEnc must not be set when responseType is JWT",
+		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenUnsupportedResponseType):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_unsupported_response_type_description",
+			DefaultValue: "ID token responseType is not supported",
+		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenUnsupportedEncryptionAlg):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_unsupported_encryption_alg_description",
+			DefaultValue: "ID token encryption algorithm is not supported",
+		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenUnsupportedEncryptionEnc):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_unsupported_encryption_enc_description",
+			DefaultValue: "ID token content-encryption algorithm is not supported",
+		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenEncryptionAlgRequiresEnc):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_encryption_alg_requires_enc_description",
+			DefaultValue: "idToken encryptionEnc is required when encryptionAlg is set",
+		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenEncryptionEncRequiresAlg):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_encryption_enc_requires_alg_description",
+			DefaultValue: "idToken encryptionAlg is required when encryptionEnc is set",
+		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenEncryptionRequiresCertificate):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_encryption_requires_certificate_description",
+			DefaultValue: "a certificate (JWKS or JWKS_URI) is required when ID token encryption is configured",
+		})
+	case errors.Is(err, inboundclient.ErrOAuthIDTokenJWKSURINotSSRFSafe):
+		return serviceerror.CustomServiceError(ErrorInvalidOAuthConfiguration, core.I18nMessage{
+			Key:          "error.applicationservice.idtoken_jwks_uri_not_ssrf_safe_description",
+			DefaultValue: "idToken JWKS URI must be a publicly reachable HTTPS URL",
+		})
 	default:
 		return nil
 	}

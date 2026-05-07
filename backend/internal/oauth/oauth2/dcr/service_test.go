@@ -693,6 +693,83 @@ func (s *DCRServiceTestSuite) TestRegisterClient_InvalidLocalizedURI() {
 	s.mockAppService.AssertExpectations(s.T())
 }
 
+// TestBuildIDTokenConfig_NilWhenBothEmpty verifies that buildIDTokenConfig returns nil when both
+// IDTokenEncryptedResponseAlg and IDTokenEncryptedResponseEnc are empty.
+func (s *DCRServiceTestSuite) TestBuildIDTokenConfig_NilWhenBothEmpty() {
+	req := &DCRRegistrationRequest{
+		IDTokenEncryptedResponseAlg: "",
+		IDTokenEncryptedResponseEnc: "",
+	}
+	s.Nil(buildIDTokenConfig(req))
+}
+
+// TestBuildIDTokenConfig_MapsAlgAndEnc verifies that buildIDTokenConfig maps the alg/enc fields.
+func (s *DCRServiceTestSuite) TestBuildIDTokenConfig_MapsAlgAndEnc() {
+	req := &DCRRegistrationRequest{
+		IDTokenEncryptedResponseAlg: "RSA-OAEP-256",
+		IDTokenEncryptedResponseEnc: "A256GCM",
+	}
+	cfg := buildIDTokenConfig(req)
+	s.Require().NotNil(cfg)
+	s.Equal("RSA-OAEP-256", cfg.EncryptionAlg)
+	s.Equal("A256GCM", cfg.EncryptionEnc)
+}
+
+// TestRegisterClient_WithIDTokenEncryption verifies that DCR registration round-trips
+// IDTokenEncryptedResponseAlg and IDTokenEncryptedResponseEnc correctly.
+func (s *DCRServiceTestSuite) TestRegisterClient_WithIDTokenEncryption() {
+	request := &DCRRegistrationRequest{
+		OUID:                        "test-ou-1",
+		ClientName:                  "IDToken Encryption Client",
+		IDTokenEncryptedResponseAlg: "RSA-OAEP-256",
+		IDTokenEncryptedResponseEnc: "A256GCM",
+	}
+
+	appDTO := &model.ApplicationDTO{
+		ID:   "app-id",
+		Name: "IDToken Encryption Client",
+		InboundAuthConfig: []model.InboundAuthConfigDTO{
+			{
+				Type: model.OAuthInboundAuthType,
+				OAuthAppConfig: &model.OAuthAppConfigDTO{
+					ClientID: "client-id",
+					Scopes:   []string{"openid"},
+					Token: &inboundmodel.OAuthTokenConfig{
+						IDToken: &inboundmodel.IDTokenConfig{
+							EncryptionAlg: "RSA-OAEP-256",
+							EncryptionEnc: "A256GCM",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	s.mockAppService.On("CreateApplication", mock.Anything,
+		mock.MatchedBy(func(dto *model.ApplicationDTO) bool {
+			for _, inbound := range dto.InboundAuthConfig {
+				cfg := inbound.OAuthAppConfig
+				if cfg != nil &&
+					cfg.Token != nil &&
+					cfg.Token.IDToken != nil &&
+					cfg.Token.IDToken.EncryptionAlg == "RSA-OAEP-256" &&
+					cfg.Token.IDToken.EncryptionEnc == "A256GCM" {
+					return true
+				}
+			}
+			return false
+		}),
+	).Return(appDTO, (*serviceerror.ServiceError)(nil))
+
+	response, err := s.service.RegisterClient(context.Background(), request)
+
+	s.Nil(err)
+	s.Require().NotNil(response)
+	s.Equal("RSA-OAEP-256", response.IDTokenEncryptedResponseAlg)
+	s.Equal("A256GCM", response.IDTokenEncryptedResponseEnc)
+	s.mockAppService.AssertExpectations(s.T())
+}
+
 // TestRegisterClient_LocalizedVariantsWriteFailure_ClientError tests that a ClientErrorType
 // i18n error maps to ErrorServerError to avoid leaking internal details to external callers.
 func (s *DCRServiceTestSuite) TestRegisterClient_LocalizedVariantsWriteFailure_ClientError() {
