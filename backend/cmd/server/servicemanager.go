@@ -317,7 +317,7 @@ func registerServices(mux *http.ServeMux, cacheManager cache.CacheManagerInterfa
 	designResolveService := resolve.Initialize(mux, themeMgtService, layoutMgtService, applicationService)
 
 	// Initialize flow metadata service
-	_ = flowmeta.Initialize(mux, applicationService, ouService, designResolveService, i18nService)
+	_ = flowmeta.Initialize(mux, inboundClientService, entityProvider, ouService, designResolveService, i18nService)
 
 	// Initialize export service with collected exporters
 	_ = export.Initialize(mux, exporters)
@@ -339,8 +339,8 @@ func registerServices(mux *http.ServeMux, cacheManager cache.CacheManagerInterfa
 		i18nService,
 	)
 
-	flowExecService, err := flowexec.Initialize(mux, flowMgtService, applicationService, execRegistry,
-		observabilitySvc, runtimeCryptoSvc)
+	flowExecService, err := flowexec.Initialize(mux, flowMgtService, inboundClientService, entityProvider,
+		execRegistry, observabilitySvc, runtimeCryptoSvc)
 	if err != nil {
 		logger.Fatal("Failed to initialize flow execution service", log.Error(err))
 	}

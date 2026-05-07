@@ -22,6 +22,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -97,8 +98,41 @@ func CreateUserType(schema UserType) (string, error) {
 	return schemaID, nil
 }
 
-// CreateAgentType creates an agent type via API and returns the schema ID.
+// CreateAgentType ensures the single allowed `default` agent type exists with the given schema
+// and returns its ID. The server restricts agent types to one `default` schema and rejects
+// deletion, so suites share the singleton: this helper creates it on first call and updates
+// it (PUT) on subsequent calls so each suite's schema fixture takes effect. The caller's
+// `Name` is ignored — it is always coerced to `default`.
 func CreateAgentType(schema UserType) (string, error) {
+	schema.Name = "default"
+
+	id, err := postAgentType(schema)
+	if err == nil {
+		return id, nil
+	}
+	if !errors.Is(err, errAgentTypeNameConflict) {
+		return "", err
+	}
+
+	existingID, lookupErr := findDefaultAgentTypeID()
+	if lookupErr != nil {
+		return "", lookupErr
+	}
+	if updateErr := putAgentType(existingID, schema); updateErr != nil {
+		return "", updateErr
+	}
+	return existingID, nil
+}
+
+// DeleteAgentType is a no-op. The server rejects agent type deletion (USRS-1015) — see
+// CreateAgentType for how suites share the singleton `default` schema.
+func DeleteAgentType(_ string) error {
+	return nil
+}
+
+var errAgentTypeNameConflict = errors.New("agent type name conflict")
+
+func postAgentType(schema UserType) (string, error) {
 	payload, err := json.Marshal(schema)
 	if err != nil {
 		return "", fmt.Errorf("failed to marshal agent type: %w", err)
@@ -110,8 +144,7 @@ func CreateAgentType(schema UserType) (string, error) {
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := GetHTTPClient()
-	resp, err := client.Do(req)
+	resp, err := GetHTTPClient().Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed to send request: %w", err)
 	}
@@ -122,6 +155,9 @@ func CreateAgentType(schema UserType) (string, error) {
 		return "", fmt.Errorf("failed to read response body: %w", err)
 	}
 
+	if resp.StatusCode == http.StatusConflict {
+		return "", errAgentTypeNameConflict
+	}
 	if resp.StatusCode != http.StatusCreated {
 		return "", fmt.Errorf("expected status 201, got %d. Response: %s", resp.StatusCode, string(bodyBytes))
 	}
@@ -130,34 +166,69 @@ func CreateAgentType(schema UserType) (string, error) {
 	if err = json.Unmarshal(bodyBytes, &createdSchema); err != nil {
 		return "", fmt.Errorf("failed to parse response body: %w. Response: %s", err, string(bodyBytes))
 	}
-
-	schemaID, ok := createdSchema["id"].(string)
+	id, ok := createdSchema["id"].(string)
 	if !ok {
 		return "", fmt.Errorf("response does not contain id or id is not a string. Response: %s", string(bodyBytes))
 	}
-	return schemaID, nil
+	return id, nil
 }
 
-// DeleteAgentType deletes an agent type by ID.
-func DeleteAgentType(schemaID string) error {
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/agent-types/%s", TestServerURL, schemaID), nil)
+func putAgentType(schemaID string, schema UserType) error {
+	payload, err := json.Marshal(schema)
 	if err != nil {
-		return fmt.Errorf("failed to create delete request: %w", err)
+		return fmt.Errorf("failed to marshal agent type: %w", err)
 	}
-
-	client := GetHTTPClient()
-	resp, err := client.Do(req)
+	req, err := http.NewRequest("PUT",
+		fmt.Sprintf("%s/agent-types/%s", TestServerURL, schemaID), bytes.NewReader(payload))
 	if err != nil {
-		return fmt.Errorf("failed to delete agent type: %w", err)
+		return fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := GetHTTPClient().Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to send request: %w", err)
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
+	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("expected status 204, got %d. Response: %s", resp.StatusCode, string(body))
+		return fmt.Errorf("expected status 200, got %d. Response: %s", resp.StatusCode, string(body))
+	}
+	return nil
+}
+
+func findDefaultAgentTypeID() (string, error) {
+	req, err := http.NewRequest("GET", TestServerURL+"/agent-types?limit=100", nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %w", err)
+	}
+	resp, err := GetHTTPClient().Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to list agent types: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("expected status 200, got %d. Response: %s", resp.StatusCode, string(body))
 	}
 
-	return nil
+	var list struct {
+		Schemas []struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"schemas"`
+	}
+	if err := json.Unmarshal(body, &list); err != nil {
+		return "", fmt.Errorf("failed to parse list response: %w. Response: %s", err, string(body))
+	}
+	for _, s := range list.Schemas {
+		if s.Name == "default" {
+			return s.ID, nil
+		}
+	}
+	return "", fmt.Errorf("default agent type not found in list. Response: %s", string(body))
 }
 
 // CreateUser creates a user via API and returns the user ID

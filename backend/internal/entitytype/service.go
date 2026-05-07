@@ -220,6 +220,10 @@ func (us *entityTypeService) CreateEntityType(
 		return nil, svcErr
 	}
 
+	if category == TypeCategoryAgent && request.Name != DefaultAgentTypeName {
+		return nil, &ErrorAgentTypeOnlyDefaultAllowed
+	}
+
 	if isDeclarativeModeEnabled() {
 		return nil, &ErrorCannotModifyDeclarativeResource
 	}
@@ -374,6 +378,10 @@ func (us *entityTypeService) UpdateEntityType(ctx context.Context, category Type
 		return nil, svcErr
 	}
 
+	if category == TypeCategoryAgent && request.Name != DefaultAgentTypeName {
+		return nil, &ErrorAgentTypeOnlyDefaultAllowed
+	}
+
 	if schemaID == "" {
 		return nil, invalidEntityTypeRequestErr(category, "schema id must not be empty")
 	}
@@ -467,6 +475,10 @@ func (us *entityTypeService) DeleteEntityType(ctx context.Context, category Type
 
 	if svcErr := validateCategory(category); svcErr != nil {
 		return svcErr
+	}
+
+	if category == TypeCategoryAgent {
+		return &ErrorAgentTypeCannotDelete
 	}
 
 	if schemaID == "" {

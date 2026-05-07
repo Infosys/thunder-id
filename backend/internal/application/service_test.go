@@ -223,7 +223,12 @@ func mockLoadFullApplication(
 	sysAttrsJSON, _ := json.Marshal(sysAttrs)
 	ep := resetEntityProviderMethod(service, "GetEntity")
 	ep.On("GetEntity", dto.ID).Return(
-		&entityprovider.Entity{ID: dto.ID, OUID: dto.OUID, SystemAttributes: sysAttrsJSON},
+		&entityprovider.Entity{
+			ID:               dto.ID,
+			Category:         entityprovider.EntityCategoryApp,
+			OUID:             dto.OUID,
+			SystemAttributes: sysAttrsJSON,
+		},
 		(*entityprovider.EntityProviderError)(nil),
 	)
 }
@@ -264,13 +269,71 @@ func (suite *ServiceTestSuite) TestGetOAuthApplication_Success() {
 	service, mockStore := suite.setupTestService()
 
 	mockStore.EXPECT().GetOAuthClientByClientID(mock.Anything, "client123").
-		Return(&inboundmodel.OAuthClient{ClientID: "client123"}, nil)
+		Return(&inboundmodel.OAuthClient{ClientID: "client123", ID: "app123"}, nil)
+	resetEntityProviderMethod(service, "GetEntity")
+	service.entityProvider.(*entityprovidermock.EntityProviderInterfaceMock).
+		On("GetEntity", "app123").Return(
+		&entityprovider.Entity{ID: "app123", Category: entityprovider.EntityCategoryApp},
+		(*entityprovider.EntityProviderError)(nil))
 
 	result, svcErr := service.GetOAuthApplication(context.Background(), "client123")
 
 	assert.NotNil(suite.T(), result)
 	assert.Nil(suite.T(), svcErr)
 	assert.Equal(suite.T(), "client123", result.ClientID)
+}
+
+// TestGetOAuthApplication_AgentEntity verifies GetOAuthApplication rejects an OAuth client
+// whose owning entity is an agent (the OAuth client_id namespace is shared with agents).
+func (suite *ServiceTestSuite) TestGetOAuthApplication_AgentEntity() {
+	service, mockStore := suite.setupTestService()
+
+	mockStore.EXPECT().GetOAuthClientByClientID(mock.Anything, "agent-client").
+		Return(&inboundmodel.OAuthClient{ClientID: "agent-client", ID: "agent-id"}, nil)
+	resetEntityProviderMethod(service, "GetEntity")
+	service.entityProvider.(*entityprovidermock.EntityProviderInterfaceMock).
+		On("GetEntity", "agent-id").Return(
+		&entityprovider.Entity{ID: "agent-id", Category: entityprovider.EntityCategoryAgent},
+		(*entityprovider.EntityProviderError)(nil))
+
+	result, svcErr := service.GetOAuthApplication(context.Background(), "agent-client")
+
+	assert.Nil(suite.T(), result)
+	assert.NotNil(suite.T(), svcErr)
+	assert.Equal(suite.T(), ErrorApplicationNotFound.Code, svcErr.Code)
+}
+
+// TestGetOAuthApplication_EntityNotFound covers the path where the OAuth client exists but the
+// owning entity has been deleted; GetOAuthApplication must surface ErrorApplicationNotFound.
+func (suite *ServiceTestSuite) TestGetOAuthApplication_EntityNotFound() {
+	service, mockStore := suite.setupTestService()
+
+	mockStore.EXPECT().GetOAuthClientByClientID(mock.Anything, "client-x").
+		Return(&inboundmodel.OAuthClient{ClientID: "client-x", ID: "missing-app"}, nil)
+
+	result, svcErr := service.GetOAuthApplication(context.Background(), "client-x")
+
+	assert.Nil(suite.T(), result)
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), ErrorApplicationNotFound.Code, svcErr.Code)
+}
+
+// TestGetOAuthApplication_EntityLoadError covers the non-NotFound entity-provider error branch.
+func (suite *ServiceTestSuite) TestGetOAuthApplication_EntityLoadError() {
+	service, mockStore := suite.setupTestService()
+
+	mockStore.EXPECT().GetOAuthClientByClientID(mock.Anything, "client-y").
+		Return(&inboundmodel.OAuthClient{ClientID: "client-y", ID: "app-y"}, nil)
+	ep := resetEntityProviderMethod(service, "GetEntity")
+	ep.On("GetEntity", "app-y").Return(
+		(*entityprovider.Entity)(nil),
+		entityprovider.NewEntityProviderError("INTERNAL_ERROR", "boom", ""))
+
+	result, svcErr := service.GetOAuthApplication(context.Background(), "client-y")
+
+	assert.Nil(suite.T(), result)
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), serviceerror.InternalServerError.Code, svcErr.Code)
 }
 
 func (suite *ServiceTestSuite) TestGetApplication_EmptyAppID() {
@@ -324,6 +387,25 @@ func (suite *ServiceTestSuite) TestGetApplication_Success() {
 	assert.Nil(suite.T(), svcErr)
 	assert.Equal(suite.T(), testServiceAppID, result.ID)
 	assert.Equal(suite.T(), map[string]interface{}{"service_key": "service_val"}, result.Metadata)
+}
+
+// TestGetApplication_AgentEntity verifies getApplication rejects an entity that exists but is
+// in the agent category — the application API must not leak agent records.
+func (suite *ServiceTestSuite) TestGetApplication_AgentEntity() {
+	service, mockStore := suite.setupTestService()
+
+	mockStore.On("GetInboundClientByEntityID", mock.Anything, testServiceAppID).
+		Return(&inboundmodel.InboundClient{ID: testServiceAppID}, nil)
+	ep := resetEntityProviderMethod(service, "GetEntity")
+	ep.On("GetEntity", testServiceAppID).Return(
+		&entityprovider.Entity{ID: testServiceAppID, Category: entityprovider.EntityCategoryAgent},
+		(*entityprovider.EntityProviderError)(nil))
+
+	result, svcErr := service.GetApplication(context.Background(), testServiceAppID)
+
+	assert.Nil(suite.T(), result)
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), ErrorApplicationNotFound.Code, svcErr.Code)
 }
 
 func (suite *ServiceTestSuite) TestGetApplication_WithInboundAuthConfig_Success() {
@@ -393,12 +475,16 @@ func (suite *ServiceTestSuite) TestGetApplicationList_Success() {
 	cfg1 := inboundmodel.InboundClient{ID: "app1"}
 	cfg2 := inboundmodel.InboundClient{ID: "app2"}
 
+	ep := resetEntityProviderMethod(service, "GetEntityList")
+	ep.On("GetEntityList", entityprovider.EntityCategoryApp,
+		mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.Anything).
+		Return(entities, (*entityprovider.EntityProviderError)(nil))
+	resetEntityProviderMethod(service, "GetEntityListCount").
+		On("GetEntityListCount", entityprovider.EntityCategoryApp, mock.Anything).
+		Return(2, (*entityprovider.EntityProviderError)(nil))
+
 	mockStore.On("GetInboundClientList", mock.Anything).
 		Return([]inboundmodel.InboundClient{cfg1, cfg2}, nil)
-
-	ep := resetEntityProviderMethod(service, "GetEntitiesByIDs")
-	ep.On("GetEntitiesByIDs", mock.Anything).
-		Return(entities, (*entityprovider.EntityProviderError)(nil))
 
 	result, svcErr := service.GetApplicationList(context.Background())
 
@@ -410,10 +496,16 @@ func (suite *ServiceTestSuite) TestGetApplicationList_Success() {
 }
 
 func (suite *ServiceTestSuite) TestGetApplicationList_ListError() {
-	service, mockStore := suite.setupTestService()
+	service, _ := suite.setupTestService()
 
-	mockStore.On("GetInboundClientList", mock.Anything).
-		Return(([]inboundmodel.InboundClient)(nil), errors.New("db error"))
+	resetEntityProviderMethod(service, "GetEntityListCount").
+		On("GetEntityListCount", entityprovider.EntityCategoryApp, mock.Anything).
+		Return(0, (*entityprovider.EntityProviderError)(nil))
+	ep := resetEntityProviderMethod(service, "GetEntityList")
+	epErr := &entityprovider.EntityProviderError{Code: "INTERNAL_ERROR"}
+	ep.On("GetEntityList", entityprovider.EntityCategoryApp,
+		mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.Anything).
+		Return(([]entityprovider.Entity)(nil), epErr)
 
 	result, svcErr := service.GetApplicationList(context.Background())
 
@@ -421,17 +513,22 @@ func (suite *ServiceTestSuite) TestGetApplicationList_ListError() {
 	assert.NotNil(suite.T(), svcErr)
 }
 
-func (suite *ServiceTestSuite) TestGetApplicationList_EntityFetchError() {
+func (suite *ServiceTestSuite) TestGetApplicationList_InboundFetchError() {
 	service, mockStore := suite.setupTestService()
 
-	cfg1 := inboundmodel.InboundClient{ID: "app1"}
-	mockStore.On("GetInboundClientList", mock.Anything).
-		Return([]inboundmodel.InboundClient{cfg1}, nil)
+	entities := []entityprovider.Entity{
+		{ID: "app1", Category: entityprovider.EntityCategoryApp},
+	}
+	resetEntityProviderMethod(service, "GetEntityListCount").
+		On("GetEntityListCount", entityprovider.EntityCategoryApp, mock.Anything).
+		Return(1, (*entityprovider.EntityProviderError)(nil))
+	ep := resetEntityProviderMethod(service, "GetEntityList")
+	ep.On("GetEntityList", entityprovider.EntityCategoryApp,
+		mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.Anything).
+		Return(entities, (*entityprovider.EntityProviderError)(nil))
 
-	ep := resetEntityProviderMethod(service, "GetEntitiesByIDs")
-	epErr := &entityprovider.EntityProviderError{Code: "INTERNAL_ERROR"}
-	ep.On("GetEntitiesByIDs", mock.Anything).
-		Return(([]entityprovider.Entity)(nil), epErr)
+	mockStore.On("GetInboundClientList", mock.Anything).
+		Return(([]inboundmodel.InboundClient)(nil), errors.New("db error"))
 
 	result, svcErr := service.GetApplicationList(context.Background())
 
@@ -647,7 +744,9 @@ func (suite *ServiceTestSuite) TestValidateApplicationForUpdate_NameConflict() {
 	mockEP.On("GetEntity", testServiceAppID).Unset()
 	mockEP.On("GetEntity", testServiceAppID).Return(
 		&entityprovider.Entity{
-			ID: testServiceAppID, SystemAttributes: sysAttrs,
+			ID:               testServiceAppID,
+			Category:         entityprovider.EntityCategoryApp,
+			SystemAttributes: sysAttrs,
 		}, (*entityprovider.EntityProviderError)(nil))
 	conflictingID := testConflictingAppID
 	mockEP.On("IdentifyEntity",
@@ -924,6 +1023,47 @@ func (suite *ServiceTestSuite) TestDeleteApplication_WithOAuthCert_Success() {
 
 	assert.Nil(suite.T(), svcErr)
 }
+
+// TestDeleteApplication_AgentEntity verifies DeleteApplication refuses to delete when the
+// targeted entity exists but is an agent — application delete must not affect agent records.
+func (suite *ServiceTestSuite) TestDeleteApplication_AgentEntity() {
+	testConfig := &config.Config{DeclarativeResources: config.DeclarativeResources{Enabled: false}}
+	config.ResetServerRuntime()
+	require.NoError(suite.T(), config.InitializeServerRuntime("/tmp/test", testConfig))
+	defer config.ResetServerRuntime()
+
+	service, _ := suite.setupTestService()
+	ep := resetEntityProviderMethod(service, "GetEntity")
+	ep.On("GetEntity", testServiceAppID).Return(
+		&entityprovider.Entity{ID: testServiceAppID, Category: entityprovider.EntityCategoryAgent},
+		(*entityprovider.EntityProviderError)(nil))
+
+	svcErr := service.DeleteApplication(context.Background(), testServiceAppID)
+
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), ErrorApplicationNotFound.Code, svcErr.Code)
+}
+
+// TestDeleteApplication_EntityLoadError covers the non-NotFound entity-provider error branch
+// in the pre-delete category check.
+func (suite *ServiceTestSuite) TestDeleteApplication_EntityLoadError() {
+	testConfig := &config.Config{DeclarativeResources: config.DeclarativeResources{Enabled: false}}
+	config.ResetServerRuntime()
+	require.NoError(suite.T(), config.InitializeServerRuntime("/tmp/test", testConfig))
+	defer config.ResetServerRuntime()
+
+	service, _ := suite.setupTestService()
+	ep := resetEntityProviderMethod(service, "GetEntity")
+	ep.On("GetEntity", testServiceAppID).Return(
+		(*entityprovider.Entity)(nil),
+		entityprovider.NewEntityProviderError("INTERNAL_ERROR", "boom", ""))
+
+	svcErr := service.DeleteApplication(context.Background(), testServiceAppID)
+
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), serviceerror.InternalServerError.Code, svcErr.Code)
+}
+
 func (suite *ServiceTestSuite) TestValidateOAuthParamsForCreateAndUpdate_EmptyInboundAuth() {
 	app := &model.ApplicationDTO{
 		Name: "Test App",

@@ -203,6 +203,37 @@ var (
 			DefaultValue: "Display attribute must not reference a credential attribute",
 		},
 	}
+
+	// ErrorAgentTypeOnlyDefaultAllowed is returned when a non-`default` agent type is created or renamed.
+	// Agent types are restricted to a single bootstrap-provisioned `default` schema.
+	ErrorAgentTypeOnlyDefaultAllowed = serviceerror.ServiceError{
+		Type: serviceerror.ClientErrorType,
+		Code: "USRS-1014",
+		Error: core.I18nMessage{
+			Key:          "error.entitytypeservice.agent_type_only_default_allowed",
+			DefaultValue: "Only the default agent type is allowed",
+		},
+		ErrorDescription: core.I18nMessage{
+			Key: "error.entitytypeservice.agent_type_only_default_allowed_description",
+			DefaultValue: "Agent types are restricted to a single 'default' schema; " +
+				"create or rename to other names is not permitted",
+		},
+	}
+
+	// ErrorAgentTypeCannotDelete is returned when an attempt is made to delete an agent type.
+	// The default agent type cannot be removed; agent creation depends on it.
+	ErrorAgentTypeCannotDelete = serviceerror.ServiceError{
+		Type: serviceerror.ClientErrorType,
+		Code: "USRS-1015",
+		Error: core.I18nMessage{
+			Key:          "error.entitytypeservice.agent_type_cannot_delete",
+			DefaultValue: "Agent type cannot be deleted",
+		},
+		ErrorDescription: core.I18nMessage{
+			Key:          "error.entitytypeservice.agent_type_cannot_delete_description",
+			DefaultValue: "The default agent type cannot be deleted. Edit the schema instead",
+		},
+	}
 )
 
 // Per-category ServiceError constants — used as the actual returned errors.

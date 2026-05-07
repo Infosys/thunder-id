@@ -35,6 +35,7 @@ import (
 	oauthutils "github.com/asgardeo/thunder/internal/oauth/oauth2/utils"
 	oupkg "github.com/asgardeo/thunder/internal/ou"
 	"github.com/asgardeo/thunder/internal/system/config"
+	serverconst "github.com/asgardeo/thunder/internal/system/constants"
 	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
 	"github.com/asgardeo/thunder/internal/system/i18n/core"
 	i18nmgt "github.com/asgardeo/thunder/internal/system/i18n/mgt"
@@ -245,6 +246,27 @@ func (as *applicationService) ValidateApplication(ctx context.Context, app *mode
 // GetApplicationList list the applications.
 func (as *applicationService) GetApplicationList(
 	ctx context.Context) (*model.ApplicationListResponse, *serviceerror.ServiceError) {
+	totalResults, epErr := as.entityProvider.GetEntityListCount(entityprovider.EntityCategoryApp, nil)
+	if epErr != nil {
+		as.logger.Error("Failed to count application entities", log.Error(epErr))
+		return nil, &serviceerror.InternalServerError
+	}
+
+	entities, epErr := as.entityProvider.GetEntityList(
+		entityprovider.EntityCategoryApp, serverconst.MaxCompositeStoreRecords, 0, nil)
+	if epErr != nil {
+		as.logger.Error("Failed to list application entities", log.Error(epErr))
+		return nil, &serviceerror.InternalServerError
+	}
+	if len(entities) == 0 {
+		return &model.ApplicationListResponse{
+			TotalResults: totalResults,
+			Count:        0,
+			Applications: []model.BasicApplicationResponse{},
+		}, nil
+	}
+
+	// Get all inbound clients and filter to app entities.
 	configs, err := as.inboundClientService.GetInboundClientList(ctx)
 	if err != nil {
 		if errors.Is(err, inboundclient.ErrCompositeResultLimitExceeded) {
@@ -253,35 +275,31 @@ func (as *applicationService) GetApplicationList(
 		as.logger.Error("Failed to list inbound clients", log.Error(err))
 		return nil, &serviceerror.InternalServerError
 	}
-	if len(configs) == 0 {
-		return &model.ApplicationListResponse{
-			TotalResults: 0,
-			Count:        0,
-			Applications: []model.BasicApplicationResponse{},
-		}, nil
-	}
 
-	entityIDs := make([]string, 0, len(configs))
-	for _, cfg := range configs {
-		entityIDs = append(entityIDs, cfg.ID)
-	}
-	entities, epErr := as.entityProvider.GetEntitiesByIDs(entityIDs)
-	if epErr != nil {
-		as.logger.Error("Failed to retrieve entities for application list", log.Error(epErr))
-		return nil, &serviceerror.InternalServerError
-	}
-	entityMap := make(map[string]*entityprovider.Entity, len(entities))
+	appIDs := make(map[string]struct{}, len(entities))
 	for i := range entities {
-		entityMap[entities[i].ID] = &entities[i]
+		appIDs[entities[i].ID] = struct{}{}
+	}
+	configMap := make(map[string]*inboundmodel.InboundClient, len(entities))
+	for i := range configs {
+		if _, ok := appIDs[configs[i].ID]; ok {
+			configMap[configs[i].ID] = &configs[i]
+		}
 	}
 
-	applicationList := make([]model.BasicApplicationResponse, 0, len(configs))
-	for i := range configs {
-		applicationList = append(applicationList, buildBasicApplicationResponse(configs[i], entityMap[configs[i].ID]))
+	applicationList := make([]model.BasicApplicationResponse, 0, len(entities))
+	for i := range entities {
+		cfg := configMap[entities[i].ID]
+		if cfg == nil {
+			as.logger.Warn("Application entity has no inbound-client row; skipping in list",
+				log.String("appID", entities[i].ID))
+			continue
+		}
+		applicationList = append(applicationList, buildBasicApplicationResponse(*cfg, &entities[i]))
 	}
 
 	return &model.ApplicationListResponse{
-		TotalResults: len(configs),
+		TotalResults: totalResults,
 		Count:        len(applicationList),
 		Applications: applicationList,
 	}, nil
@@ -301,6 +319,16 @@ func (as *applicationService) GetOAuthApplication(
 		return nil, &serviceerror.InternalServerError
 	}
 	if client == nil {
+		return nil, &ErrorApplicationNotFound
+	}
+
+	entity, epErr := as.entityProvider.GetEntity(client.ID)
+	if epErr != nil && epErr.Code != entityprovider.ErrorCodeEntityNotFound {
+		as.logger.Error("Failed to load entity for OAuth client",
+			log.String("entityID", client.ID), log.Error(epErr))
+		return nil, &serviceerror.InternalServerError
+	}
+	if entity == nil || entity.Category != entityprovider.EntityCategoryApp {
 		return nil, &ErrorApplicationNotFound
 	}
 	return client, nil
@@ -482,6 +510,15 @@ func (as *applicationService) DeleteApplication(ctx context.Context, appID strin
 		return &ErrorInvalidApplicationID
 	}
 
+	if existing, epErr := as.entityProvider.GetEntity(appID); epErr != nil {
+		if epErr.Code != entityprovider.ErrorCodeEntityNotFound {
+			as.logger.Error("Failed to load entity before delete", log.String("appID", appID), log.Error(epErr))
+			return &serviceerror.InternalServerError
+		}
+	} else if existing != nil && existing.Category != entityprovider.EntityCategoryApp {
+		return &ErrorApplicationNotFound
+	}
+
 	// Delete config.
 	appErr := as.inboundClientService.DeleteInboundClient(ctx, appID)
 	if appErr != nil {
@@ -552,6 +589,10 @@ func (as *applicationService) getApplication(
 			as.logger.Error("Failed to get entity for application", log.String("appID", appID), log.Error(epErr))
 			return nil, &serviceerror.InternalServerError
 		}
+	}
+
+	if entity != nil && entity.Category != entityprovider.EntityCategoryApp {
+		return nil, &ErrorApplicationNotFound
 	}
 
 	oauthProfile, err := as.inboundClientService.GetOAuthProfileByEntityID(ctx, appID)

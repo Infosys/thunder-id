@@ -21,6 +21,7 @@ package agent
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -825,6 +826,96 @@ func (suite *AgentServiceTestSuite) TestUpdateAgent_FlowIDResolvedToDefault() {
 	suite.Require().NotNil(resp)
 	assert.Equal(suite.T(), "default-flow-id", resp.AuthFlowID)
 	assert.Equal(suite.T(), "default-reg-flow-id", resp.RegistrationFlowID)
+}
+
+// --- owner validation ---
+
+func (suite *AgentServiceTestSuite) TestValidateOwnerExists_Empty() {
+	svc, _, _, _ := suite.setupService()
+	assert.Nil(suite.T(), svc.validateOwnerExists(context.Background(), ""))
+}
+
+func (suite *AgentServiceTestSuite) TestValidateOwnerExists_NotFound() {
+	svc, mockEntity, _, _ := suite.setupService()
+	clearMockCalls(mockEntity, "GetEntity")
+	mockEntity.On("GetEntity", mock.Anything, "missing-owner").
+		Return((*entity.Entity)(nil), entity.ErrEntityNotFound)
+
+	svcErr := svc.validateOwnerExists(context.Background(), "missing-owner")
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), ErrorOwnerNotFound.Code, svcErr.Code)
+}
+
+func (suite *AgentServiceTestSuite) TestValidateOwnerExists_StoreError() {
+	svc, mockEntity, _, _ := suite.setupService()
+	clearMockCalls(mockEntity, "GetEntity")
+	mockEntity.On("GetEntity", mock.Anything, "owner-x").
+		Return((*entity.Entity)(nil), errors.New("db error"))
+
+	svcErr := svc.validateOwnerExists(context.Background(), "owner-x")
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), serviceerror.InternalServerError.Code, svcErr.Code)
+}
+
+func (suite *AgentServiceTestSuite) TestValidateOwnerExists_Success() {
+	svc, mockEntity, _, _ := suite.setupService()
+	clearMockCalls(mockEntity, "GetEntity")
+	mockEntity.On("GetEntity", mock.Anything, "owner-y").
+		Return(&entity.Entity{ID: "owner-y"}, nil)
+
+	assert.Nil(suite.T(), svc.validateOwnerExists(context.Background(), "owner-y"))
+}
+
+func (suite *AgentServiceTestSuite) TestCreateAgent_OwnerNotFound() {
+	svc, mockEntity, _, _ := suite.setupService()
+	clearMockCalls(mockEntity, "GetEntity")
+	mockEntity.On("GetEntity", mock.Anything, "ghost").
+		Return((*entity.Entity)(nil), entity.ErrEntityNotFound)
+
+	resp, svcErr := svc.CreateAgent(context.Background(), &model.CreateAgentRequest{
+		Name: testAgentName, Type: testAgentType, OUID: testOUID, Owner: "ghost",
+	})
+	assert.Nil(suite.T(), resp)
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), ErrorOwnerNotFound.Code, svcErr.Code)
+}
+
+func (suite *AgentServiceTestSuite) TestUpdateAgent_OwnerChanged_OwnerNotFound() {
+	svc, mockEntity, _, _ := suite.setupService()
+
+	agentEntity := buildAgentEntityFixture("old-name", "", "current-owner", "")
+	clearMockCalls(mockEntity, "GetEntity")
+	mockEntity.On("GetEntity", mock.Anything, testAgentID).Return(agentEntity, nil)
+	mockEntity.On("GetEntity", mock.Anything, "new-owner").
+		Return((*entity.Entity)(nil), entity.ErrEntityNotFound)
+
+	resp, svcErr := svc.UpdateAgent(context.Background(), testAgentID, &model.UpdateAgentRequest{
+		Name: testAgentName, Type: testAgentType, Owner: "new-owner",
+	})
+	assert.Nil(suite.T(), resp)
+	suite.Require().NotNil(svcErr)
+	assert.Equal(suite.T(), ErrorOwnerNotFound.Code, svcErr.Code)
+}
+
+func (suite *AgentServiceTestSuite) TestUpdateAgent_OwnerChanged_Success() {
+	svc, mockEntity, _, _ := suite.setupService()
+
+	agentEntity := buildAgentEntityFixture("old-name", "", "current-owner", "")
+	clearMockCalls(mockEntity, "GetEntity")
+	mockEntity.On("GetEntity", mock.Anything, testAgentID).Return(agentEntity, nil)
+	mockEntity.On("GetEntity", mock.Anything, "new-owner").
+		Return(&entity.Entity{ID: "new-owner"}, nil)
+
+	clearMockCalls(mockEntity, "UpdateEntity")
+	mockEntity.On("UpdateEntity", mock.Anything, testAgentID, mock.Anything).
+		Return(&entity.Entity{}, nil)
+
+	resp, svcErr := svc.UpdateAgent(context.Background(), testAgentID, &model.UpdateAgentRequest{
+		Name: testAgentName, Type: testAgentType, Owner: "new-owner",
+	})
+	suite.Require().Nil(svcErr)
+	suite.Require().NotNil(resp)
+	assert.Equal(suite.T(), "new-owner", resp.Owner)
 }
 
 // --- mapEntityError ---

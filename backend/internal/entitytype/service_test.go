@@ -1009,6 +1009,72 @@ func TestDeleteEntityType(t *testing.T) {
 	}
 }
 
+func TestCreateEntityType_AgentTypeRejectsNonDefaultName(t *testing.T) {
+	testConfig := &config.Config{
+		DeclarativeResources: config.DeclarativeResources{Enabled: false},
+	}
+	config.ResetServerRuntime()
+	require.NoError(t, config.InitializeServerRuntime("/tmp/test", testConfig))
+	defer config.ResetServerRuntime()
+
+	service := &entityTypeService{
+		entityTypeStore: newEntityTypeStoreInterfaceMock(t),
+		transactioner:   &mockTransactioner{},
+		authzService:    newAllowAllAuthz(t),
+	}
+
+	req := CreateEntityTypeRequestWithID{
+		Name:   "tool-agent",
+		OUID:   testOUID1,
+		Schema: json.RawMessage(`{"name":{"type":"string"}}`),
+	}
+	_, svcErr := service.CreateEntityType(context.Background(), TypeCategoryAgent, req)
+	require.NotNil(t, svcErr)
+	require.Equal(t, ErrorAgentTypeOnlyDefaultAllowed.Code, svcErr.Code)
+}
+
+func TestUpdateEntityType_AgentTypeRejectsNonDefaultName(t *testing.T) {
+	testConfig := &config.Config{
+		DeclarativeResources: config.DeclarativeResources{Enabled: false},
+	}
+	config.ResetServerRuntime()
+	require.NoError(t, config.InitializeServerRuntime("/tmp/test", testConfig))
+	defer config.ResetServerRuntime()
+
+	service := &entityTypeService{
+		entityTypeStore: newEntityTypeStoreInterfaceMock(t),
+		transactioner:   &mockTransactioner{},
+		authzService:    newAllowAllAuthz(t),
+	}
+
+	req := UpdateEntityTypeRequest{
+		Name:   "tool-agent",
+		OUID:   testOUID1,
+		Schema: json.RawMessage(`{"name":{"type":"string"}}`),
+	}
+	_, svcErr := service.UpdateEntityType(context.Background(), TypeCategoryAgent, "schema-1", req)
+	require.NotNil(t, svcErr)
+	require.Equal(t, ErrorAgentTypeOnlyDefaultAllowed.Code, svcErr.Code)
+}
+
+func TestDeleteEntityType_AgentTypeAlwaysRejected(t *testing.T) {
+	testConfig := &config.Config{
+		DeclarativeResources: config.DeclarativeResources{Enabled: false},
+	}
+	config.ResetServerRuntime()
+	require.NoError(t, config.InitializeServerRuntime("/tmp/test", testConfig))
+	defer config.ResetServerRuntime()
+
+	service := &entityTypeService{
+		entityTypeStore: newEntityTypeStoreInterfaceMock(t),
+		authzService:    newAllowAllAuthz(t),
+	}
+
+	svcErr := service.DeleteEntityType(context.Background(), TypeCategoryAgent, "schema-1")
+	require.NotNil(t, svcErr)
+	require.Equal(t, ErrorAgentTypeCannotDelete.Code, svcErr.Code)
+}
+
 func TestValidateDisplayAttribute_NilSystemAttributes(t *testing.T) {
 	compiled, err := model.CompileSchema(json.RawMessage(`{"email":{"type":"string"}}`))
 	require.NoError(t, err)

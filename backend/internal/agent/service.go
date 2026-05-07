@@ -106,7 +106,10 @@ func (s *agentService) CreateAgent(ctx context.Context, req *model.CreateAgentRe
 
 	owner := req.Owner
 	if owner == "" {
+		// Default to the authenticated subject.
 		owner = security.GetSubject(ctx)
+	} else if svcErr := s.validateOwnerExists(ctx, owner); svcErr != nil {
+		return nil, svcErr
 	}
 
 	e, sysCredsJSON, buildErr := buildAgentEntity(agentID, req.Type, req.OUID, req.Attributes,
@@ -268,9 +271,9 @@ func (s *agentService) UpdateAgent(ctx context.Context, agentID string,
 		return nil, svcErr
 	}
 
-	owner := req.Owner
-	if owner == "" {
-		owner = currentOwner
+	owner, svcErr := s.resolveUpdateOwner(ctx, req.Owner, currentOwner)
+	if svcErr != nil {
+		return nil, svcErr
 	}
 
 	ouID := req.OUID
@@ -466,6 +469,39 @@ func (s *agentService) validateOUExists(ctx context.Context, ouID string) *servi
 	}
 	if !exists {
 		return &ErrorOrganizationUnitNotFound
+	}
+	return nil
+}
+
+// resolveUpdateOwner picks the effective owner for an update — either the requested owner or the
+// existing one — and validates it exists when the owner is changing.
+func (s *agentService) resolveUpdateOwner(
+	ctx context.Context, requestedOwner, currentOwner string,
+) (string, *serviceerror.ServiceError) {
+	owner := requestedOwner
+	if owner == "" {
+		owner = currentOwner
+	}
+	if owner != currentOwner {
+		if svcErr := s.validateOwnerExists(ctx, owner); svcErr != nil {
+			return "", svcErr
+		}
+	}
+	return owner, nil
+}
+
+// validateOwnerExists returns an error when the given owner ID does not resolve to an existing entity.
+func (s *agentService) validateOwnerExists(ctx context.Context, ownerID string) *serviceerror.ServiceError {
+	if ownerID == "" {
+		return nil
+	}
+	_, err := s.entityService.GetEntity(ctx, ownerID)
+	if err != nil {
+		if errors.Is(err, entity.ErrEntityNotFound) {
+			return &ErrorOwnerNotFound
+		}
+		s.logger.Error("Failed to verify owner existence", log.String("ownerID", ownerID), log.Error(err))
+		return &serviceerror.InternalServerError
 	}
 	return nil
 }

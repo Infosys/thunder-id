@@ -486,4 +486,18 @@ var (
 			DefaultValue: "An entity may have at most one inbound auth config per protocol",
 		},
 	}
+
+	// ErrorOwnerNotFound is returned when the supplied owner identifier does not resolve to a known entity.
+	ErrorOwnerNotFound = serviceerror.ServiceError{
+		Type: serviceerror.ClientErrorType,
+		Code: "AGT-1039",
+		Error: core.I18nMessage{
+			Key:          "error.agentservice.owner_not_found",
+			DefaultValue: "Owner not found",
+		},
+		ErrorDescription: core.I18nMessage{
+			Key:          "error.agentservice.owner_not_found_description",
+			DefaultValue: "The specified owner does not match any known user, application, or agent",
+		},
+	}
 )
