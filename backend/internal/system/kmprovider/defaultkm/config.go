@@ -49,7 +49,7 @@ func (es *encryptionService) Encrypt(_ context.Context, plaintext []byte) ([]byt
 		return nil, errors.New("default encryption key not found")
 	}
 	ciphertext, _, err := cryptolab.Encrypt(
-		key, cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmAESGCM}, plaintext,
+		key, &cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmAESGCM}, plaintext,
 	)
 	if err != nil {
 		return nil, err

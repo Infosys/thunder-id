@@ -65,13 +65,13 @@ func (s *runtimeCryptoService) Encrypt(
 		if err != nil {
 			return nil, nil, err
 		}
-		return cryptolab.Encrypt(rsaPub, params, content)
+		return cryptolab.Encrypt(rsaPub, &params, content)
 	case cryptolab.AlgorithmECDHES, cryptolab.AlgorithmECDHESA128KW, cryptolab.AlgorithmECDHESA256KW:
 		ecPub, err := s.getECPublicKey(keyRef)
 		if err != nil {
 			return nil, nil, err
 		}
-		return cryptolab.Encrypt(ecPub, params, content)
+		return cryptolab.Encrypt(ecPub, &params, content)
 	default:
 		return nil, nil, fmt.Errorf("unsupported algorithm: %s", params.Algorithm)
 	}
