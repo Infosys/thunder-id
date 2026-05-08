@@ -23,6 +23,7 @@ import (
 
 	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/dpop"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/model"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/resourceindicators"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/tokenservice"
@@ -145,6 +146,24 @@ func (h *tokenExchangeGrantHandler) HandleGrant(ctx context.Context, tokenReques
 		}
 	}
 
+	// Enforce subject_token DPoP binding. The proof's jkt is verified earlier in the
+	// token service and propagated via context.
+	if subjectClaims.CnfJkt != "" {
+		proofJkt := dpop.GetJkt(ctx)
+		if proofJkt == "" {
+			return nil, &model.ErrorResponse{
+				Error:            constants.ErrorInvalidDPoPProof,
+				ErrorDescription: "DPoP proof required for DPoP-bound subject_token",
+			}
+		}
+		if proofJkt != subjectClaims.CnfJkt {
+			return nil, &model.ErrorResponse{
+				Error:            constants.ErrorInvalidDPoPProof,
+				ErrorDescription: "DPoP proof key does not match subject_token binding",
+			}
+		}
+	}
+
 	// Validate and extract actor token claims if present
 	var actorClaims *tokenservice.SubjectTokenClaims
 	if tokenRequest.ActorToken != "" {
@@ -199,6 +218,7 @@ func (h *tokenExchangeGrantHandler) HandleGrant(ctx context.Context, tokenReques
 		GrantType:      string(constants.GrantTypeTokenExchange),
 		OAuthApp:       oauthApp,
 		ActorClaims:    actorClaims,
+		DPoPJkt:        dpop.GetJkt(ctx),
 	})
 	if err != nil {
 		logger.Error("Failed to generate token", log.Error(err))

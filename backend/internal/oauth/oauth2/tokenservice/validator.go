@@ -149,6 +149,15 @@ func (tv *tokenValidator) ValidateRefreshToken(token string, clientID string) (*
 	// Extract claims_locales if present
 	claimsLocales, _ := extractStringClaim(claims, "access_token_claims_locales")
 
+	var dpopJkt string
+	if _, exists := claims["dpop_jkt"]; exists {
+		s, err := extractStringClaim(claims, "dpop_jkt")
+		if err != nil {
+			return nil, fmt.Errorf("invalid 'dpop_jkt' claim in refresh token: %w", err)
+		}
+		dpopJkt = s
+	}
+
 	// Extract user type and organizational unit details if present
 	return &RefreshTokenClaims{
 		Sub:              sub,
@@ -159,6 +168,7 @@ func (tv *tokenValidator) ValidateRefreshToken(token string, clientID string) (*
 		Iat:              iat,
 		ClaimsRequest:    claimsRequest,
 		ClaimsLocales:    claimsLocales,
+		DPoPJkt:          dpopJkt,
 	}, nil
 }
 
@@ -301,6 +311,21 @@ func (tv *tokenValidator) extractSubjectTokenClaims(
 		nestedAct = actClaim
 	}
 
+	var cnfJkt string
+	if cnfRaw, exists := claims["cnf"]; exists {
+		cnf, ok := cnfRaw.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("invalid 'cnf' claim: must be an object")
+		}
+		if jktRaw, hasJKT := cnf["jkt"]; hasJKT {
+			s, ok := jktRaw.(string)
+			if !ok || s == "" {
+				return nil, fmt.Errorf("invalid 'cnf.jkt' claim")
+			}
+			cnfJkt = s
+		}
+	}
+
 	return &SubjectTokenClaims{
 		Sub:            sub,
 		Iss:            iss,
@@ -308,6 +333,7 @@ func (tv *tokenValidator) extractSubjectTokenClaims(
 		Scopes:         scopes,
 		UserAttributes: userAttributes,
 		NestedAct:      nestedAct,
+		CnfJkt:         cnfJkt,
 	}, nil
 }
 

@@ -19,14 +19,18 @@
 package userinfo
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/thunder-id/thunder-id/internal/attributecache"
 	"github.com/thunder-id/thunder-id/internal/inboundclient"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/discovery"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/dpop"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/jwksresolver"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/tokenservice"
 	"github.com/thunder-id/thunder-id/internal/ou"
+	"github.com/thunder-id/thunder-id/internal/system/config"
 	"github.com/thunder-id/thunder-id/internal/system/jose/jwe"
 	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
 	"github.com/thunder-id/thunder-id/internal/system/middleware"
@@ -44,10 +48,15 @@ func Initialize(
 	ouService ou.OrganizationUnitServiceInterface,
 	attributeCacheSvc attributecache.AttributeCacheServiceInterface,
 	transactioner transaction.Transactioner,
+	discoveryService discovery.DiscoveryServiceInterface,
+	dpopVerifier dpop.VerifierInterface,
 ) userInfoServiceInterface {
 	userInfoService := newUserInfoService(jwtService, jweService, resolver, tokenValidator,
-		inboundClient, ouService, attributeCacheSvc, transactioner)
-	userInfoHandler := newUserInfoHandler(userInfoService)
+		inboundClient, ouService, attributeCacheSvc, transactioner, dpopVerifier)
+	userInfoEndpoint := discoveryService.GetOAuth2AuthorizationServerMetadata(
+		context.Background()).UserInfoEndpoint
+	dpopAlgs := config.GetServerRuntime().Config.OAuth.DPoP.AllowedAlgs
+	userInfoHandler := newUserInfoHandler(userInfoService, userInfoEndpoint, dpopAlgs)
 	registerRoutes(mux, userInfoHandler)
 	return userInfoService
 }

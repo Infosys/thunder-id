@@ -376,6 +376,34 @@ func ExtractBearerToken(authHeader string) (string, error) {
 	return token, nil
 }
 
+// IsDPoPAuth checks if the Authorization header uses the DPoP scheme.
+// Scheme matching is case-insensitive.
+func IsDPoPAuth(authHeader string) bool {
+	parts := strings.SplitN(authHeader, " ", 2)
+	return len(parts) >= 1 && strings.EqualFold(parts[0], "DPoP")
+}
+
+// ExtractDPoPToken extracts the access token from a DPoP-scheme Authorization header.
+// It validates that the header starts with "DPoP" (case-insensitive) and contains a
+// non-empty token. Returns the token and an error if validation fails.
+func ExtractDPoPToken(authHeader string) (string, error) {
+	if authHeader == "" {
+		return "", errors.New("missing Authorization header")
+	}
+
+	parts := strings.SplitN(authHeader, " ", 2)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "DPoP") {
+		return "", errors.New("invalid Authorization header format. Expected: DPoP <token>")
+	}
+
+	token := strings.TrimSpace(parts[1])
+	if token == "" {
+		return "", errors.New("missing access token")
+	}
+
+	return token, nil
+}
+
 // WriteSuccessResponse writes a JSON success response with the given status code and data.
 func WriteSuccessResponse(w http.ResponseWriter, statusCode int, data interface{}) {
 	logger := log.GetLogger()

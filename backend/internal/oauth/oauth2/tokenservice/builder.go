@@ -79,8 +79,13 @@ func (tb *tokenBuilder) BuildAccessToken(ctx *AccessTokenBuildContext) (*oauth2m
 		return nil, fmt.Errorf("failed to build access token claims: %w", claimsErr)
 	}
 
+	tokenType := constants.TokenTypeBearer
+	if ctx.DPoPJkt != "" {
+		tokenType = constants.TokenTypeDPoP
+	}
+
 	tokenDTO := &oauth2model.TokenDTO{
-		TokenType:        constants.TokenTypeBearer,
+		TokenType:        tokenType,
 		ExpiresIn:        tokenConfig.ValidityPeriod,
 		Scopes:           ctx.Scopes,
 		ClientID:         ctx.ClientID,
@@ -174,6 +179,10 @@ func (tb *tokenBuilder) buildAccessTokenClaims(
 		claims["aud"] = ctx.Audiences
 	} else if len(ctx.Audiences) == 1 {
 		claims["aud"] = ctx.Audiences[0]
+	}
+
+	if ctx.DPoPJkt != "" {
+		claims["cnf"] = map[string]any{"jkt": ctx.DPoPJkt}
 	}
 
 	return claims, nil
@@ -304,6 +313,10 @@ func (tb *tokenBuilder) buildRefreshTokenClaims(ctx *RefreshTokenBuildContext) (
 	// Include claims_locales if present
 	if ctx.ClaimsLocales != "" {
 		claims["access_token_claims_locales"] = ctx.ClaimsLocales
+	}
+
+	if ctx.DPoPJkt != "" {
+		claims["dpop_jkt"] = ctx.DPoPJkt
 	}
 
 	return claims, nil

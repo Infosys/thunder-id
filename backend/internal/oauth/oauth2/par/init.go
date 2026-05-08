@@ -26,6 +26,7 @@ import (
 	"github.com/thunder-id/thunder-id/internal/inboundclient"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/clientauth"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/discovery"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/dpop"
 	"github.com/thunder-id/thunder-id/internal/resource"
 	"github.com/thunder-id/thunder-id/internal/system/config"
 	"github.com/thunder-id/thunder-id/internal/system/database/provider"
@@ -42,10 +43,13 @@ func Initialize(
 	jwtService jwt.JWTServiceInterface,
 	discoveryService discovery.DiscoveryServiceInterface,
 	resourceService resource.ResourceServiceInterface,
+	dpopVerifier dpop.VerifierInterface,
 ) PARServiceInterface {
 	store := initializePARStore()
 	parSvc := newPARService(store, resourceService)
-	handler := newPARHandler(parSvc)
+	parEndpoint := discoveryService.GetOAuth2AuthorizationServerMetadata(
+		context.Background()).PushedAuthorizationRequestEndpoint
+	handler := newPARHandler(parSvc, dpopVerifier, parEndpoint)
 	registerRoutes(mux, handler, inboundClient, authnProvider, jwtService, discoveryService)
 	return parSvc
 }

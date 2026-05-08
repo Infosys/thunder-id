@@ -33,6 +33,7 @@ import (
 	"github.com/thunder-id/thunder-id/internal/oauth/jwks"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/dcr"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/discovery"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/dpop"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/granthandlers"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/introspect"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/jwksresolver"
@@ -85,8 +86,9 @@ func Initialize(
 	tokenBuilder, tokenValidator := tokenservice.Initialize(jwtService, jweService, resolver, idpService)
 	scopeValidator := scope.Initialize()
 	discoveryService := discovery.Initialize(mux, pkiService)
+	dpopVerifier := dpop.Initialize()
 	parService := par.Initialize(mux, inboundClient, authnProvider, jwtService, discoveryService,
-		resourceService)
+		resourceService, dpopVerifier)
 	grantHandlerProvider, err := granthandlers.Initialize(
 		mux, jwtService, inboundClient, flowExecService, tokenBuilder, tokenValidator,
 		attributeCacheSvc, ouService, authzService, entityProvider, resourceService, parService)
@@ -94,10 +96,11 @@ func Initialize(
 		return err
 	}
 	token.Initialize(mux, jwtService, inboundClient, authnProvider, grantHandlerProvider,
-		scopeValidator, observabilitySvc, discoveryService, transactioner)
+		scopeValidator, observabilitySvc, discoveryService, transactioner, dpopVerifier)
 	introspect.Initialize(mux, jwtService, inboundClient, authnProvider, discoveryService)
 	userinfo.Initialize(mux, jwtService, jweService, resolver,
-		tokenValidator, inboundClient, ouService, attributeCacheSvc, transactioner)
+		tokenValidator, inboundClient, ouService, attributeCacheSvc, transactioner,
+		discoveryService, dpopVerifier)
 	dcr.Initialize(mux, applicationService, ouService, i18nService, transactioner)
 	return nil
 }

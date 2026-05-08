@@ -446,6 +446,68 @@ func (suite *TokenBuilderTestSuite) TestBuildAccessToken_Success_WithClaimsLocal
 	suite.mockJWTService.AssertExpectations(suite.T())
 }
 
+func (suite *TokenBuilderTestSuite) TestBuildAccessToken_Success_WithDPoPJkt() {
+	const testJkt = "0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
+
+	ctx := &AccessTokenBuildContext{
+		Subject:        "user123",
+		Audiences:      []string{"app123"},
+		ClientID:       "test-client",
+		Scopes:         []string{"read"},
+		UserAttributes: map[string]any{},
+		GrantType:      string(constants.GrantTypeAuthorizationCode),
+		OAuthApp:       suite.oauthApp,
+		DPoPJkt:        testJkt,
+	}
+
+	suite.mockJWTService.On("GenerateJWT",
+		mock.Anything,
+		"user123",
+		"https://thunder.io",
+		int64(3600),
+		mock.MatchedBy(func(claims map[string]any) bool {
+			cnf, ok := claims["cnf"].(map[string]any)
+			return ok && cnf["jkt"] == testJkt
+		}), mock.Anything, mock.Anything,
+	).Return(testAccessToken, time.Now().Unix(), nil)
+
+	result, err := suite.builder.BuildAccessToken(ctx)
+
+	assert.NoError(suite.T(), err)
+	assert.NotNil(suite.T(), result)
+	assert.Equal(suite.T(), constants.TokenTypeDPoP, result.TokenType)
+	suite.mockJWTService.AssertExpectations(suite.T())
+}
+
+func (suite *TokenBuilderTestSuite) TestBuildAccessToken_Success_WithoutDPoPJkt_BearerType() {
+	ctx := &AccessTokenBuildContext{
+		Subject:        "user123",
+		Audiences:      []string{"app123"},
+		ClientID:       "test-client",
+		Scopes:         []string{"read"},
+		UserAttributes: map[string]any{},
+		GrantType:      string(constants.GrantTypeAuthorizationCode),
+		OAuthApp:       suite.oauthApp,
+	}
+
+	suite.mockJWTService.On("GenerateJWT",
+		mock.Anything,
+		"user123",
+		"https://thunder.io",
+		int64(3600),
+		mock.MatchedBy(func(claims map[string]any) bool {
+			_, hasCnf := claims["cnf"]
+			return !hasCnf
+		}), mock.Anything, mock.Anything,
+	).Return(testAccessToken, time.Now().Unix(), nil)
+
+	result, err := suite.builder.BuildAccessToken(ctx)
+
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), constants.TokenTypeBearer, result.TokenType)
+	suite.mockJWTService.AssertExpectations(suite.T())
+}
+
 func (suite *TokenBuilderTestSuite) TestBuildRefreshToken_Success_Basic() {
 	// Create OAuth app with user attributes configured
 	oauthAppWithUserAttrs := &inboundmodel.OAuthClient{
@@ -495,6 +557,64 @@ func (suite *TokenBuilderTestSuite) TestBuildRefreshToken_Success_Basic() {
 	assert.Equal(suite.T(), []string{"read", "write"}, result.Scopes)
 	assert.Equal(suite.T(), "test-client", result.ClientID)
 	assert.Equal(suite.T(), []string{"https://thunder.io"}, result.Audiences)
+	suite.mockJWTService.AssertExpectations(suite.T())
+}
+
+func (suite *TokenBuilderTestSuite) TestBuildRefreshToken_Success_WithDPoPJkt() {
+	const testJkt = "0ZcOCORZNYy-DWpqq30jZyJGHTN0d2HglBV3uiguA4I"
+
+	ctx := &RefreshTokenBuildContext{
+		ClientID:             "test-client",
+		Scopes:               []string{"read"},
+		GrantType:            string(constants.GrantTypeAuthorizationCode),
+		AccessTokenSubject:   "user123",
+		AccessTokenAudiences: []string{"app123"},
+		OAuthApp:             suite.oauthApp,
+		DPoPJkt:              testJkt,
+	}
+
+	suite.mockJWTService.On("GenerateJWT",
+		mock.Anything,
+		"test-client",
+		"https://thunder.io",
+		int64(3600),
+		mock.MatchedBy(func(claims map[string]interface{}) bool {
+			return claims["dpop_jkt"] == testJkt
+		}), mock.Anything, mock.Anything,
+	).Return(testRefreshToken, time.Now().Unix(), nil)
+
+	result, err := suite.builder.BuildRefreshToken(ctx)
+
+	assert.NoError(suite.T(), err)
+	assert.NotNil(suite.T(), result)
+	suite.mockJWTService.AssertExpectations(suite.T())
+}
+
+func (suite *TokenBuilderTestSuite) TestBuildRefreshToken_Success_WithoutDPoPJkt() {
+	ctx := &RefreshTokenBuildContext{
+		ClientID:             "test-client",
+		Scopes:               []string{"read"},
+		GrantType:            string(constants.GrantTypeAuthorizationCode),
+		AccessTokenSubject:   "user123",
+		AccessTokenAudiences: []string{"app123"},
+		OAuthApp:             suite.oauthApp,
+	}
+
+	suite.mockJWTService.On("GenerateJWT",
+		mock.Anything,
+		"test-client",
+		"https://thunder.io",
+		int64(3600),
+		mock.MatchedBy(func(claims map[string]interface{}) bool {
+			_, has := claims["dpop_jkt"]
+			return !has
+		}), mock.Anything, mock.Anything,
+	).Return(testRefreshToken, time.Now().Unix(), nil)
+
+	result, err := suite.builder.BuildRefreshToken(ctx)
+
+	assert.NoError(suite.T(), err)
+	assert.NotNil(suite.T(), result)
 	suite.mockJWTService.AssertExpectations(suite.T())
 }
 

@@ -69,6 +69,7 @@ func (ds *discoveryService) GetOAuth2AuthorizationServerMetadata(
 		TokenEndpointAuthMethodsSupported:          ds.getSupportedTokenEndpointAuthMethods(),
 		CodeChallengeMethodsSupported:              ds.getSupportedCodeChallengeMethods(),
 		AuthorizationResponseIssParameterSupported: true,
+		DPoPSigningAlgValuesSupported:              ds.getSupportedDPoPSigningAlgs(),
 	}
 
 	return metadata
@@ -151,6 +152,16 @@ func (ds *discoveryService) getPAREndpoint() string {
 
 func (ds *discoveryService) isGlobalPARRequired() bool {
 	return config.GetServerRuntime().Config.OAuth.PAR.RequirePAR
+}
+
+func (ds *discoveryService) getSupportedDPoPSigningAlgs() []string {
+	algs := config.GetServerRuntime().Config.OAuth.DPoP.AllowedAlgs
+	if len(algs) == 0 {
+		return nil
+	}
+	out := make([]string, len(algs))
+	copy(out, algs)
+	return out
 }
 
 func (ds *discoveryService) getSupportedSubjectTypes() []string {

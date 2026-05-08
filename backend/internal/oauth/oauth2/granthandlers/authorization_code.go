@@ -28,6 +28,7 @@ import (
 	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/authz"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/dpop"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/model"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/pkce"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/resourceindicators"
@@ -116,6 +117,22 @@ func (h *authorizationCodeGrantHandler) HandleGrant(ctx context.Context, tokenRe
 		return nil, errResponse
 	}
 
+	if authCode.DPoPJkt != "" {
+		proofJkt := dpop.GetJkt(ctx)
+		if proofJkt == "" {
+			return nil, &model.ErrorResponse{
+				Error:            constants.ErrorInvalidGrant,
+				ErrorDescription: "DPoP proof required for this authorization code",
+			}
+		}
+		if proofJkt != authCode.DPoPJkt {
+			return nil, &model.ErrorResponse{
+				Error:            constants.ErrorInvalidGrant,
+				ErrorDescription: "DPoP proof key does not match authorization code binding",
+			}
+		}
+	}
+
 	// Parse authorized scopes
 	authorizedScopes := tokenservice.ParseScopes(authCode.Scopes)
 
@@ -196,6 +213,7 @@ func (h *authorizationCodeGrantHandler) HandleGrant(ctx context.Context, tokenRe
 		OAuthApp:         oauthApp,
 		ClaimsRequest:    authCode.ClaimsRequest,
 		ClaimsLocales:    authCode.ClaimsLocales,
+		DPoPJkt:          dpop.GetJkt(ctx),
 	})
 	if err != nil {
 		return nil, &model.ErrorResponse{

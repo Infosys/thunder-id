@@ -27,6 +27,7 @@ import (
 	"github.com/thunder-id/thunder-id/internal/attributecache"
 	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/dpop"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/model"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/resourceindicators"
 	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/tokenservice"
@@ -106,6 +107,22 @@ func (h *refreshTokenGrantHandler) HandleGrant(ctx context.Context, tokenRequest
 		return nil, &model.ErrorResponse{
 			Error:            constants.ErrorInvalidGrant,
 			ErrorDescription: "Invalid refresh token",
+		}
+	}
+
+	if refreshTokenClaims.DPoPJkt != "" {
+		proofJkt := dpop.GetJkt(ctx)
+		if proofJkt == "" {
+			return nil, &model.ErrorResponse{
+				Error:            constants.ErrorInvalidGrant,
+				ErrorDescription: "DPoP proof required for this refresh token",
+			}
+		}
+		if proofJkt != refreshTokenClaims.DPoPJkt {
+			return nil, &model.ErrorResponse{
+				Error:            constants.ErrorInvalidGrant,
+				ErrorDescription: "DPoP proof key does not match refresh token binding",
+			}
 		}
 	}
 
@@ -192,6 +209,7 @@ func (h *refreshTokenGrantHandler) HandleGrant(ctx context.Context, tokenRequest
 		OAuthApp:         oauthApp,
 		ClaimsRequest:    refreshTokenClaims.ClaimsRequest,
 		ClaimsLocales:    refreshTokenClaims.ClaimsLocales,
+		DPoPJkt:          dpop.GetJkt(ctx),
 	})
 	if err != nil {
 		logger.Error("Failed to generate access token", log.Error(err))
@@ -283,6 +301,7 @@ func (h *refreshTokenGrantHandler) IssueRefreshToken(
 		OAuthApp:             oauthApp,
 		ClaimsRequest:        claimsRequest,
 		ClaimsLocales:        claimsLocales,
+		DPoPJkt:              dpopJktForRefresh(ctx, oauthApp),
 	}
 
 	// Build refresh token using token builder
@@ -299,6 +318,15 @@ func (h *refreshTokenGrantHandler) IssueRefreshToken(
 	}
 	tokenResponse.RefreshToken = *refreshToken
 	return nil
+}
+
+// dpopJktForRefresh returns the DPoP jkt to bind onto a newly issued refresh token.
+// Confidential clients receive unbound refresh tokens.
+func dpopJktForRefresh(ctx context.Context, oauthApp *inboundmodel.OAuthClient) string {
+	if oauthApp == nil || !oauthApp.PublicClient {
+		return ""
+	}
+	return dpop.GetJkt(ctx)
 }
 
 // extendCacheTTL extends the attribute cache TTL when the desired lifetime exceeds what is already

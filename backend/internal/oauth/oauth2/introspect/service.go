@@ -88,9 +88,16 @@ func (s *tokenIntrospectionService) validateToken(logger *log.Logger, token stri
 // prepareValidResponse prepares the response for a valid token introspection.
 func (s *tokenIntrospectionService) prepareValidResponse(payload map[string]interface{}) *IntrospectResponse {
 	response := &IntrospectResponse{
-		Active: true,
-		// TODO: Revisit if/when adding support for other token types.
+		Active:    true,
 		TokenType: constants.TokenTypeBearer,
+	}
+
+	// Surface cnf.jkt and report token_type=DPoP for bound tokens.
+	if cnf, ok := payload["cnf"].(map[string]any); ok {
+		if jkt, ok := cnf["jkt"].(string); ok && jkt != "" {
+			response.Cnf = &CnfClaim{Jkt: jkt}
+			response.TokenType = constants.TokenTypeDPoP
+		}
 	}
 
 	if scope, ok := payload["scope"].(string); ok {
