@@ -48,6 +48,9 @@ const (
 	testUserType            = "INTERNAL"
 	testNewUserID           = "user-new"
 	methodGetRequiredInputs = "GetRequiredInputs"
+	attributeEmail          = "email"
+	attributePassword       = "password"
+	attributePin            = "pin"
 )
 
 type ProvisioningExecutorTestSuite struct {
@@ -87,13 +90,13 @@ func (suite *ProvisioningExecutorTestSuite) SetupTest() {
 
 // expectSchemaForProvisioning sets up the schema service mocks for Execute tests.
 // The (true,true) mock covers both HasRequiredInputs and getAttributesForProvisioning.
+// This version does NOT include credentials - use expectSchemaWithCredentials if needed.
 func (suite *ProvisioningExecutorTestSuite) expectSchemaForProvisioning() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "username", Required: false},
-			{Attribute: "email", Required: false},
+			{Attribute: attributeEmail, Required: false},
 			{Attribute: "sub", Required: false},
-			{Attribute: "password", Credential: true},
 		}, nil).Maybe()
 }
 
@@ -146,15 +149,15 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_NonRegistrationFlow() {
 
 func (suite *ProvisioningExecutorTestSuite) TestExecute_Success() {
 	suite.expectSchemaForProvisioning()
-	attrs := map[string]interface{}{"username": "newuser", "email": "new@example.com"}
+	attrs := map[string]interface{}{"username": "newuser", attributeEmail: "new@example.com"}
 	attrsJSON, _ := json.Marshal(attrs)
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeRegistration,
 		UserInputs: map[string]string{
-			"username": "newuser",
-			"email":    "new@example.com",
+			"username":     "newuser",
+			attributeEmail: "new@example.com",
 		},
 		RuntimeData: map[string]string{
 			ouIDKey:     testOUID,
@@ -162,7 +165,7 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_Success() {
 		},
 		NodeInputs: []common.Input{
 			{Identifier: "username", Type: "string", Required: true},
-			{Identifier: "email", Type: "string", Required: true},
+			{Identifier: attributeEmail, Type: "string", Required: true},
 		},
 		NodeProperties: map[string]interface{}{
 			"assignGroup": "test-group-id",
@@ -171,8 +174,8 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_Success() {
 	}
 
 	suite.mockEntityProvider.On("IdentifyEntity", map[string]interface{}{
-		"username": "newuser",
-		"email":    "new@example.com",
+		"username":     "newuser",
+		attributeEmail: "new@example.com",
 	}).Return(nil, entityprovider.NewEntityProviderError(entityprovider.ErrorCodeEntityNotFound, "", ""))
 
 	createdUser := &entityprovider.Entity{
@@ -293,9 +296,9 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AttributesFrom
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeRegistration,
 		AuthenticatedUser: authncm.AuthenticatedUser{
-			Attributes: map[string]interface{}{"email": "test@example.com"},
+			Attributes: map[string]interface{}{attributeEmail: "test@example.com"},
 		},
-		NodeInputs:  []common.Input{{Identifier: "email", Type: "string", Required: true}},
+		NodeInputs:  []common.Input{{Identifier: attributeEmail, Type: "string", Required: true}},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 	}
 
@@ -313,7 +316,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AttributesFrom
 // is unavailable (no userTypeKey → getUserType returns ""), an empty map is returned.
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_SchemaEmpty_ReturnsEmpty() {
 	ctx := &core.NodeContext{
-		UserInputs:  map[string]string{"username": "testuser", "email": "test@example.com"},
+		UserInputs:  map[string]string{"username": "testuser", attributeEmail: "test@example.com"},
 		RuntimeData: map[string]string{},
 		NodeInputs:  []common.Input{},
 	}
@@ -354,7 +357,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Req
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "username", Required: true},
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "given_name", Required: true},
 			{Attribute: "phone", Required: true},
 		}, nil).Once()
@@ -363,8 +366,8 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Req
 		UserInputs: map[string]string{"username": "testuser"},
 		AuthenticatedUser: authncm.AuthenticatedUser{
 			Attributes: map[string]interface{}{
-				"email":      "auth@example.com",
-				"given_name": "Test",
+				attributeEmail: "auth@example.com",
+				"given_name":   "Test",
 			},
 		},
 		RuntimeData: map[string]string{
@@ -377,7 +380,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Req
 	result, _, _ := suite.executor.getAttributesForProvisioning(ctx)
 
 	assert.Equal(suite.T(), "testuser", result["username"])
-	assert.Equal(suite.T(), "auth@example.com", result["email"])
+	assert.Equal(suite.T(), "auth@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "Test", result["given_name"])
 	assert.Equal(suite.T(), "+1234567890", result["phone"])
 }
@@ -387,23 +390,23 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Req
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_ContextPriority() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "name", Required: true},
 			{Attribute: "phone", Required: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
-		UserInputs: map[string]string{"email": "userinput@example.com"},
+		UserInputs: map[string]string{attributeEmail: "userinput@example.com"},
 		AuthenticatedUser: authncm.AuthenticatedUser{
 			Attributes: map[string]interface{}{
-				"email": "authn@example.com",
-				"name":  "Authn Name",
+				attributeEmail: "authn@example.com",
+				"name":         "Authn Name",
 			},
 		},
 		RuntimeData: map[string]string{
-			userTypeKey: testUserType,
-			"email":     "runtime@example.com",
-			"phone":     "+1234567890",
+			userTypeKey:    testUserType,
+			attributeEmail: "runtime@example.com",
+			"phone":        "+1234567890",
 		},
 		NodeInputs: []common.Input{},
 	}
@@ -411,7 +414,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Con
 	result, _, _ := suite.executor.getAttributesForProvisioning(ctx)
 
 	// UserInputs is checked first — wins for email.
-	assert.Equal(suite.T(), "userinput@example.com", result["email"])
+	assert.Equal(suite.T(), "userinput@example.com", result[attributeEmail])
 	// Only in AuthenticatedUser — comes from there.
 	assert.Equal(suite.T(), "Authn Name", result["name"])
 	// Only in RuntimeData — comes from there.
@@ -423,12 +426,12 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Con
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_AllAttrsCollectedWhenNoNodeInputs() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "phone", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
-		UserInputs: map[string]string{"email": "user@example.com"},
+		UserInputs: map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData: map[string]string{
 			userTypeKey: testUserType,
 			"phone":     "+1234567890",
@@ -438,7 +441,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_All
 
 	result, _, _ := suite.executor.getAttributesForProvisioning(ctx)
 
-	assert.Equal(suite.T(), "user@example.com", result["email"])
+	assert.Equal(suite.T(), "user@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "+1234567890", result["phone"],
 		"optional attr with a value must be collected when node inputs are empty")
 }
@@ -447,21 +450,21 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_All
 // schema attr is collected when it is explicitly listed in node inputs.
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_OptionalAttrCollectedWhenInNodeInputs() {
 	nodeInputs := []common.Input{
-		{Identifier: "email", Type: "EMAIL_INPUT", Required: true},
+		{Identifier: attributeEmail, Type: "EMAIL_INPUT", Required: true},
 		{Identifier: "phone", Type: "TEXT_INPUT", Required: false},
 	}
 	exec := suite.newExecutorWithNodeInputs(nodeInputs)
 
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "phone", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		UserInputs: map[string]string{
-			"email": "user@example.com",
-			"phone": "+1234567890",
+			attributeEmail: "user@example.com",
+			"phone":        "+1234567890",
 		},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		NodeInputs:  nodeInputs,
@@ -469,7 +472,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Opt
 
 	result, _, _ := exec.getAttributesForProvisioning(ctx)
 
-	assert.Equal(suite.T(), "user@example.com", result["email"])
+	assert.Equal(suite.T(), "user@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "+1234567890", result["phone"],
 		"optional attr in node inputs must be collected")
 }
@@ -497,21 +500,21 @@ func (suite *ProvisioningExecutorTestSuite) newExecutorWithNodeInputs(inputs []c
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_FilteredPath_RequiredAttrFromUserInputs() {
 	nodeInputs := []common.Input{
 		{Identifier: "username", Type: "TEXT_INPUT", Required: true},
-		{Identifier: "email", Type: "EMAIL_INPUT", Required: true},
+		{Identifier: attributeEmail, Type: "EMAIL_INPUT", Required: true},
 	}
 	exec := suite.newExecutorWithNodeInputs(nodeInputs)
 
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "username", Required: true},
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "mobileNumber", Required: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		UserInputs: map[string]string{
 			"username":     "testuser",
-			"email":        "test@example.com",
+			attributeEmail: "test@example.com",
 			"mobileNumber": "0771234567",
 		},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
@@ -521,7 +524,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Fil
 	result, _, _ := exec.getAttributesForProvisioning(ctx)
 
 	assert.Equal(suite.T(), "testuser", result["username"])
-	assert.Equal(suite.T(), "test@example.com", result["email"])
+	assert.Equal(suite.T(), "test@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "0771234567", result["mobileNumber"],
 		"required schema attr from UserInputs must be included even though it is not in node inputs")
 }
@@ -535,7 +538,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Fil
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "username", Required: true},
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "given_name", Required: true},
 			{Attribute: "mobileNumber", Required: true},
 		}, nil).Once()
@@ -544,7 +547,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Fil
 		UserInputs: map[string]string{"username": "testuser"},
 		AuthenticatedUser: authncm.AuthenticatedUser{
 			Attributes: map[string]interface{}{
-				"email":        "federated@example.com",
+				attributeEmail: "federated@example.com",
 				"given_name":   "Test",
 				"mobileNumber": "0779876543",
 			},
@@ -556,29 +559,29 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Fil
 	result, _, _ := exec.getAttributesForProvisioning(ctx)
 
 	assert.Equal(suite.T(), "testuser", result["username"])
-	assert.Equal(suite.T(), "federated@example.com", result["email"])
+	assert.Equal(suite.T(), "federated@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "Test", result["given_name"])
 	assert.Equal(suite.T(), "0779876543", result["mobileNumber"])
 }
 
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_FilteredPath_UserInputTakesPriority() {
 	nodeInputs := []common.Input{
-		{Identifier: "email", Type: "EMAIL_INPUT", Required: true},
+		{Identifier: attributeEmail, Type: "EMAIL_INPUT", Required: true},
 	}
 	exec := suite.newExecutorWithNodeInputs(nodeInputs)
 
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "username", Required: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
-		UserInputs: map[string]string{"email": "userinput@example.com"},
+		UserInputs: map[string]string{attributeEmail: "userinput@example.com"},
 		AuthenticatedUser: authncm.AuthenticatedUser{
 			Attributes: map[string]interface{}{
-				"email":    "authn@example.com",
-				"username": "federateduser",
+				attributeEmail: "authn@example.com",
+				"username":     "federateduser",
 			},
 		},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
@@ -587,7 +590,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Fil
 
 	result, _, _ := exec.getAttributesForProvisioning(ctx)
 
-	assert.Equal(suite.T(), "userinput@example.com", result["email"],
+	assert.Equal(suite.T(), "userinput@example.com", result[attributeEmail],
 		"UserInputs must win over AuthenticatedUser.Attributes for the same key")
 	assert.Equal(suite.T(), "federateduser", result["username"],
 		"required schema attr from AuthenticatedUser.Attributes must still be included")
@@ -635,8 +638,8 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_SkipProvisioning_Proceed
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeRegistration,
 		UserInputs: map[string]string{
-			"username": "newuser",
-			"email":    "new@example.com",
+			"username":     "newuser",
+			attributeEmail: "new@example.com",
 		},
 		RuntimeData: map[string]string{
 			common.RuntimeKeySkipProvisioning: "false",
@@ -645,14 +648,14 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_SkipProvisioning_Proceed
 		},
 		NodeInputs: []common.Input{
 			{Identifier: "username", Type: "string", Required: true},
-			{Identifier: "email", Type: "string", Required: true},
+			{Identifier: attributeEmail, Type: "string", Required: true},
 		},
 		// No NodeProperties - should skip group/role assignment
 	}
 
 	attrs := map[string]interface{}{
-		"username": "newuser",
-		"email":    "new@example.com",
+		"username":     "newuser",
+		attributeEmail: "new@example.com",
 	}
 	attrsJSON, _ := json.Marshal(attrs)
 
@@ -694,8 +697,8 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_UserEligibleForProvision
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeAuthentication,
 		UserInputs: map[string]string{
-			"username": "provisioneduser",
-			"email":    "provisioned@example.com",
+			"username":     "provisioneduser",
+			attributeEmail: "provisioned@example.com",
 		},
 		RuntimeData: map[string]string{
 			common.RuntimeKeyUserEligibleForProvisioning: dataValueTrue,
@@ -704,13 +707,16 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_UserEligibleForProvision
 		},
 		NodeInputs: []common.Input{
 			{Identifier: "username", Type: "string", Required: true},
-			{Identifier: "email", Type: "string", Required: true},
+			{Identifier: attributeEmail, Type: "string", Required: true},
+		},
+		NodeProperties: map[string]interface{}{
+			propertyKeyDynamicInputsIncludeOptionalCredentials: false,
 		},
 	}
 
 	attrs := map[string]interface{}{
-		"username": "provisioneduser",
-		"email":    "provisioned@example.com",
+		"username":     "provisioneduser",
+		attributeEmail: "provisioned@example.com",
 	}
 	attrsJSON, _ := json.Marshal(attrs)
 
@@ -740,15 +746,15 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_UserEligibleForProvision
 
 func (suite *ProvisioningExecutorTestSuite) TestExecute_UserAutoProvisionedFlag_SetAfterCreation() {
 	suite.expectSchemaForProvisioning()
-	attrs := map[string]interface{}{"username": "newuser", "email": "new@example.com"}
+	attrs := map[string]interface{}{"username": "newuser", attributeEmail: "new@example.com"}
 	attrsJSON, _ := json.Marshal(attrs)
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeAuthentication,
 		UserInputs: map[string]string{
-			"username": "newuser",
-			"email":    "new@example.com",
+			"username":     "newuser",
+			attributeEmail: "new@example.com",
 		},
 		RuntimeData: map[string]string{
 			ouIDKey:     testOUID,
@@ -757,7 +763,10 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_UserAutoProvisionedFlag_
 		},
 		NodeInputs: []common.Input{
 			{Identifier: "username", Type: "string", Required: true},
-			{Identifier: "email", Type: "string", Required: true},
+			{Identifier: attributeEmail, Type: "string", Required: true},
+		},
+		NodeProperties: map[string]interface{}{
+			propertyKeyDynamicInputsIncludeOptionalCredentials: false,
 		},
 	}
 
@@ -1017,15 +1026,15 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AllAttributesI
 		ExecutionID: "flow-123",
 		UserInputs:  map[string]string{},
 		RuntimeData: map[string]string{
-			"email":     "user@example.com",
-			"username":  "testuser",
-			userTypeKey: testUserType,
+			attributeEmail: "user@example.com",
+			"username":     "testuser",
+			userTypeKey:    testUserType,
 		},
 		AuthenticatedUser: authncm.AuthenticatedUser{
 			Attributes: map[string]interface{}{},
 		},
 		NodeInputs: []common.Input{
-			{Identifier: "email", Type: "string", Required: true},
+			{Identifier: attributeEmail, Type: "string", Required: true},
 			{Identifier: "username", Type: "string", Required: true},
 		},
 	}
@@ -1297,6 +1306,7 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_AuthFlow_AutoProvisionin
 		NodeProperties: map[string]interface{}{
 			"assignGroup": "test-group-id",
 			"assignRole":  "test-role-id",
+			propertyKeyDynamicInputsIncludeOptionalCredentials: false,
 		},
 	}
 
@@ -1331,15 +1341,15 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_AuthFlow_AutoProvisionin
 // Test successful provisioning with both group and role assignment (detailed verification)
 func (suite *ProvisioningExecutorTestSuite) TestExecute_Success_WithGroupAndRoleAssignment() {
 	suite.expectSchemaForProvisioning()
-	attrs := map[string]interface{}{"username": "newuser", "email": "new@example.com"}
+	attrs := map[string]interface{}{"username": "newuser", attributeEmail: "new@example.com"}
 	attrsJSON, _ := json.Marshal(attrs)
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeRegistration,
 		UserInputs: map[string]string{
-			"username": "newuser",
-			"email":    "new@example.com",
+			"username":     "newuser",
+			attributeEmail: "new@example.com",
 		},
 		RuntimeData: map[string]string{
 			ouIDKey:     testOUID,
@@ -1347,7 +1357,7 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_Success_WithGroupAndRole
 		},
 		NodeInputs: []common.Input{
 			{Identifier: "username", Type: "string", Required: true},
-			{Identifier: "email", Type: "string", Required: true},
+			{Identifier: attributeEmail, Type: "string", Required: true},
 		},
 		NodeProperties: map[string]interface{}{
 			"assignGroup": "test-group-id",
@@ -1356,8 +1366,8 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_Success_WithGroupAndRole
 	}
 
 	suite.mockEntityProvider.On("IdentifyEntity", map[string]interface{}{
-		"username": "newuser",
-		"email":    "new@example.com",
+		"username":     "newuser",
+		attributeEmail: "new@example.com",
 	}).Return(nil, entityprovider.NewEntityProviderError(entityprovider.ErrorCodeEntityNotFound, "", ""))
 
 	createdUser := &entityprovider.Entity{
@@ -1800,11 +1810,11 @@ func (suite *ProvisioningExecutorTestSuite) TestExecute_CrossOU_GetUserError() {
 
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrSatisfiedByUserInputs() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
-		Return([]model.AttributeInfo{{Attribute: "email", DisplayName: "Email"}}, nil).Once()
+		Return([]model.AttributeInfo{{Attribute: attributeEmail, DisplayName: "Email"}}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
-		UserInputs:  map[string]string{"email": "user@example.com"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
@@ -1818,12 +1828,12 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrSati
 
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrSatisfiedByRuntimeData() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
-		Return([]model.AttributeInfo{{Attribute: "email", DisplayName: ""}}, nil).Once()
+		Return([]model.AttributeInfo{{Attribute: attributeEmail, DisplayName: ""}}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		UserInputs:  map[string]string{},
-		RuntimeData: map[string]string{userTypeKey: testUserType, "email": "user@example.com"},
+		RuntimeData: map[string]string{userTypeKey: testUserType, attributeEmail: "user@example.com"},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
@@ -1836,7 +1846,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrSati
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrSatisfiedByAuthnAttrs() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email"},
+			{Attribute: attributeEmail, DisplayName: "Email"},
 			{Attribute: "firstName", DisplayName: "First Name"},
 		}, nil).Once()
 
@@ -1846,8 +1856,8 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrSati
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		AuthenticatedUser: authncm.AuthenticatedUser{
 			Attributes: map[string]interface{}{
-				"email":     "user@example.com",
-				"firstName": "Test",
+				attributeEmail: "user@example.com",
+				"firstName":    "Test",
 			},
 		},
 	}
@@ -1862,7 +1872,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrSati
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrMissing_AppendedToInputsAndForwardedData() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email Address", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email Address", Required: true},
 			{Attribute: "firstName", DisplayName: "", Required: true},
 		}, nil).Once()
 
@@ -1883,7 +1893,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrMiss
 		inputMap[inp.Identifier] = inp
 	}
 
-	emailInput, ok := inputMap["email"]
+	emailInput, ok := inputMap[attributeEmail]
 	assert.True(suite.T(), ok)
 	assert.True(suite.T(), emailInput.Required, "required schema attr must have Required=true in the built input")
 	assert.Equal(suite.T(), "Email Address", emailInput.DisplayName)
@@ -1903,7 +1913,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrMiss
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalTrue_OptionalRenderedAsNotRequired() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
 		}, nil).Once()
 
@@ -1924,7 +1934,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 	for _, inp := range execResp.Inputs {
 		inputMap[inp.Identifier] = inp
 	}
-	assert.True(suite.T(), inputMap["email"].Required, "required attr must be marked required")
+	assert.True(suite.T(), inputMap[attributeEmail].Required, "required attr must be marked required")
 	assert.False(suite.T(), inputMap["nickname"].Required,
 		"optional attr must be marked not-required so the UI does not force the user to fill it")
 }
@@ -1935,13 +1945,13 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalTrue_SkipsOptionalAlreadyPresented() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
-		UserInputs:  map[string]string{"email": "user@example.com"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData: map[string]string{
 			userTypeKey: testUserType,
 			// nickname was presented in the previous iteration and the user left it blank.
@@ -1966,7 +1976,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalTrue_StoresPresentedOptionals() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
 		}, nil).Once()
 
@@ -1985,7 +1995,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 	stored := execResp.RuntimeData[common.RuntimeKeyPresentedOptionalAttrs]
 	assert.Contains(suite.T(), stored, "nickname",
 		"presented optional attrs must be written to RuntimeData for subsequent iterations")
-	assert.NotContains(suite.T(), stored, "email",
+	assert.NotContains(suite.T(), stored, attributeEmail,
 		"required attrs must not be written to the presented-optionals tracking key")
 }
 
@@ -1995,7 +2005,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 			{Attribute: "phone", DisplayName: "Phone", Required: false},
 			{Attribute: "firstName", DisplayName: "First Name", Required: true},
 		}, nil).Once()
@@ -2025,14 +2035,14 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrCoveredByNodeInput_NotDuplicated() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
-		Return([]model.AttributeInfo{{Attribute: "email", DisplayName: "Email"}}, nil).Once()
+		Return([]model.AttributeInfo{{Attribute: attributeEmail, DisplayName: "Email"}}, nil).Once()
 
 	// email is already a node-defined input — schema must not create a second copy
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		UserInputs:  map[string]string{},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
-		NodeInputs:  []common.Input{{Identifier: "email", Type: "string", Required: true}},
+		NodeInputs:  []common.Input{{Identifier: attributeEmail, Type: "string", Required: true}},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
@@ -2041,7 +2051,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrCove
 	assert.False(suite.T(), result, "node input still missing so overall result is false")
 	emailCount := 0
 	for _, inp := range execResp.Inputs {
-		if inp.Identifier == "email" {
+		if inp.Identifier == attributeEmail {
 			emailCount++
 		}
 	}
@@ -2050,11 +2060,11 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaAttrCove
 
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IgnoresAbsentNodeInputWhenSchemaAttrsSatisfied() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
-		Return([]model.AttributeInfo{{Attribute: "email", DisplayName: ""}}, nil).Once()
+		Return([]model.AttributeInfo{{Attribute: attributeEmail, DisplayName: ""}}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
-		UserInputs:  map[string]string{"email": "user@example.com"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		NodeInputs:  []common.Input{{Identifier: "username", Required: true}},
 	}
@@ -2086,7 +2096,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaServiceE
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_RequiredCredential_PromptedAsPassword() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "password", DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2100,7 +2110,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_RequiredCreden
 
 	assert.False(suite.T(), result)
 	assert.Len(suite.T(), execResp.Inputs, 1)
-	assert.Equal(suite.T(), "password", execResp.Inputs[0].Identifier)
+	assert.Equal(suite.T(), attributePassword, execResp.Inputs[0].Identifier)
 	assert.Equal(suite.T(), common.InputTypePassword, execResp.Inputs[0].Type)
 	assert.True(suite.T(), execResp.Inputs[0].Required)
 
@@ -2113,12 +2123,12 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_RequiredCreden
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_RequiredCredentialSatisfied_ReturnsTrue() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "password", DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
-		UserInputs:  map[string]string{"password": "secret"},
+		UserInputs:  map[string]string{attributePassword: "secret"},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
@@ -2129,64 +2139,93 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_RequiredCreden
 	assert.Empty(suite.T(), execResp.Inputs)
 }
 
-func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_OptionalCredential_InNodeInputs_Prompted() {
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AllCredentials_PromptedByDefault() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "pin", DisplayName: "PIN", Required: false, Credential: true},
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		UserInputs:  map[string]string{},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
-		// pin is explicitly listed in node inputs — so it must be prompted even though optional in schema.
-		NodeInputs: []common.Input{{Identifier: "pin", Type: common.InputTypePassword, Required: false}},
-	}
-	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
-
-	result := suite.executor.HasRequiredInputs(ctx, execResp)
-
-	assert.False(suite.T(), result)
-	pinFound := false
-	for _, inp := range execResp.Inputs {
-		if inp.Identifier == "pin" {
-			pinFound = true
-			assert.Equal(suite.T(), common.InputTypePassword, inp.Type)
-			assert.False(suite.T(), inp.Required)
-		}
-	}
-	assert.True(suite.T(), pinFound, "optional credential listed in node inputs must be prompted")
-}
-
-func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_OptionalCredential_NotInNodeInputs_Skipped() {
-	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
-		Return([]model.AttributeInfo{
-			{Attribute: "pin", DisplayName: "PIN", Required: false, Credential: true},
-		}, nil).Once()
-
-	ctx := &core.NodeContext{
-		ExecutionID: "flow-123",
-		UserInputs:  map[string]string{},
-		RuntimeData: map[string]string{userTypeKey: testUserType},
-		// pin is NOT in node inputs — optional credential must be skipped.
+		// No includeOptionalCredentials property — defaults to false, only required credentials prompted
 		NodeInputs: []common.Input{},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
 	result := suite.executor.HasRequiredInputs(ctx, execResp)
 
-	assert.True(suite.T(), result, "optional credential not in node inputs must not block")
+	assert.False(suite.T(), result)
+	passwordFound := false
+	pinFound := false
 	for _, inp := range execResp.Inputs {
-		assert.NotEqual(suite.T(), "pin", inp.Identifier, "optional credential not in node inputs must not appear")
+		if inp.Identifier == attributePassword {
+			passwordFound = true
+			assert.True(suite.T(), inp.Required)
+			assert.Equal(suite.T(), common.InputTypePassword, inp.Type)
+		}
+		if inp.Identifier == attributePin {
+			pinFound = true
+			assert.False(suite.T(), inp.Required)
+			assert.Equal(suite.T(), common.InputTypePassword, inp.Type)
+		}
 	}
+	assert.True(suite.T(), passwordFound, "required credential must be prompted by default")
+	assert.False(suite.T(), pinFound, "optional credential must NOT be prompted by default")
 }
 
-func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptional_DoesNotAffectCredentials() {
-	// includeOptional=true must only pull in optional non-credential attrs, not optional credentials.
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalCreds_False_OnlyRequired() {
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		ExecutionID: "flow-123",
+		UserInputs:  map[string]string{},
+		RuntimeData: map[string]string{userTypeKey: testUserType},
+		NodeProperties: map[string]interface{}{
+			propertyKeyDynamicInputsIncludeOptionalCredentials: false,
+		},
+		NodeInputs: []common.Input{},
+	}
+	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
+
+	result := suite.executor.HasRequiredInputs(ctx, execResp)
+
+	// Should still be missing because password and email are required and not satisfied
+	assert.False(suite.T(), result)
+	passwordFound := false
+	pinFound := false
+	for _, inp := range execResp.Inputs {
+		if inp.Identifier == attributePassword {
+			passwordFound = true
+			assert.True(suite.T(), inp.Required)
+		}
+		if inp.Identifier == attributePin {
+			pinFound = true
+		}
+		if inp.Identifier == attributeEmail {
+			assert.True(suite.T(), inp.Required)
+		}
+	}
+	assert.True(suite.T(), passwordFound,
+		"required credential must be prompted even when includeOptionalCredentials is false")
+	assert.False(suite.T(), pinFound,
+		"optional credential must not be prompted when includeOptionalCredentials is false")
+}
+
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptional_IndependentOfCredentials() {
+	// includeOptional controls non-credential attrs, includeOptionalCredentials (default false)
+	// controls optional credentials independently.
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
-			{Attribute: "pin", DisplayName: "PIN", Required: false, Credential: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2196,30 +2235,30 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 		NodeProperties: map[string]interface{}{
 			propertyKeyDynamicInputsIncludeOptional: true,
 		},
-		// pin not in node inputs — includeOptional must NOT pull it in.
 		NodeInputs: []common.Input{},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
 	suite.executor.HasRequiredInputs(ctx, execResp)
 
-	for _, inp := range execResp.Inputs {
-		assert.NotEqual(suite.T(), "pin", inp.Identifier,
-			"includeOptional must not prompt optional credentials not listed in node inputs")
-	}
 	nicknameFound := false
+	pinFound := false
 	for _, inp := range execResp.Inputs {
 		if inp.Identifier == "nickname" {
 			nicknameFound = true
 		}
+		if inp.Identifier == attributePin {
+			pinFound = true
+		}
 	}
-	assert.True(suite.T(), nicknameFound, "includeOptional must still prompt optional non-credential attrs")
+	assert.True(suite.T(), nicknameFound, "includeOptional must prompt optional non-credential attrs")
+	assert.False(suite.T(), pinFound, "optional credentials are NOT prompted by default")
 }
 
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_NodeInputUpgradesOptionalCredentialToRequired() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "pin", DisplayName: "PIN", Required: false, Credential: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2227,7 +2266,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_NodeInputUpgra
 		UserInputs:  map[string]string{},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		// Node marks pin as required even though schema says optional.
-		NodeInputs: []common.Input{{Identifier: "pin", Type: common.InputTypePassword, Required: true}},
+		NodeInputs: []common.Input{{Identifier: attributePin, Type: common.InputTypePassword, Required: true}},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
@@ -2236,7 +2275,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_NodeInputUpgra
 	assert.False(suite.T(), result)
 	pinFound := false
 	for _, inp := range execResp.Inputs {
-		if inp.Identifier == "pin" {
+		if inp.Identifier == attributePin {
 			pinFound = true
 			assert.True(
 				suite.T(), inp.Required,
@@ -2251,7 +2290,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_NodeInputUpgra
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AlreadyPromptedOptionalCredential_Skipped() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "pin", DisplayName: "PIN", Required: false, Credential: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2259,9 +2298,9 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AlreadyPrompte
 		UserInputs:  map[string]string{},
 		RuntimeData: map[string]string{
 			userTypeKey:                             testUserType,
-			common.RuntimeKeyPresentedOptionalAttrs: "pin",
+			common.RuntimeKeyPresentedOptionalAttrs: attributePin,
 		},
-		NodeInputs: []common.Input{{Identifier: "pin", Type: common.InputTypePassword, Required: false}},
+		NodeInputs: []common.Input{{Identifier: attributePin, Type: common.InputTypePassword, Required: false}},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
@@ -2270,16 +2309,156 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AlreadyPrompte
 	assert.True(suite.T(), result, "already-prompted optional credential should not block progress")
 	for _, inp := range execResp.Inputs {
 		assert.NotEqual(
-			suite.T(), "pin", inp.Identifier,
+			suite.T(), attributePin, inp.Identifier,
 			"already-prompted optional credential must not be re-prompted",
 		)
 	}
 }
 
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalCreds_True_AllPrompted() {
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		ExecutionID: "flow-123",
+		UserInputs:  map[string]string{},
+		RuntimeData: map[string]string{userTypeKey: testUserType},
+		NodeProperties: map[string]interface{}{
+			propertyKeyDynamicInputsIncludeOptionalCredentials: true,
+		},
+		NodeInputs: []common.Input{},
+	}
+	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
+
+	result := suite.executor.HasRequiredInputs(ctx, execResp)
+
+	assert.False(suite.T(), result)
+	passwordFound := false
+	pinFound := false
+	for _, inp := range execResp.Inputs {
+		if inp.Identifier == attributePassword {
+			passwordFound = true
+			assert.True(suite.T(), inp.Required)
+			assert.Equal(suite.T(), common.InputTypePassword, inp.Type)
+		}
+		if inp.Identifier == attributePin {
+			pinFound = true
+			assert.False(suite.T(), inp.Required)
+			assert.Equal(suite.T(), common.InputTypePassword, inp.Type)
+		}
+	}
+	assert.True(suite.T(), passwordFound, "includeOptionalCredentials=true must prompt required credentials")
+	assert.True(suite.T(), pinFound, "includeOptionalCredentials=true must prompt optional credentials")
+}
+
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalCredentials_AlreadyPrompted_Skipped() {
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		ExecutionID: "flow-123",
+		UserInputs:  map[string]string{},
+		RuntimeData: map[string]string{
+			userTypeKey:                             testUserType,
+			common.RuntimeKeyPresentedOptionalAttrs: attributePin,
+		},
+		NodeProperties: map[string]interface{}{
+			propertyKeyDynamicInputsIncludeOptionalCredentials: true,
+		},
+		NodeInputs: []common.Input{},
+	}
+	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
+
+	result := suite.executor.HasRequiredInputs(ctx, execResp)
+
+	assert.True(suite.T(), result, "already-prompted optional credential should not block")
+	for _, inp := range execResp.Inputs {
+		assert.NotEqual(suite.T(), attributePin, inp.Identifier,
+			"already-prompted optional credential must not be re-prompted")
+	}
+}
+
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalCreds_WithRequired() {
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		ExecutionID: "flow-123",
+		UserInputs:  map[string]string{},
+		RuntimeData: map[string]string{userTypeKey: testUserType},
+		NodeProperties: map[string]interface{}{
+			propertyKeyDynamicInputsIncludeOptionalCredentials: false,
+		},
+		NodeInputs: []common.Input{},
+	}
+	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
+
+	result := suite.executor.HasRequiredInputs(ctx, execResp)
+
+	assert.False(suite.T(), result, "should still need inputs when password and email are missing")
+	emailFound := false
+	passwordFound := false
+	for _, inp := range execResp.Inputs {
+		if inp.Identifier == attributeEmail {
+			emailFound = true
+		}
+		if inp.Identifier == attributePassword {
+			passwordFound = true
+		}
+	}
+	assert.True(suite.T(), emailFound, "non-credential attributes must still be prompted")
+	assert.True(suite.T(), passwordFound,
+		"required credentials must be prompted even when includeOptionalCredentials=false")
+}
+
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_OptionalCreds_IndependentOfOptional() {
+	// includeOptionalCredentials and includeOptional work independently.
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		ExecutionID: "flow-123",
+		UserInputs:  map[string]string{},
+		RuntimeData: map[string]string{userTypeKey: testUserType},
+		NodeProperties: map[string]interface{}{
+			propertyKeyDynamicInputsIncludeOptional:            false,
+			propertyKeyDynamicInputsIncludeOptionalCredentials: true,
+		},
+		NodeInputs: []common.Input{},
+	}
+	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
+
+	suite.executor.HasRequiredInputs(ctx, execResp)
+
+	pinFound := false
+	nicknameFound := false
+	for _, inp := range execResp.Inputs {
+		if inp.Identifier == attributePin {
+			pinFound = true
+		}
+		if inp.Identifier == "nickname" {
+			nicknameFound = true
+		}
+	}
+	assert.True(suite.T(), pinFound, "includeOptionalCredentials=true must prompt optional credentials")
+	assert.False(suite.T(), nicknameFound, "includeOptional=false must not prompt optional non-credentials")
+}
+
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaRequiredCredentialNotLoweredByNodeInput() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "password", DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2287,7 +2466,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaRequired
 		UserInputs:  map[string]string{},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		// Node tries to mark schema-required credential as optional — schema wins.
-		NodeInputs: []common.Input{{Identifier: "password", Type: common.InputTypePassword, Required: false}},
+		NodeInputs: []common.Input{{Identifier: attributePassword, Type: common.InputTypePassword, Required: false}},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
@@ -2295,7 +2474,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_SchemaRequired
 
 	assert.False(suite.T(), result)
 	for _, inp := range execResp.Inputs {
-		if inp.Identifier == "password" {
+		if inp.Identifier == attributePassword {
 			assert.True(suite.T(), inp.Required,
 				"schema-required credential cannot be lowered to optional by node input")
 		}
@@ -2308,9 +2487,9 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_Ordering_NonCr
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
-			{Attribute: "email", DisplayName: "Email", Required: true},
-			{Attribute: "pin", DisplayName: "PIN", Required: false, Credential: true},
-			{Attribute: "password", DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: false, Credential: true},
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2321,7 +2500,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_Ordering_NonCr
 			propertyKeyDynamicInputsIncludeOptional: true,
 		},
 		// pin is optional credential listed in node inputs so it will be prompted.
-		NodeInputs: []common.Input{{Identifier: "pin", Type: common.InputTypePassword, Required: false}},
+		NodeInputs: []common.Input{{Identifier: attributePin, Type: common.InputTypePassword, Required: false}},
 	}
 	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
 
@@ -2333,17 +2512,17 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_Ordering_NonCr
 	for _, inp := range execResp.Inputs {
 		identifiers = append(identifiers, inp.Identifier)
 	}
-	assert.Equal(suite.T(), []string{"email", "nickname", "password", "pin"}, identifiers)
+	assert.Equal(suite.T(), []string{attributeEmail, "nickname", attributePassword, attributePin}, identifiers)
 }
 
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_MaxPerPrompt_CapsForwardedPromptBatchOnly() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 			{Attribute: "phone", DisplayName: "Phone", Required: true},
 			{Attribute: "firstName", DisplayName: "First Name", Required: true},
-			{Attribute: "password", DisplayName: "Password", Required: true, Credential: true},
-			{Attribute: "pin", DisplayName: "PIN", Required: true, Credential: true},
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
+			{Attribute: attributePin, DisplayName: "PIN", Required: true, Credential: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2380,7 +2559,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Sch
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
 			{Attribute: "username", Required: true},
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
@@ -2390,7 +2569,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Sch
 		},
 		AuthenticatedUser: authncm.AuthenticatedUser{
 			Attributes: map[string]interface{}{
-				"email": "test@example.com",
+				attributeEmail: "test@example.com",
 			},
 		},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
@@ -2400,7 +2579,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Sch
 	result, _, _ := suite.executor.getAttributesForProvisioning(ctx)
 
 	assert.Equal(suite.T(), "testuser", result["username"])
-	assert.Equal(suite.T(), "test@example.com", result["email"])
+	assert.Equal(suite.T(), "test@example.com", result[attributeEmail])
 	assert.NotContains(suite.T(), result, "extra_field",
 		"attrs not defined in schema must be excluded when schema is available")
 }
@@ -2408,19 +2587,19 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Sch
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_OptionalAttrCollectedWhenNoNodeInputs() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "phone", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
-		UserInputs:  map[string]string{"email": "user@example.com"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData: map[string]string{userTypeKey: testUserType, "phone": "+1234567890"},
 		NodeInputs:  []common.Input{},
 	}
 
 	result, _, _ := suite.executor.getAttributesForProvisioning(ctx)
 
-	assert.Equal(suite.T(), "user@example.com", result["email"])
+	assert.Equal(suite.T(), "user@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "+1234567890", result["phone"],
 		"optional schema attr with a value must be collected when node inputs are empty")
 }
@@ -2430,7 +2609,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Sch
 		Return(nil, &serviceerror.ServiceError{Code: "internal_error"}).Once()
 
 	ctx := &core.NodeContext{
-		UserInputs:  map[string]string{"email": "user@example.com", "username": "testuser"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com", "username": "testuser"},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		NodeInputs:  []common.Input{},
 	}
@@ -2442,17 +2621,17 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Sch
 }
 
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_OptionalAttrCollectedWithoutNodeInput() {
-	nodeInputs := []common.Input{{Identifier: "email", Required: true}}
+	nodeInputs := []common.Input{{Identifier: attributeEmail, Required: true}}
 	exec := suite.newExecutorWithNodeInputs(nodeInputs)
 
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "phone", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
-		UserInputs:  map[string]string{"email": "user@example.com", "phone": "+1234567890"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com", "phone": "+1234567890"},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		NodeInputs:  nodeInputs,
 	}
@@ -2460,7 +2639,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Opt
 	result, _, err := exec.getAttributesForProvisioning(ctx)
 
 	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), "user@example.com", result["email"])
+	assert.Equal(suite.T(), "user@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "+1234567890", result["phone"],
 		"optional schema attr with a value must be collected even when nodeInputSet is non-empty")
 }
@@ -2687,14 +2866,14 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_MissingUserTyp
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalTrue_PromptsOptionals() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeRegistration,
-		UserInputs:  map[string]string{"email": "user@example.com"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		NodeProperties: map[string]interface{}{
 			propertyKeyDynamicInputsIncludeOptional: true,
@@ -2711,7 +2890,7 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 	}
 	assert.Contains(suite.T(), identifiers, "nickname",
 		"optional attr must be prompted when includeOptional=true")
-	assert.NotContains(suite.T(), identifiers, "email", "already-satisfied attr must not be re-prompted")
+	assert.NotContains(suite.T(), identifiers, attributeEmail, "already-satisfied attr must not be re-prompted")
 }
 
 // TestHasRequiredInputs_IncludeOptionalFalse_SkipsOptionals verifies the default
@@ -2719,13 +2898,13 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptionalFalse_SkipsOptionals() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID:    "flow-123",
 		FlowType:       common.FlowTypeRegistration,
-		UserInputs:     map[string]string{"email": "user@example.com"},
+		UserInputs:     map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData:    map[string]string{userTypeKey: testUserType},
 		NodeProperties: map[string]interface{}{},
 	}
@@ -2743,14 +2922,14 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_IncludeOptiona
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_NodeOptionalAttr_PromptedWithoutIncludeOptional() {
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", DisplayName: "Email", Required: true},
+			{Attribute: attributeEmail, DisplayName: "Email", Required: true},
 			{Attribute: "nickname", DisplayName: "Nickname", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		ExecutionID: "flow-123",
 		FlowType:    common.FlowTypeRegistration,
-		UserInputs:  map[string]string{"email": "user@example.com"},
+		UserInputs:  map[string]string{attributeEmail: "user@example.com"},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		NodeInputs: []common.Input{
 			{Identifier: "nickname", Type: common.InputTypeText, Required: false},
@@ -2830,20 +3009,20 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_MaxPerPrompt_Z
 // includeOptional=true does not alter schema-backed attribute collection.
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_IncludeOptionalTrue_NoEffect() {
 	nodeInputs := []common.Input{
-		{Identifier: "email", Type: "EMAIL_INPUT", Required: true},
+		{Identifier: attributeEmail, Type: "EMAIL_INPUT", Required: true},
 	}
 	exec := suite.newExecutorWithNodeInputs(nodeInputs)
 
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "nickname", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		UserInputs: map[string]string{
-			"email":    "user@example.com",
-			"nickname": "nick",
+			attributeEmail: "user@example.com",
+			"nickname":     "nick",
 		},
 		RuntimeData: map[string]string{userTypeKey: testUserType},
 		NodeInputs:  nodeInputs,
@@ -2855,7 +3034,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Inc
 	result, _, err := exec.getAttributesForProvisioning(ctx)
 
 	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), "user@example.com", result["email"])
+	assert.Equal(suite.T(), "user@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "nick", result["nickname"],
 		"optional attr with a value must be collected regardless of includeOptional")
 }
@@ -2864,20 +3043,20 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Inc
 // includeOptional=false does not exclude schema-backed values during collection.
 func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_IncludeOptionalFalse_CollectsOptionals() {
 	nodeInputs := []common.Input{
-		{Identifier: "email", Type: "EMAIL_INPUT", Required: true},
+		{Identifier: attributeEmail, Type: "EMAIL_INPUT", Required: true},
 	}
 	exec := suite.newExecutorWithNodeInputs(nodeInputs)
 
 	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
 		Return([]model.AttributeInfo{
-			{Attribute: "email", Required: true},
+			{Attribute: attributeEmail, Required: true},
 			{Attribute: "nickname", Required: false},
 		}, nil).Once()
 
 	ctx := &core.NodeContext{
 		UserInputs: map[string]string{
-			"email":    "user@example.com",
-			"nickname": "nick",
+			attributeEmail: "user@example.com",
+			"nickname":     "nick",
 		},
 		RuntimeData:    map[string]string{userTypeKey: testUserType},
 		NodeInputs:     nodeInputs,
@@ -2887,7 +3066,7 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Inc
 	result, _, err := exec.getAttributesForProvisioning(ctx)
 
 	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), "user@example.com", result["email"])
+	assert.Equal(suite.T(), "user@example.com", result[attributeEmail])
 	assert.Equal(suite.T(), "nick", result["nickname"],
 		"optional attr with a value must be collected regardless of includeOptional")
 }

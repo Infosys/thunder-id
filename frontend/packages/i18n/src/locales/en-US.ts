@@ -2280,6 +2280,9 @@ const translations = {
 
     // Provisioning executor
     'core.executions.provisioning.description': 'Configure the provisioning executor settings.',
+    'core.executions.provisioning.includeOptionalCredentials.label': 'Include Optional Credentials',
+    'core.executions.provisioning.includeOptionalCredentials.hint':
+      'Prompt for optional credential attributes during dynamic input collection.',
     'core.executions.provisioning.assignGroup.label': 'Assign Group',
     'core.executions.provisioning.assignGroup.placeholder': 'Group ID to assign',
     'core.executions.provisioning.assignRole.label': 'Assign Role',

@@ -93,13 +93,14 @@ const (
 	propertyKeyRequiredScopes = "requiredScopes"
 	propertyKeyEmailTemplate  = "emailTemplate"
 	// TODO: Revisit propertyKeyTokenExpiry and propertyKeyMagicLinkURL — these should not be node properties.
-	propertyKeyTokenExpiry                  = "tokenExpiry"
-	propertyKeyMagicLinkURL                 = "magicLinkURL"
-	propertyKeySMSTemplate                  = "smsTemplate"
-	propertyKeyAllowedUserTypes             = "allowedUserTypes"
-	propertyKeyNotificationSenderID         = "senderId"
-	propertyKeyDynamicInputsIncludeOptional = "includeOptional"
-	propertyKeyMaxDynamicInputsPerPrompt    = "maxPerPrompt"
+	propertyKeyTokenExpiry                             = "tokenExpiry"
+	propertyKeyMagicLinkURL                            = "magicLinkURL"
+	propertyKeySMSTemplate                             = "smsTemplate"
+	propertyKeyAllowedUserTypes                        = "allowedUserTypes"
+	propertyKeyNotificationSenderID                    = "senderId"
+	propertyKeyDynamicInputsIncludeOptional            = "includeOptional"
+	propertyKeyDynamicInputsIncludeOptionalCredentials = "includeOptionalCredentials"
+	propertyKeyMaxDynamicInputsPerPrompt               = "maxPerPrompt"
 )
 
 // nonSearchableInputs contains the list of user inputs/ attributes that are non-searchable.

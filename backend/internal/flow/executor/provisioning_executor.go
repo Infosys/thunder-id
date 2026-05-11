@@ -306,10 +306,9 @@ func (p *provisioningExecutor) HasRequiredInputs(ctx *core.NodeContext,
 	// Load the set of optional attrs already prompted in previous iterations so they are not
 	// re-prompted even when the user left them empty.
 	alreadyPromptedOptionalAttrs := p.getPresentedOptionalAttrs(ctx)
-	promptOptional := p.isPromptOptionalAttributesEnabled(ctx)
 
 	credRequiredMissing, credOptionalMissing, ncRequiredMissing, ncOptionalMissing :=
-		p.buildMissingInputs(ctx, allSchemaAttrs, nodeInputMap, alreadyPromptedOptionalAttrs, promptOptional)
+		p.buildMissingInputs(ctx, allSchemaAttrs, nodeInputMap, alreadyPromptedOptionalAttrs)
 
 	// Build the full schema missing list: required non-creds first, then optional non-creds,
 	// followed by required creds, then optional creds.
@@ -353,8 +352,10 @@ func (p *provisioningExecutor) buildMissingInputs(
 	schemaAttrs []entitytype.AttributeInfo,
 	nodeInputMap map[string]common.Input,
 	alreadyPromptedOptionalAttrs map[string]bool,
-	promptOptional bool,
 ) (credRequired, credOptional, ncRequired, ncOptional []common.Input) {
+	promptOptional := p.isPromptOptionalAttributesEnabled(ctx)
+	promptOptionalCredentials := p.isPromptOptionalCredentialsEnabled(ctx)
+
 	for _, attr := range schemaAttrs {
 		if p.isAttrSatisfied(ctx, attr.Attribute) {
 			continue
@@ -366,7 +367,7 @@ func (p *provisioningExecutor) buildMissingInputs(
 		}
 
 		if attr.Credential {
-			if !attr.Required && !inNodeInputs {
+			if !effectiveRequired && !promptOptionalCredentials && !inNodeInputs {
 				continue
 			}
 			if !effectiveRequired && alreadyPromptedOptionalAttrs[attr.Attribute] {
@@ -442,6 +443,17 @@ func (p *provisioningExecutor) fetchSchemaAttributes(
 // Returns false when the property is absent, preserving the default behavior of prompting only required attributes.
 func (p *provisioningExecutor) isPromptOptionalAttributesEnabled(ctx *core.NodeContext) bool {
 	if val, ok := ctx.NodeProperties[propertyKeyDynamicInputsIncludeOptional]; ok {
+		if boolVal, ok := val.(bool); ok {
+			return boolVal
+		}
+	}
+	return false
+}
+
+// isPromptOptionalCredentialsEnabled reads the includeOptionalCredentials node property.
+// Returns false when the property is absent. Only the required credentials are prompted by default.
+func (p *provisioningExecutor) isPromptOptionalCredentialsEnabled(ctx *core.NodeContext) bool {
+	if val, ok := ctx.NodeProperties[propertyKeyDynamicInputsIncludeOptionalCredentials]; ok {
 		if boolVal, ok := val.(bool); ok {
 			return boolVal
 		}
