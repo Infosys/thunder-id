@@ -30,11 +30,11 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	oauth2const "github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	i18ncore "github.com/asgardeo/thunder/internal/system/i18n/core"
-	"github.com/asgardeo/thunder/internal/system/security"
+	oauth2const "github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	i18ncore "github.com/thunder-id/thunder-id/internal/system/i18n/core"
+	"github.com/thunder-id/thunder-id/internal/system/security"
 )
 
 // DCRHandlerTestSuite is the test suite for DCR handler

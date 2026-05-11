@@ -26,9 +26,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/observability/event"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/observability/event"
 
 	"go.opentelemetry.io/otel/attribute"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"

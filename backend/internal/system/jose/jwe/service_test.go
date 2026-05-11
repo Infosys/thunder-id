@@ -27,10 +27,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/tests/mocks/crypto/pki/pkimock"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/tests/mocks/crypto/pki/pkimock"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

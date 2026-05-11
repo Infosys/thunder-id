@@ -27,9 +27,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/discovery"
-	"github.com/asgardeo/thunder/tests/mocks/jose/jwtmock"
-	"github.com/asgardeo/thunder/tests/mocks/oauth/oauth2/discoverymock"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/discovery"
+	"github.com/thunder-id/thunder-id/tests/mocks/jose/jwtmock"
+	"github.com/thunder-id/thunder-id/tests/mocks/oauth/oauth2/discoverymock"
 )
 
 type InitTestSuite struct {

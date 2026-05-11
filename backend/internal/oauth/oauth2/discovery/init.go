@@ -21,8 +21,8 @@ package discovery
 import (
 	"net/http"
 
-	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm/pkiservice"
-	"github.com/asgardeo/thunder/internal/system/middleware"
+	"github.com/thunder-id/thunder-id/internal/system/kmprovider/defaultkm/pkiservice"
+	"github.com/thunder-id/thunder-id/internal/system/middleware"
 )
 
 // Initialize initializes the discovery service and registers its routes

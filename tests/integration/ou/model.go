@@ -19,7 +19,7 @@
 package ou
 
 import (
-	"github.com/asgardeo/thunder/tests/integration/testutils"
+	"github.com/thunder-id/thunder-id/tests/integration/testutils"
 )
 
 // OrganizationUnitBasic represents the basic information of an organization unit.

@@ -22,8 +22,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/asgardeo/thunder/internal/system/cache"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/cache"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 const cacheBackedStoreLoggerComponentName = "CacheBackedCertificateStore"

@@ -24,7 +24,7 @@ import (
 
 	"github.com/stretchr/testify/mock"
 
-	"github.com/asgardeo/thunder/internal/entity"
+	"github.com/thunder-id/thunder-id/internal/entity"
 )
 
 // ----- DefaultEntityProvider — previously uncovered methods -----

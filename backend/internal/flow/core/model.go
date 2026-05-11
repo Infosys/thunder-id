@@ -21,10 +21,10 @@ package core
 import (
 	"context"
 
-	appmodel "github.com/asgardeo/thunder/internal/application/model"
-	authncm "github.com/asgardeo/thunder/internal/authn/common"
-	"github.com/asgardeo/thunder/internal/authnprovider/manager"
-	"github.com/asgardeo/thunder/internal/flow/common"
+	appmodel "github.com/thunder-id/thunder-id/internal/application/model"
+	authncm "github.com/thunder-id/thunder-id/internal/authn/common"
+	"github.com/thunder-id/thunder-id/internal/authnprovider/manager"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
 )
 
 // NodeContext holds the context for a specific node in the flow execution.

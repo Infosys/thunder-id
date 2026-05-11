@@ -24,17 +24,17 @@ import (
 	"fmt"
 	"slices"
 
-	authncm "github.com/asgardeo/thunder/internal/authn/common"
-	authnoauth "github.com/asgardeo/thunder/internal/authn/oauth"
-	authnprovidermgr "github.com/asgardeo/thunder/internal/authnprovider/manager"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/entitytype"
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/flow/core"
-	"github.com/asgardeo/thunder/internal/idp"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	systemutils "github.com/asgardeo/thunder/internal/system/utils"
+	authncm "github.com/thunder-id/thunder-id/internal/authn/common"
+	authnoauth "github.com/thunder-id/thunder-id/internal/authn/oauth"
+	authnprovidermgr "github.com/thunder-id/thunder-id/internal/authnprovider/manager"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/entitytype"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/core"
+	"github.com/thunder-id/thunder-id/internal/idp"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	systemutils "github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 const (

@@ -19,8 +19,8 @@
 package declarativeresource
 
 import (
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
 )
 
 // IsDeclarativeModeEnabled checks if declarative resources are enabled in the configuration.

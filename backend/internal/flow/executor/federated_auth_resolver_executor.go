@@ -23,11 +23,11 @@ import (
 	"errors"
 	"fmt"
 
-	authncm "github.com/asgardeo/thunder/internal/authn/common"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/flow/core"
-	"github.com/asgardeo/thunder/internal/system/log"
+	authncm "github.com/thunder-id/thunder-id/internal/authn/common"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/core"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 var _ core.ExecutorInterface = (*federatedAuthResolverExecutor)(nil)

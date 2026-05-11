@@ -22,7 +22,7 @@ package formatter
 import (
 	"encoding/json"
 
-	"github.com/asgardeo/thunder/internal/system/observability/event"
+	"github.com/thunder-id/thunder-id/internal/system/observability/event"
 )
 
 // JSONFormatter formats events as JSON.

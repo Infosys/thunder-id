@@ -22,12 +22,12 @@ package resolve
 import (
 	"context"
 
-	"github.com/asgardeo/thunder/internal/application"
-	"github.com/asgardeo/thunder/internal/design/common"
-	layoutmgt "github.com/asgardeo/thunder/internal/design/layout/mgt"
-	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/application"
+	"github.com/thunder-id/thunder-id/internal/design/common"
+	layoutmgt "github.com/thunder-id/thunder-id/internal/design/layout/mgt"
+	thememgt "github.com/thunder-id/thunder-id/internal/design/theme/mgt"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 const serviceLogger = "DesignResolveService"

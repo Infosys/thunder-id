@@ -36,7 +36,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/asgardeo/thunder/tests/integration/testutils"
+	"github.com/thunder-id/thunder-id/tests/integration/testutils"
 	"github.com/stretchr/testify/suite"
 )
 

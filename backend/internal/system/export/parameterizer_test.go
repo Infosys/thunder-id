@@ -27,8 +27,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 
-	"github.com/asgardeo/thunder/internal/resource"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/resource"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
 )
 
 // Helper to convert local resourceRules to declarativeresource.ResourceRules for testing

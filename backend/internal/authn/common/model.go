@@ -23,10 +23,10 @@ import (
 	"context"
 	"time"
 
-	authnprovidercm "github.com/asgardeo/thunder/internal/authnprovider/common"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/idp"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
+	authnprovidercm "github.com/thunder-id/thunder-id/internal/authnprovider/common"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/idp"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
 )
 
 // AuthenticatedUser represents the user information of an authenticated user.

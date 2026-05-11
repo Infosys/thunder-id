@@ -26,12 +26,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/notification/common"
-	"github.com/asgardeo/thunder/internal/system/cmodels"
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/tests/mocks/notification/messagemock"
+	"github.com/thunder-id/thunder-id/internal/notification/common"
+	"github.com/thunder-id/thunder-id/internal/system/cmodels"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/tests/mocks/notification/messagemock"
 )
 
 type NotificationSenderServiceTestSuite struct {

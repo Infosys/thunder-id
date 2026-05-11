@@ -23,13 +23,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/asgardeo/thunder/internal/notification/common"
-	"github.com/asgardeo/thunder/internal/system/cmodels"
-	"github.com/asgardeo/thunder/internal/system/error/apierror"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/i18n/core"
-	"github.com/asgardeo/thunder/internal/system/log"
-	sysutils "github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/notification/common"
+	"github.com/thunder-id/thunder-id/internal/system/cmodels"
+	"github.com/thunder-id/thunder-id/internal/system/error/apierror"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/i18n/core"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	sysutils "github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // messageNotificationSenderHandler handles HTTP requests for message notification sender management

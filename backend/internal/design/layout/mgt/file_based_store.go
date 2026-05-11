@@ -21,8 +21,8 @@ package layoutmgt
 import (
 	"errors"
 
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
-	"github.com/asgardeo/thunder/internal/system/declarative_resource/entity"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/declarative_resource/entity"
 )
 
 type layoutFileBasedStore struct {

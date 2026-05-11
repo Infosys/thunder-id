@@ -22,15 +22,15 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/asgardeo/thunder/internal/entity"
-	"github.com/asgardeo/thunder/internal/entitytype"
-	"github.com/asgardeo/thunder/internal/group"
-	oupkg "github.com/asgardeo/thunder/internal/ou"
-	resourcepkg "github.com/asgardeo/thunder/internal/resource"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
-	"github.com/asgardeo/thunder/internal/system/middleware"
-	"github.com/asgardeo/thunder/internal/system/transaction"
+	"github.com/thunder-id/thunder-id/internal/entity"
+	"github.com/thunder-id/thunder-id/internal/entitytype"
+	"github.com/thunder-id/thunder-id/internal/group"
+	oupkg "github.com/thunder-id/thunder-id/internal/ou"
+	resourcepkg "github.com/thunder-id/thunder-id/internal/resource"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/middleware"
+	"github.com/thunder-id/thunder-id/internal/system/transaction"
 )
 
 // Initialize initializes the role service and registers its routes.

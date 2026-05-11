@@ -21,9 +21,9 @@ package role
 import (
 	"strings"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
 )
 
 // getRoleStoreMode determines the store mode for roles.

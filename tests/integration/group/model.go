@@ -19,7 +19,7 @@
 package group
 
 import (
-	"github.com/asgardeo/thunder/tests/integration/testutils"
+	"github.com/thunder-id/thunder-id/tests/integration/testutils"
 )
 
 type I18nMessage struct {

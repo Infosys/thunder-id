@@ -21,8 +21,8 @@ package resource
 import (
 	"context"
 
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
 )
 
 // compositeResourceStore implements a composite store that combines file-based (immutable) and

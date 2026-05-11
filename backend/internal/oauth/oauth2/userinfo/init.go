@@ -21,16 +21,16 @@ package userinfo
 import (
 	"net/http"
 
-	"github.com/asgardeo/thunder/internal/attributecache"
-	"github.com/asgardeo/thunder/internal/inboundclient"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/jwksresolver"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/tokenservice"
-	"github.com/asgardeo/thunder/internal/ou"
-	"github.com/asgardeo/thunder/internal/system/jose/jwe"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
-	"github.com/asgardeo/thunder/internal/system/middleware"
-	"github.com/asgardeo/thunder/internal/system/transaction"
+	"github.com/thunder-id/thunder-id/internal/attributecache"
+	"github.com/thunder-id/thunder-id/internal/inboundclient"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/jwksresolver"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/tokenservice"
+	"github.com/thunder-id/thunder-id/internal/ou"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwe"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/internal/system/middleware"
+	"github.com/thunder-id/thunder-id/internal/system/transaction"
 )
 
 // Initialize initializes the userinfo handler and registers its routes.

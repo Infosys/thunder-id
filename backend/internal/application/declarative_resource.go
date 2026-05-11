@@ -25,13 +25,13 @@ import (
 
 	"encoding/json"
 
-	"github.com/asgardeo/thunder/internal/application/model"
-	"github.com/asgardeo/thunder/internal/entity"
-	"github.com/asgardeo/thunder/internal/inboundclient"
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/application/model"
+	"github.com/thunder-id/thunder-id/internal/entity"
+	"github.com/thunder-id/thunder-id/internal/inboundclient"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 
 	"gopkg.in/yaml.v3"
 )

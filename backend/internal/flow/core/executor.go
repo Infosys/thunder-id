@@ -19,8 +19,8 @@
 package core
 
 import (
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 const (

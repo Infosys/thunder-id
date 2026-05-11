@@ -23,8 +23,8 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/tests/mocks/entitymock"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/tests/mocks/entitymock"
 )
 
 type InitEntityProviderTestSuite struct {

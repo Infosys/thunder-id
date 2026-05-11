@@ -19,7 +19,7 @@
 package flowmgt
 
 import (
-	"github.com/asgardeo/thunder/internal/system/database/model"
+	"github.com/thunder-id/thunder-id/internal/system/database/model"
 )
 
 var (

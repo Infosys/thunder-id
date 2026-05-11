@@ -22,7 +22,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/asgardeo/thunder/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
 )
 
 // GraphInterface defines the graph structure

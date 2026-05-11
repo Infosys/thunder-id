@@ -19,10 +19,10 @@
 package tokenservice
 
 import (
-	"github.com/asgardeo/thunder/internal/idp"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/jwksresolver"
-	"github.com/asgardeo/thunder/internal/system/jose/jwe"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/internal/idp"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/jwksresolver"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwe"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
 )
 
 // Initialize initializes the token service components (builder and validator).

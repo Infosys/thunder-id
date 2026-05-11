@@ -23,9 +23,9 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/application/model"
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/application/model"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 type ApplicationServiceConsentTestSuite struct {

@@ -21,8 +21,8 @@ package ou
 import (
 	"testing"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
 
 	"github.com/stretchr/testify/assert"
 )

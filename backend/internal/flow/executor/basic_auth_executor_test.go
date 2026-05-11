@@ -19,8 +19,8 @@
 package executor
 
 import (
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	i18ncore "github.com/asgardeo/thunder/internal/system/i18n/core"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	i18ncore "github.com/thunder-id/thunder-id/internal/system/i18n/core"
 
 	"encoding/json"
 	"testing"
@@ -29,15 +29,15 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	appmodel "github.com/asgardeo/thunder/internal/application/model"
-	authnprovidermgr "github.com/asgardeo/thunder/internal/authnprovider/manager"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/flow/core"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/tests/mocks/authnprovider/managermock"
-	"github.com/asgardeo/thunder/tests/mocks/entityprovidermock"
-	"github.com/asgardeo/thunder/tests/mocks/flow/coremock"
+	appmodel "github.com/thunder-id/thunder-id/internal/application/model"
+	authnprovidermgr "github.com/thunder-id/thunder-id/internal/authnprovider/manager"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/core"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/tests/mocks/authnprovider/managermock"
+	"github.com/thunder-id/thunder-id/tests/mocks/entityprovidermock"
+	"github.com/thunder-id/thunder-id/tests/mocks/flow/coremock"
 )
 
 type BasicAuthExecutorTestSuite struct {

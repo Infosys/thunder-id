@@ -26,12 +26,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	i18ncore "github.com/asgardeo/thunder/internal/system/i18n/core"
-	"github.com/asgardeo/thunder/internal/system/jose/jwe"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
-	"github.com/asgardeo/thunder/tests/mocks/crypto/pki/pkimock"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	i18ncore "github.com/thunder-id/thunder-id/internal/system/i18n/core"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwe"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/tests/mocks/crypto/pki/pkimock"
 )
 
 type JOSEInitTestSuite struct {

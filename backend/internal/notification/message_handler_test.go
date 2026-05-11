@@ -29,12 +29,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/notification/common"
-	"github.com/asgardeo/thunder/internal/system/cmodels"
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/apierror"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	i18ncore "github.com/asgardeo/thunder/internal/system/i18n/core"
+	"github.com/thunder-id/thunder-id/internal/notification/common"
+	"github.com/thunder-id/thunder-id/internal/system/cmodels"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/apierror"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	i18ncore "github.com/thunder-id/thunder-id/internal/system/i18n/core"
 )
 
 type MessageHandlerTestSuite struct {

@@ -27,7 +27,7 @@ import (
 	"github.com/go-webauthn/webauthn/protocol"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/entity"
+	"github.com/thunder-id/thunder-id/internal/entity"
 )
 
 type UtilsTestSuite struct {

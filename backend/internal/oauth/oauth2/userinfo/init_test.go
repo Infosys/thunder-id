@@ -26,11 +26,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/tests/mocks/attributecachemock"
-	"github.com/asgardeo/thunder/tests/mocks/inboundclientmock"
-	"github.com/asgardeo/thunder/tests/mocks/jose/jwtmock"
-	"github.com/asgardeo/thunder/tests/mocks/oauth/oauth2/tokenservicemock"
-	"github.com/asgardeo/thunder/tests/mocks/oumock"
+	"github.com/thunder-id/thunder-id/tests/mocks/attributecachemock"
+	"github.com/thunder-id/thunder-id/tests/mocks/inboundclientmock"
+	"github.com/thunder-id/thunder-id/tests/mocks/jose/jwtmock"
+	"github.com/thunder-id/thunder-id/tests/mocks/oauth/oauth2/tokenservicemock"
+	"github.com/thunder-id/thunder-id/tests/mocks/oumock"
 )
 
 type InitTestSuite struct {

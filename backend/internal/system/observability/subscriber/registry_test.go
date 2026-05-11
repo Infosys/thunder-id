@@ -21,7 +21,7 @@ package subscriber
 import (
 	"testing"
 
-	"github.com/asgardeo/thunder/internal/system/observability/event"
+	"github.com/thunder-id/thunder-id/internal/system/observability/event"
 )
 
 // mockSubscriber is a mock implementation of SubscriberInterface for testing

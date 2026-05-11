@@ -24,14 +24,14 @@ import (
 	"fmt"
 	"strconv"
 
-	authncm "github.com/asgardeo/thunder/internal/authn/common"
-	"github.com/asgardeo/thunder/internal/authn/otp"
-	authnprovidermgr "github.com/asgardeo/thunder/internal/authnprovider/manager"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/flow/core"
-	notifcommon "github.com/asgardeo/thunder/internal/notification/common"
-	"github.com/asgardeo/thunder/internal/system/log"
+	authncm "github.com/thunder-id/thunder-id/internal/authn/common"
+	"github.com/thunder-id/thunder-id/internal/authn/otp"
+	authnprovidermgr "github.com/thunder-id/thunder-id/internal/authnprovider/manager"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/core"
+	notifcommon "github.com/thunder-id/thunder-id/internal/notification/common"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // mobileNumberInput is the default input definition for mobile number collection.

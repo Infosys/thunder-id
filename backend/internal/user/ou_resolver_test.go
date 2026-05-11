@@ -27,12 +27,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	entitypkg "github.com/asgardeo/thunder/internal/entity"
-	oupkg "github.com/asgardeo/thunder/internal/ou"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	i18ncore "github.com/asgardeo/thunder/internal/system/i18n/core"
-	"github.com/asgardeo/thunder/tests/mocks/entitymock"
-	"github.com/asgardeo/thunder/tests/mocks/entitytypemock"
+	entitypkg "github.com/thunder-id/thunder-id/internal/entity"
+	oupkg "github.com/thunder-id/thunder-id/internal/ou"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	i18ncore "github.com/thunder-id/thunder-id/internal/system/i18n/core"
+	"github.com/thunder-id/thunder-id/tests/mocks/entitymock"
+	"github.com/thunder-id/thunder-id/tests/mocks/entitytypemock"
 )
 
 func TestOUUserResolver_GetUserCountByOUID(t *testing.T) {

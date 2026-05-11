@@ -22,12 +22,12 @@ import (
 	"fmt"
 	"net/http"
 
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/utils"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 const handlerLoggerComponentName = "UserInfoHandler"

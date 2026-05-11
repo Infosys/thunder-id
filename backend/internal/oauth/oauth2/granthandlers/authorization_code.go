@@ -24,17 +24,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asgardeo/thunder/internal/attributecache"
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/authz"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/model"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/pkce"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/resourceindicators"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/tokenservice"
-	oauth2utils "github.com/asgardeo/thunder/internal/oauth/oauth2/utils"
-	"github.com/asgardeo/thunder/internal/resource"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/attributecache"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/authz"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/model"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/pkce"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/resourceindicators"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/tokenservice"
+	oauth2utils "github.com/thunder-id/thunder-id/internal/oauth/oauth2/utils"
+	"github.com/thunder-id/thunder-id/internal/resource"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // authorizationCodeGrantHandler handles the authorization code grant type.

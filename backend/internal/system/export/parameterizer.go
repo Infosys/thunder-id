@@ -27,8 +27,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
-	"github.com/asgardeo/thunder/internal/system/log"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 type templatingRules struct {

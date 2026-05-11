@@ -24,9 +24,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/healthcheck/model"
-	"github.com/asgardeo/thunder/tests/mocks/healthcheck/servicemock"
+	"github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/healthcheck/model"
+	"github.com/thunder-id/thunder-id/tests/mocks/healthcheck/servicemock"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"

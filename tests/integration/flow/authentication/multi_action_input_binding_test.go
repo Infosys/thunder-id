@@ -25,8 +25,8 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/tests/integration/flow/common"
-	"github.com/asgardeo/thunder/tests/integration/testutils"
+	"github.com/thunder-id/thunder-id/tests/integration/flow/common"
+	"github.com/thunder-id/thunder-id/tests/integration/testutils"
 )
 
 const (

@@ -26,8 +26,8 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // CacheManagerInterface defines the interface for managing caches.

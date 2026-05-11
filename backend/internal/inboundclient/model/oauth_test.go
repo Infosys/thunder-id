@@ -24,9 +24,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/inboundclient/model"
-	oauth2const "github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	sysconfig "github.com/asgardeo/thunder/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	oauth2const "github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	sysconfig "github.com/thunder-id/thunder-id/internal/system/config"
 )
 
 const (

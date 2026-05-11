@@ -23,12 +23,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/database/provider"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/transaction"
-	"github.com/asgardeo/thunder/internal/system/utils"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/database/provider"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/transaction"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // inboundClientJSONBlob is the internal structure for marshaling/unmarshaling the

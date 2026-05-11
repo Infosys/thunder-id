@@ -7,8 +7,8 @@ package oumock
 import (
 	"context"
 
-	"github.com/asgardeo/thunder/internal/ou"
 	mock "github.com/stretchr/testify/mock"
+	"github.com/thunder-id/thunder-id/internal/ou"
 )
 
 // newOrganizationUnitStoreInterfaceMock creates a new instance of organizationUnitStoreInterfaceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

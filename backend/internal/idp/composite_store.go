@@ -22,8 +22,8 @@ import (
 	"context"
 	"errors"
 
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
 )
 
 var (

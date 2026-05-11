@@ -19,8 +19,8 @@
 package google
 
 import (
-	authnoidc "github.com/asgardeo/thunder/internal/authn/oidc"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
+	authnoidc "github.com/thunder-id/thunder-id/internal/authn/oidc"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
 )
 
 // Initialize initializes the Google OIDC authentication service.

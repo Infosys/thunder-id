@@ -19,7 +19,7 @@
 package mgt
 
 import (
-	dbmodel "github.com/asgardeo/thunder/internal/system/database/model"
+	dbmodel "github.com/thunder-id/thunder-id/internal/system/database/model"
 )
 
 var (

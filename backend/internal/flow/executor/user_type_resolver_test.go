@@ -19,8 +19,8 @@
 package executor
 
 import (
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	i18ncore "github.com/asgardeo/thunder/internal/system/i18n/core"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	i18ncore "github.com/thunder-id/thunder-id/internal/system/i18n/core"
 
 	"context"
 	"testing"
@@ -29,14 +29,14 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	appmodel "github.com/asgardeo/thunder/internal/application/model"
-	"github.com/asgardeo/thunder/internal/entitytype"
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/flow/core"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/tests/mocks/entitytypemock"
-	"github.com/asgardeo/thunder/tests/mocks/flow/coremock"
-	"github.com/asgardeo/thunder/tests/mocks/oumock"
+	appmodel "github.com/thunder-id/thunder-id/internal/application/model"
+	"github.com/thunder-id/thunder-id/internal/entitytype"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/core"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/tests/mocks/entitytypemock"
+	"github.com/thunder-id/thunder-id/tests/mocks/flow/coremock"
+	"github.com/thunder-id/thunder-id/tests/mocks/oumock"
 )
 
 type UserTypeResolverTestSuite struct {

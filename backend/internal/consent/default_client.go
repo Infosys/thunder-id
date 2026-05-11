@@ -29,12 +29,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	sysconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	httpservice "github.com/asgardeo/thunder/internal/system/http"
-	"github.com/asgardeo/thunder/internal/system/log"
-	sysutils "github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	sysconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	httpservice "github.com/thunder-id/thunder-id/internal/system/http"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	sysutils "github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // External service endpoints.

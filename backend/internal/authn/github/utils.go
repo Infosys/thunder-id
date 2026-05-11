@@ -23,10 +23,10 @@ import (
 	"io"
 	"net/http"
 
-	sysconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	syshttp "github.com/asgardeo/thunder/internal/system/http"
-	"github.com/asgardeo/thunder/internal/system/log"
+	sysconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	syshttp "github.com/thunder-id/thunder-id/internal/system/http"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // buildUserEmailRequest constructs the HTTP request to fetch user emails from GitHub.

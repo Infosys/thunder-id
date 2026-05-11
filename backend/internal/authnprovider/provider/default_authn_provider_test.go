@@ -26,9 +26,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	authnprovidercm "github.com/asgardeo/thunder/internal/authnprovider/common"
-	"github.com/asgardeo/thunder/internal/entity"
-	"github.com/asgardeo/thunder/tests/mocks/entitymock"
+	authnprovidercm "github.com/thunder-id/thunder-id/internal/authnprovider/common"
+	"github.com/thunder-id/thunder-id/internal/entity"
+	"github.com/thunder-id/thunder-id/tests/mocks/entitymock"
 )
 
 type DefaultAuthnProviderTestSuite struct {

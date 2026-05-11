@@ -27,13 +27,13 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	authncm "github.com/asgardeo/thunder/internal/authn/common"
-	authnprovidercm "github.com/asgardeo/thunder/internal/authnprovider/common"
-	managerpkg "github.com/asgardeo/thunder/internal/authnprovider/manager"
-	"github.com/asgardeo/thunder/internal/flow/common"
+	authncm "github.com/thunder-id/thunder-id/internal/authn/common"
+	authnprovidercm "github.com/thunder-id/thunder-id/internal/authnprovider/common"
+	managerpkg "github.com/thunder-id/thunder-id/internal/authnprovider/manager"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
 
-	"github.com/asgardeo/thunder/tests/mocks/database/providermock"
-	"github.com/asgardeo/thunder/tests/mocks/flow/coremock"
+	"github.com/thunder-id/thunder-id/tests/mocks/database/providermock"
+	"github.com/thunder-id/thunder-id/tests/mocks/flow/coremock"
 )
 
 type StoreTestSuite struct {

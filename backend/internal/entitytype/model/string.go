@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 type str struct {

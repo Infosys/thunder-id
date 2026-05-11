@@ -19,11 +19,11 @@
 package authz
 
 import (
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/authz/requestvalidator"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/resourceindicators"
-	"github.com/asgardeo/thunder/internal/system/log"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/authz/requestvalidator"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/resourceindicators"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // AuthorizationValidatorInterface defines the interface for validating OAuth2 authorization requests.

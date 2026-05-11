@@ -25,10 +25,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/asgardeo/thunder/internal/system/cryptolab"
-	"github.com/asgardeo/thunder/internal/system/kmprovider"
-	"github.com/asgardeo/thunder/internal/system/kmprovider/defaultkm/pkiservice"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/cryptolab"
+	"github.com/thunder-id/thunder-id/internal/system/kmprovider"
+	"github.com/thunder-id/thunder-id/internal/system/kmprovider/defaultkm/pkiservice"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 type runtimeCryptoService struct {

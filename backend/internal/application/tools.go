@@ -22,14 +22,14 @@ import (
 	"context"
 	"fmt"
 
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/asgardeo/thunder/internal/application/model"
-	oauth2const "github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/system/mcp/tool"
+	"github.com/thunder-id/thunder-id/internal/application/model"
+	oauth2const "github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/system/mcp/tool"
 )
 
 // applicationTools provides MCP tools for managing  applications.

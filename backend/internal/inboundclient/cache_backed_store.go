@@ -22,9 +22,9 @@ package inboundclient
 import (
 	"context"
 
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	"github.com/asgardeo/thunder/internal/system/cache"
-	"github.com/asgardeo/thunder/internal/system/log"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	"github.com/thunder-id/thunder-id/internal/system/cache"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 const (

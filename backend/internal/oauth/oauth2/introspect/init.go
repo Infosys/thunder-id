@@ -22,12 +22,12 @@ import (
 	"context"
 	"net/http"
 
-	authnprovidermgr "github.com/asgardeo/thunder/internal/authnprovider/manager"
-	"github.com/asgardeo/thunder/internal/inboundclient"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/clientauth"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/discovery"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
-	"github.com/asgardeo/thunder/internal/system/middleware"
+	authnprovidermgr "github.com/thunder-id/thunder-id/internal/authnprovider/manager"
+	"github.com/thunder-id/thunder-id/internal/inboundclient"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/clientauth"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/discovery"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/internal/system/middleware"
 )
 
 // Initialize initializes the token introspection handler and registers its routes.

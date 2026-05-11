@@ -28,17 +28,17 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/agent/model"
-	"github.com/asgardeo/thunder/internal/entity"
-	"github.com/asgardeo/thunder/internal/inboundclient"
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	oauth2const "github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	oupkg "github.com/asgardeo/thunder/internal/ou"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/tests/mocks/entitymock"
-	"github.com/asgardeo/thunder/tests/mocks/inboundclientmock"
-	"github.com/asgardeo/thunder/tests/mocks/oumock"
+	"github.com/thunder-id/thunder-id/internal/agent/model"
+	"github.com/thunder-id/thunder-id/internal/entity"
+	"github.com/thunder-id/thunder-id/internal/inboundclient"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	oauth2const "github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	oupkg "github.com/thunder-id/thunder-id/internal/ou"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/tests/mocks/entitymock"
+	"github.com/thunder-id/thunder-id/tests/mocks/inboundclientmock"
+	"github.com/thunder-id/thunder-id/tests/mocks/oumock"
 )
 
 const (

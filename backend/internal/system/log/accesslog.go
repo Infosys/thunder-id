@@ -24,7 +24,7 @@ import (
 	"net/http"
 	"time"
 
-	sysContext "github.com/asgardeo/thunder/internal/system/context"
+	sysContext "github.com/thunder-id/thunder-id/internal/system/context"
 )
 
 // AccessLogHandler logs HTTP requests in Apache CLF with response time and correlation ID.

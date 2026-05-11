@@ -19,8 +19,8 @@
 package magiclink
 
 import (
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
 )
 
 // Initialize initializes the Magic Link authentication service.

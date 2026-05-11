@@ -21,13 +21,13 @@ package granthandlers
 import (
 	"context"
 
-	inboundmodel "github.com/asgardeo/thunder/internal/inboundclient/model"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/model"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/resourceindicators"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/tokenservice"
-	"github.com/asgardeo/thunder/internal/resource"
-	"github.com/asgardeo/thunder/internal/system/log"
+	inboundmodel "github.com/thunder-id/thunder-id/internal/inboundclient/model"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/model"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/resourceindicators"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/tokenservice"
+	"github.com/thunder-id/thunder-id/internal/resource"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // tokenExchangeGrantHandler handles the token exchange grant type.

@@ -18,7 +18,7 @@
 
 package passkey
 
-import dbmodel "github.com/asgardeo/thunder/internal/system/database/model"
+import dbmodel "github.com/thunder-id/thunder-id/internal/system/database/model"
 
 // Database column name for WebAuthn session storage.
 const (

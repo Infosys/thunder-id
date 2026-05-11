@@ -30,11 +30,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/asgardeo/thunder/internal/system/cryptolab"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/i18n/core"
-	"github.com/asgardeo/thunder/internal/system/kmprovider"
-	"github.com/asgardeo/thunder/tests/mocks/crypto/pki/pkimock"
+	"github.com/thunder-id/thunder-id/internal/system/cryptolab"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/i18n/core"
+	"github.com/thunder-id/thunder-id/internal/system/kmprovider"
+	"github.com/thunder-id/thunder-id/tests/mocks/crypto/pki/pkimock"
 )
 
 const testKeyID = "test-key-id"

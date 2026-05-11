@@ -23,9 +23,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/database/provider"
-	"github.com/asgardeo/thunder/internal/system/transaction"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/database/provider"
+	"github.com/thunder-id/thunder-id/internal/system/transaction"
 )
 
 // resourceStoreInterface defines the interface for resource store operations.

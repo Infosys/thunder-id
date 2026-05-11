@@ -25,9 +25,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // GetConfigs reads all configuration files from the specified directory within the resources directory.

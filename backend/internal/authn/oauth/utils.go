@@ -26,13 +26,13 @@ import (
 	"net/url"
 	"strings"
 
-	idpPkg "github.com/asgardeo/thunder/internal/idp"
-	oauth2const "github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	sysconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	httpservice "github.com/asgardeo/thunder/internal/system/http"
-	"github.com/asgardeo/thunder/internal/system/log"
-	sysutils "github.com/asgardeo/thunder/internal/system/utils"
+	idpPkg "github.com/thunder-id/thunder-id/internal/idp"
+	oauth2const "github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	sysconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	httpservice "github.com/thunder-id/thunder-id/internal/system/http"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	sysutils "github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // parseIDPConfig extracts the OAuth client configuration from the identity provider details.

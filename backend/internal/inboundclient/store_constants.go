@@ -18,7 +18,7 @@
 
 package inboundclient
 
-import dbmodel "github.com/asgardeo/thunder/internal/system/database/model"
+import dbmodel "github.com/thunder-id/thunder-id/internal/system/database/model"
 
 var (
 	// queryCreateInboundClient creates a new inbound client entry for an entity.

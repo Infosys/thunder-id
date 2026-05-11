@@ -5,11 +5,11 @@
 package executor
 
 import (
-	common0 "github.com/asgardeo/thunder/internal/authn/common"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/flow/core"
 	mock "github.com/stretchr/testify/mock"
+	common0 "github.com/thunder-id/thunder-id/internal/authn/common"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/core"
 )
 
 // newOidcAuthExecutorInterfaceMock creates a new instance of oidcAuthExecutorInterfaceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

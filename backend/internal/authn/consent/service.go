@@ -26,12 +26,12 @@ import (
 	"slices"
 	"time"
 
-	authnprovidercm "github.com/asgardeo/thunder/internal/authnprovider/common"
-	"github.com/asgardeo/thunder/internal/consent"
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
-	"github.com/asgardeo/thunder/internal/system/log"
+	authnprovidercm "github.com/thunder-id/thunder-id/internal/authnprovider/common"
+	"github.com/thunder-id/thunder-id/internal/consent"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // ConsentEnforcerServiceInterface provides functionality to resolve consent requirements and

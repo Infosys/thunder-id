@@ -22,7 +22,7 @@ package kmprovider
 import (
 	"context"
 
-	"github.com/asgardeo/thunder/internal/system/cryptolab"
+	"github.com/thunder-id/thunder-id/internal/system/cryptolab"
 )
 
 // ConfigCryptoProvider provides symmetric encryption and decryption functionality

@@ -27,7 +27,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/asgardeo/thunder/internal/system/database/provider"
+	"github.com/thunder-id/thunder-id/internal/system/database/provider"
 )
 
 // parRedisClient abstracts the Redis commands used by the PAR store.

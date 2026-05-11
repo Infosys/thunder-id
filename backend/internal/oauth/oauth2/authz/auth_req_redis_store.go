@@ -27,9 +27,9 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/database/provider"
-	"github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/database/provider"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // authReqRedisClient abstracts the Redis commands used by the authorization request store.

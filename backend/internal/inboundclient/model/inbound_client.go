@@ -22,7 +22,7 @@
 package model
 
 import (
-	"github.com/asgardeo/thunder/internal/cert"
+	"github.com/thunder-id/thunder-id/internal/cert"
 )
 
 // InboundClient is the persistence shape for protocol-agnostic inbound client record.

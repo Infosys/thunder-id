@@ -30,12 +30,12 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/database/provider"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
-	"github.com/asgardeo/thunder/internal/system/declarative_resource/entity"
-	"github.com/asgardeo/thunder/tests/mocks/database/providermock"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/database/provider"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/declarative_resource/entity"
+	"github.com/thunder-id/thunder-id/tests/mocks/database/providermock"
 )
 
 // InitTestSuite contains tests for store initialization.

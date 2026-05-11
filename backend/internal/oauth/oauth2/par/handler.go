@@ -21,10 +21,10 @@ package par
 import (
 	"net/http"
 
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/clientauth"
-	oauth2const "github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/clientauth"
+	oauth2const "github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // parHandlerInterface defines the interface for handling PAR requests.

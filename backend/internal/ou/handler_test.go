@@ -30,10 +30,10 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/error/apierror"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/error/apierror"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
 )
 
 type OrganizationUnitHandlerTestSuite struct {

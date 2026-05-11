@@ -25,11 +25,11 @@ import (
 	"io"
 	"net/http"
 
-	authnprovidercm "github.com/asgardeo/thunder/internal/authnprovider/common"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	systemhttp "github.com/asgardeo/thunder/internal/system/http"
-	"github.com/asgardeo/thunder/internal/system/i18n/core"
-	"github.com/asgardeo/thunder/internal/system/log"
+	authnprovidercm "github.com/thunder-id/thunder-id/internal/authnprovider/common"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	systemhttp "github.com/thunder-id/thunder-id/internal/system/http"
+	"github.com/thunder-id/thunder-id/internal/system/i18n/core"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // restAuthnProvider is an authentication provider that communicates with an external service via REST.

@@ -26,16 +26,16 @@ import (
 
 	"encoding/json"
 
-	"github.com/asgardeo/thunder/internal/entity"
-	"github.com/asgardeo/thunder/internal/entitytype"
-	"github.com/asgardeo/thunder/internal/group"
-	oupkg "github.com/asgardeo/thunder/internal/ou"
-	resourcepkg "github.com/asgardeo/thunder/internal/resource"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/transaction"
-	"github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/entity"
+	"github.com/thunder-id/thunder-id/internal/entitytype"
+	"github.com/thunder-id/thunder-id/internal/group"
+	oupkg "github.com/thunder-id/thunder-id/internal/ou"
+	resourcepkg "github.com/thunder-id/thunder-id/internal/resource"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/transaction"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 const loggerComponentName = "RoleMgtService"

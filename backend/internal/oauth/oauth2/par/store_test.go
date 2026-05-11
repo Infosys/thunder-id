@@ -29,8 +29,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/model"
-	"github.com/asgardeo/thunder/tests/mocks/database/providermock"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/model"
+	"github.com/thunder-id/thunder-id/tests/mocks/database/providermock"
 )
 
 const (

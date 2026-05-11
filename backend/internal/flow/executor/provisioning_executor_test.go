@@ -19,7 +19,7 @@
 package executor
 
 import (
-	i18ncore "github.com/asgardeo/thunder/internal/system/i18n/core"
+	i18ncore "github.com/thunder-id/thunder-id/internal/system/i18n/core"
 
 	"encoding/json"
 	"testing"
@@ -29,19 +29,19 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	authncm "github.com/asgardeo/thunder/internal/authn/common"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/entitytype/model"
-	"github.com/asgardeo/thunder/internal/flow/common"
-	"github.com/asgardeo/thunder/internal/flow/core"
-	"github.com/asgardeo/thunder/internal/group"
-	"github.com/asgardeo/thunder/internal/role"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/tests/mocks/entityprovidermock"
-	"github.com/asgardeo/thunder/tests/mocks/entitytypemock"
-	"github.com/asgardeo/thunder/tests/mocks/flow/coremock"
-	"github.com/asgardeo/thunder/tests/mocks/groupmock"
-	"github.com/asgardeo/thunder/tests/mocks/rolemock"
+	authncm "github.com/thunder-id/thunder-id/internal/authn/common"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/entitytype/model"
+	"github.com/thunder-id/thunder-id/internal/flow/common"
+	"github.com/thunder-id/thunder-id/internal/flow/core"
+	"github.com/thunder-id/thunder-id/internal/group"
+	"github.com/thunder-id/thunder-id/internal/role"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/tests/mocks/entityprovidermock"
+	"github.com/thunder-id/thunder-id/tests/mocks/entitytypemock"
+	"github.com/thunder-id/thunder-id/tests/mocks/flow/coremock"
+	"github.com/thunder-id/thunder-id/tests/mocks/groupmock"
+	"github.com/thunder-id/thunder-id/tests/mocks/rolemock"
 )
 
 const (

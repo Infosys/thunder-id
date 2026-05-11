@@ -22,11 +22,11 @@ package dcr
 import (
 	"net/http"
 
-	"github.com/asgardeo/thunder/internal/application"
-	"github.com/asgardeo/thunder/internal/ou"
-	i18nmgt "github.com/asgardeo/thunder/internal/system/i18n/mgt"
-	"github.com/asgardeo/thunder/internal/system/middleware"
-	"github.com/asgardeo/thunder/internal/system/transaction"
+	"github.com/thunder-id/thunder-id/internal/application"
+	"github.com/thunder-id/thunder-id/internal/ou"
+	i18nmgt "github.com/thunder-id/thunder-id/internal/system/i18n/mgt"
+	"github.com/thunder-id/thunder-id/internal/system/middleware"
+	"github.com/thunder-id/thunder-id/internal/system/transaction"
 )
 
 // Initialize initializes the DCR service and registers its routes.

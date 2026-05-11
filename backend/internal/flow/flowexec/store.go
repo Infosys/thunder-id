@@ -25,8 +25,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/database/provider"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/database/provider"
 )
 
 // flowStoreInterface defines the methods for flow context storage operations.

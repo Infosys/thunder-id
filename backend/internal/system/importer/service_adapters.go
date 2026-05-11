@@ -23,19 +23,19 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/asgardeo/thunder/internal/entitytype"
-	"github.com/asgardeo/thunder/internal/group"
-	"github.com/asgardeo/thunder/internal/ou"
-	"github.com/asgardeo/thunder/internal/resource"
-	"github.com/asgardeo/thunder/internal/role"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/i18n/core"
-	i18nmgt "github.com/asgardeo/thunder/internal/system/i18n/mgt"
-	"github.com/asgardeo/thunder/internal/user"
+	"github.com/thunder-id/thunder-id/internal/entitytype"
+	"github.com/thunder-id/thunder-id/internal/group"
+	"github.com/thunder-id/thunder-id/internal/ou"
+	"github.com/thunder-id/thunder-id/internal/resource"
+	"github.com/thunder-id/thunder-id/internal/role"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/i18n/core"
+	i18nmgt "github.com/thunder-id/thunder-id/internal/system/i18n/mgt"
+	"github.com/thunder-id/thunder-id/internal/user"
 
-	layoutmgt "github.com/asgardeo/thunder/internal/design/layout/mgt"
-	thememgt "github.com/asgardeo/thunder/internal/design/theme/mgt"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
+	layoutmgt "github.com/thunder-id/thunder-id/internal/design/layout/mgt"
+	thememgt "github.com/thunder-id/thunder-id/internal/design/theme/mgt"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
 )
 
 type roleDeclarativeYAML struct {

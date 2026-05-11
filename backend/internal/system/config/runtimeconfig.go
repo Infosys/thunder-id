@@ -25,7 +25,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // ServerRuntime holds the runtime configuration for the server.

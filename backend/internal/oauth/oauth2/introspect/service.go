@@ -23,9 +23,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // TokenIntrospectionServiceInterface defines the interface for OAuth 2.0 token introspection.

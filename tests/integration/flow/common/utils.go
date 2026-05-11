@@ -26,7 +26,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/asgardeo/thunder/tests/integration/testutils"
+	"github.com/thunder-id/thunder-id/tests/integration/testutils"
 )
 
 const testServerURL = "https://localhost:8095"

@@ -19,15 +19,15 @@
 package granthandlers
 
 import (
-	"github.com/asgardeo/thunder/internal/attributecache"
-	rbacauthz "github.com/asgardeo/thunder/internal/authz"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/authz"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/constants"
-	"github.com/asgardeo/thunder/internal/oauth/oauth2/tokenservice"
-	"github.com/asgardeo/thunder/internal/ou"
-	"github.com/asgardeo/thunder/internal/resource"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
+	"github.com/thunder-id/thunder-id/internal/attributecache"
+	rbacauthz "github.com/thunder-id/thunder-id/internal/authz"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/authz"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/constants"
+	"github.com/thunder-id/thunder-id/internal/oauth/oauth2/tokenservice"
+	"github.com/thunder-id/thunder-id/internal/ou"
+	"github.com/thunder-id/thunder-id/internal/resource"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
 )
 
 // GrantHandlerProviderInterface defines the interface for the grant handler provider.

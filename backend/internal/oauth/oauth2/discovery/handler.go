@@ -21,8 +21,8 @@ package discovery
 import (
 	"net/http"
 
-	"github.com/asgardeo/thunder/internal/system/log"
-	sysutils "github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	sysutils "github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // DiscoveryHandlerInterface defines the interface for discovery handlers

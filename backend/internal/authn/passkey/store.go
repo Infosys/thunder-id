@@ -26,9 +26,9 @@ import (
 
 	"github.com/go-webauthn/webauthn/protocol/webauthncose"
 
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/database/provider"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/database/provider"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 // sessionStoreInterface defines the interface for WebAuthn session storage.

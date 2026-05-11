@@ -7,8 +7,8 @@ package rolemock
 import (
 	"context"
 
-	"github.com/asgardeo/thunder/internal/role"
 	mock "github.com/stretchr/testify/mock"
+	"github.com/thunder-id/thunder-id/internal/role"
 )
 
 // newRoleStoreInterfaceMock creates a new instance of roleStoreInterfaceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

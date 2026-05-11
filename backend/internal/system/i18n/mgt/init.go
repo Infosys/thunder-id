@@ -21,8 +21,8 @@ package mgt
 import (
 	"net/http"
 
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
-	"github.com/asgardeo/thunder/internal/system/middleware"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/middleware"
 )
 
 // Initialize initializes the i18n service and registers its routes.

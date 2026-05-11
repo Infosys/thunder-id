@@ -23,8 +23,8 @@ import (
 	"errors"
 	"regexp"
 
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 var ctxPlaceholderRegex = regexp.MustCompile(`\{\{ctx\((\w+)\)}}`)

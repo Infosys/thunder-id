@@ -19,8 +19,8 @@
 package oidc
 
 import (
-	authnoauth "github.com/asgardeo/thunder/internal/authn/oauth"
-	"github.com/asgardeo/thunder/internal/system/jose/jwt"
+	authnoauth "github.com/thunder-id/thunder-id/internal/authn/oauth"
+	"github.com/thunder-id/thunder-id/internal/system/jose/jwt"
 )
 
 // Initialize initializes the OIDC authentication service.

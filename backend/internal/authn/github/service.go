@@ -23,12 +23,12 @@ import (
 	"context"
 	"slices"
 
-	authncm "github.com/asgardeo/thunder/internal/authn/common"
-	authnoauth "github.com/asgardeo/thunder/internal/authn/oauth"
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	syshttp "github.com/asgardeo/thunder/internal/system/http"
-	"github.com/asgardeo/thunder/internal/system/log"
+	authncm "github.com/thunder-id/thunder-id/internal/authn/common"
+	authnoauth "github.com/thunder-id/thunder-id/internal/authn/oauth"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	syshttp "github.com/thunder-id/thunder-id/internal/system/http"
+	"github.com/thunder-id/thunder-id/internal/system/log"
 )
 
 const (

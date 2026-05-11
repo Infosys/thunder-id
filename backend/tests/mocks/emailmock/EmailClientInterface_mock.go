@@ -5,8 +5,8 @@
 package emailmock
 
 import (
-	"github.com/asgardeo/thunder/internal/system/email"
 	mock "github.com/stretchr/testify/mock"
+	"github.com/thunder-id/thunder-id/internal/system/email"
 )
 
 // NewEmailClientInterfaceMock creates a new instance of EmailClientInterfaceMock. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

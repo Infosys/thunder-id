@@ -56,7 +56,7 @@ linters-settings:
     sections:
       - standard
       - default
-      - prefix(github.com/asgardeo/thunder)
+      - prefix(github.com/thunder-id/thunder-id)
   govet:
     enable-all: true
     disable:
@@ -70,7 +70,7 @@ linters-settings:
     enabled-tags:
       - diagnostic
   goimports:
-    local-prefixes: github.com/asgardeo/thunder
+    local-prefixes: github.com/thunder-id/thunder-id
   misspell:
     locale: US
     ignore-words:

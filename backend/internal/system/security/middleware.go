@@ -22,9 +22,9 @@ import (
 	"errors"
 	"net/http"
 
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	"github.com/asgardeo/thunder/internal/system/error/apierror"
-	"github.com/asgardeo/thunder/internal/system/utils"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	"github.com/thunder-id/thunder-id/internal/system/error/apierror"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // middleware returns an HTTP middleware function that applies security checks to requests.

@@ -29,13 +29,13 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/asgardeo/thunder/internal/entitytype/model"
-	"github.com/asgardeo/thunder/internal/system/config"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/sysauthz"
-	"github.com/asgardeo/thunder/tests/mocks/consentmock"
-	"github.com/asgardeo/thunder/tests/mocks/oumock"
-	"github.com/asgardeo/thunder/tests/mocks/sysauthzmock"
+	"github.com/thunder-id/thunder-id/internal/entitytype/model"
+	"github.com/thunder-id/thunder-id/internal/system/config"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/sysauthz"
+	"github.com/thunder-id/thunder-id/tests/mocks/consentmock"
+	"github.com/thunder-id/thunder-id/tests/mocks/oumock"
+	"github.com/thunder-id/thunder-id/tests/mocks/sysauthzmock"
 )
 
 const (

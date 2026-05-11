@@ -19,9 +19,9 @@
 package oauth
 
 import (
-	"github.com/asgardeo/thunder/internal/entityprovider"
-	"github.com/asgardeo/thunder/internal/idp"
-	syshttp "github.com/asgardeo/thunder/internal/system/http"
+	"github.com/thunder-id/thunder-id/internal/entityprovider"
+	"github.com/thunder-id/thunder-id/internal/idp"
+	syshttp "github.com/thunder-id/thunder-id/internal/system/http"
 )
 
 // Initialize initializes the OAuth authentication service.

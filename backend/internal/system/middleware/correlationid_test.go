@@ -23,7 +23,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	sysContext "github.com/asgardeo/thunder/internal/system/context"
+	sysContext "github.com/thunder-id/thunder-id/internal/system/context"
 )
 
 func TestCorrelationIDMiddleware_GeneratesID(t *testing.T) {

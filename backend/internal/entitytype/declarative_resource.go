@@ -24,13 +24,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/asgardeo/thunder/internal/entitytype/model"
-	oupkg "github.com/asgardeo/thunder/internal/ou"
-	serverconst "github.com/asgardeo/thunder/internal/system/constants"
-	declarativeresource "github.com/asgardeo/thunder/internal/system/declarative_resource"
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/security"
+	"github.com/thunder-id/thunder-id/internal/entitytype/model"
+	oupkg "github.com/thunder-id/thunder-id/internal/ou"
+	serverconst "github.com/thunder-id/thunder-id/internal/system/constants"
+	declarativeresource "github.com/thunder-id/thunder-id/internal/system/declarative_resource"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/security"
 
 	"gopkg.in/yaml.v3"
 )

@@ -27,9 +27,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
-	dbmodel "github.com/asgardeo/thunder/internal/system/database/model"
+	dbmodel "github.com/thunder-id/thunder-id/internal/system/database/model"
 
-	"github.com/asgardeo/thunder/tests/mocks/database/providermock"
+	"github.com/thunder-id/thunder-id/tests/mocks/database/providermock"
 )
 
 type GroupStoreTestSuite struct {

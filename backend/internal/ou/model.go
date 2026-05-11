@@ -21,7 +21,7 @@ package ou
 import (
 	"context"
 
-	"github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 // OrganizationUnitBasic represents the basic information of an organization unit.

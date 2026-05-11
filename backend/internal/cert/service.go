@@ -23,10 +23,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/asgardeo/thunder/internal/system/error/serviceerror"
-	"github.com/asgardeo/thunder/internal/system/log"
-	"github.com/asgardeo/thunder/internal/system/transaction"
-	sysutils "github.com/asgardeo/thunder/internal/system/utils"
+	"github.com/thunder-id/thunder-id/internal/system/error/serviceerror"
+	"github.com/thunder-id/thunder-id/internal/system/log"
+	"github.com/thunder-id/thunder-id/internal/system/transaction"
+	sysutils "github.com/thunder-id/thunder-id/internal/system/utils"
 )
 
 const loggerComponentName = "CertificateService"
