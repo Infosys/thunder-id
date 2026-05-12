@@ -392,7 +392,7 @@ func (p *provisioningExecutor) buildMissingInputs(
 	promptOptionalCredentials := p.isPromptOptionalCredentialsEnabled(ctx)
 
 	for _, attr := range schemaAttrs {
-		if p.isAttrSatisfied(ctx, attr.Attribute) {
+		if p.isAttrSatisfied(ctx, attr.Attribute, attr.Credential) {
 			continue
 		}
 		nodeInp, inNodeInputs := nodeInputMap[attr.Attribute]
@@ -549,17 +549,21 @@ func (p *provisioningExecutor) storePresentedOptionalAttrs(
 	execResp.RuntimeData[common.RuntimeKeyPresentedOptionalAttrs] = strings.Join(ids, " ")
 }
 
-// isAttrSatisfied returns true if the attribute has a non-empty usable value in any context source.
-func (p *provisioningExecutor) isAttrSatisfied(ctx *core.NodeContext, attr string) bool {
+// isAttrSatisfied returns true if the attribute has a non-empty usable value.
+// Credential attrs are satisfied only by UserInputs or RuntimeData.
+// Non-credential attrs also fall back to AuthenticatedUser.Attributes.
+func (p *provisioningExecutor) isAttrSatisfied(ctx *core.NodeContext, attr string, credential bool) bool {
 	if val, ok := ctx.UserInputs[attr]; ok && val != "" {
 		return true
 	}
 	if val, ok := ctx.RuntimeData[attr]; ok && val != "" {
 		return true
 	}
-	if val, ok := ctx.AuthenticatedUser.Attributes[attr]; ok {
-		if strVal, ok := val.(string); ok && strVal != "" {
-			return true
+	if !credential {
+		if val, ok := ctx.AuthenticatedUser.Attributes[attr]; ok {
+			if strVal, ok := val.(string); ok && strVal != "" {
+				return true
+			}
 		}
 	}
 	return false
@@ -568,7 +572,7 @@ func (p *provisioningExecutor) isAttrSatisfied(ctx *core.NodeContext, attr strin
 // getAttributesForProvisioning collects user attributes from context in a single schema pass,
 // returning identifying (non-credential) and credential attributes as separate maps.
 // Schema is the whitelist for both maps.
-// Credential values are resolved from UserInputs then RuntimeData only.
+// Credential values are resolved from non-empty UserInputs then non-empty RuntimeData only.
 // Non-credential values additionally fall back to AuthenticatedUser.Attributes.
 func (p *provisioningExecutor) getAttributesForProvisioning(
 	ctx *core.NodeContext,
@@ -587,9 +591,9 @@ func (p *provisioningExecutor) getAttributesForProvisioning(
 
 	for _, a := range schemaAttrs {
 		if a.Credential {
-			if value, exists := ctx.UserInputs[a.Attribute]; exists {
+			if value, exists := ctx.UserInputs[a.Attribute]; exists && value != "" {
 				credentialAttrs[a.Attribute] = value
-			} else if runtimeValue, exists := ctx.RuntimeData[a.Attribute]; exists {
+			} else if runtimeValue, exists := ctx.RuntimeData[a.Attribute]; exists && runtimeValue != "" {
 				credentialAttrs[a.Attribute] = runtimeValue
 			}
 		} else {

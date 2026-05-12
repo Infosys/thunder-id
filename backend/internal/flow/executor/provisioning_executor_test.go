@@ -480,6 +480,52 @@ func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_Opt
 		"optional attr in node inputs must be collected")
 }
 
+func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_EmptyCredentialFallsBackToRuntime() {
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: attributePassword, Required: true, Credential: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		UserInputs: map[string]string{
+			attributePassword: "",
+		},
+		RuntimeData: map[string]string{
+			userTypeKey:       testUserType,
+			attributePassword: "runtime-secret",
+		},
+		NodeInputs: []common.Input{},
+	}
+
+	_, credentialAttrs, err := suite.executor.getAttributesForProvisioning(ctx)
+
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), "runtime-secret", credentialAttrs[attributePassword])
+}
+
+func (suite *ProvisioningExecutorTestSuite) TestGetAttributesForProvisioning_CredentialFromUserInputs() {
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: attributePassword, Required: true, Credential: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		UserInputs: map[string]string{
+			attributePassword: "input-secret",
+		},
+		RuntimeData: map[string]string{
+			userTypeKey:       testUserType,
+			attributePassword: "runtime-secret",
+		},
+		NodeInputs: []common.Input{},
+	}
+
+	_, credentialAttrs, err := suite.executor.getAttributesForProvisioning(ctx)
+
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), "input-secret", credentialAttrs[attributePassword])
+}
+
 // newExecutorWithNodeInputs creates a provisioningExecutor whose embedded ExecutorInterface
 // returns the given inputs from GetRequiredInputs.
 func (suite *ProvisioningExecutorTestSuite) newExecutorWithNodeInputs(inputs []common.Input) *provisioningExecutor {
@@ -2140,6 +2186,31 @@ func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_RequiredCreden
 
 	assert.True(suite.T(), result)
 	assert.Empty(suite.T(), execResp.Inputs)
+}
+
+func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_RequiredCredentialInAuthnAttrs_StillPrompted() {
+	suite.mockEntityTypeService.On("GetAttributes", mock.Anything, mock.Anything, testUserType, true, true, false).
+		Return([]model.AttributeInfo{
+			{Attribute: attributePassword, DisplayName: "Password", Required: true, Credential: true},
+		}, nil).Once()
+
+	ctx := &core.NodeContext{
+		ExecutionID: "flow-123",
+		UserInputs:  map[string]string{},
+		RuntimeData: map[string]string{userTypeKey: testUserType},
+		AuthenticatedUser: authncm.AuthenticatedUser{
+			Attributes: map[string]interface{}{
+				attributePassword: "profile-secret",
+			},
+		},
+	}
+	execResp := &common.ExecutorResponse{RuntimeData: make(map[string]string)}
+
+	result := suite.executor.HasRequiredInputs(ctx, execResp)
+
+	assert.False(suite.T(), result)
+	assert.Len(suite.T(), execResp.Inputs, 1)
+	assert.Equal(suite.T(), attributePassword, execResp.Inputs[0].Identifier)
 }
 
 func (suite *ProvisioningExecutorTestSuite) TestHasRequiredInputs_AllCredentials_PromptedByDefault() {
