@@ -425,6 +425,7 @@ jobs:
       - name: 🎭 Install Playwright Browsers
         working-directory: tests/e2e
         run: npx playwright install --with-deps chromium
+        timeout-minutes: 5
 
       - name: 🔍 Verify Services Before Tests
         shell: pwsh

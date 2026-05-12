@@ -33,6 +33,7 @@ jobs:
     name: 🔒 Security Audit
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -117,6 +118,7 @@ jobs:
     name: 🔎 Dependency Review
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: write
@@ -137,6 +139,7 @@ jobs:
     name: 🔍 Verify Mock Files
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -173,6 +176,7 @@ jobs:
     needs: dependency-guard
     if: ${{ always() && (needs.dependency-guard.result == 'success' || needs.dependency-guard.result == 'skipped') && (github.event_name == 'pull_request' || github.event_name == 'merge_group') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -231,6 +235,7 @@ jobs:
     needs: dependency-guard
     if: ${{ always() && (needs.dependency-guard.result == 'success' || needs.dependency-guard.result == 'skipped') && (github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || github.event_name == 'merge_group') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -322,6 +327,7 @@ jobs:
     needs: dependency-guard
     if: ${{ always() && (needs.dependency-guard.result == 'success' || needs.dependency-guard.result == 'skipped') && (github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || github.event_name == 'merge_group') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -396,6 +402,7 @@ jobs:
     needs: test-frontend
     if: always() && needs.test-frontend.result == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -441,6 +448,7 @@ jobs:
     needs: dependency-guard
     if: ${{ always() && (needs.dependency-guard.result == 'success' || needs.dependency-guard.result == 'skipped') && (github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || github.event_name == 'merge_group') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -476,6 +484,7 @@ jobs:
     needs: build
     if: ${{ always() && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     strategy:
       matrix:
         database: [sqlite, postgres, redis]
@@ -575,6 +584,7 @@ jobs:
     needs: [build, build_samples]
     if: ${{ always() && needs.build.result == 'success' && needs.build_samples.result == 'success' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -756,9 +766,17 @@ jobs:
         run: npm ci
         working-directory: tests/e2e
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: Install Playwright System Dependencies
+        run: npx playwright install-deps
         working-directory: tests/e2e
+        timeout-minutes: 5
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      - name: Install Playwright Browsers
+        run: npx playwright install
+        working-directory: tests/e2e
+        timeout-minutes: 5
 
       - name: Run Playwright tests
         run: npx playwright test
@@ -793,6 +811,7 @@ jobs:
     name: 🔍 Detect PowerShell Changes
     if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     outputs:
       should-run: ${{ steps.filter.outputs.powershell }}
     steps:
@@ -817,6 +836,7 @@ jobs:
     name: 🔍 Detect Documentation Changes
     if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     outputs:
       should-run: ${{ steps.filter.outputs.docs }}
     steps:
@@ -844,6 +864,7 @@ jobs:
     needs: [dependency-guard, detect-docs-changes]
     if: ${{ always() && (needs.dependency-guard.result == 'success' || needs.dependency-guard.result == 'skipped') && needs.detect-docs-changes.outputs.should-run == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
