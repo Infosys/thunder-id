@@ -51,7 +51,7 @@ func NewRuntimeCryptoService(
 }
 
 func (s *runtimeCryptoService) Encrypt(
-	ctx context.Context, keyRef kmprovider.KeyRef, params cryptolab.AlgorithmParams, content []byte,
+	ctx context.Context, keyRef *kmprovider.KeyRef, params cryptolab.AlgorithmParams, content []byte,
 ) ([]byte, *cryptolab.CryptoDetails, error) {
 	switch params.Algorithm {
 	case cryptolab.AlgorithmAESGCM:
@@ -61,13 +61,19 @@ func (s *runtimeCryptoService) Encrypt(
 		encrypted, err := s.cfgService.Encrypt(ctx, content)
 		return encrypted, nil, err
 	case cryptolab.AlgorithmRSAOAEP256:
-		rsaPub, err := s.getRSAPublicKey(keyRef)
+		if keyRef == nil {
+			return nil, nil, errors.New("keyRef required for RSA-OAEP-256")
+		}
+		rsaPub, err := s.getRSAPublicKey(*keyRef)
 		if err != nil {
 			return nil, nil, err
 		}
 		return cryptolab.Encrypt(rsaPub, &params, content)
 	case cryptolab.AlgorithmECDHES, cryptolab.AlgorithmECDHESA128KW, cryptolab.AlgorithmECDHESA256KW:
-		ecPub, err := s.getECPublicKey(keyRef)
+		if keyRef == nil {
+			return nil, nil, errors.New("keyRef required for ECDH-ES")
+		}
+		ecPub, err := s.getECPublicKey(*keyRef)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -78,7 +84,7 @@ func (s *runtimeCryptoService) Encrypt(
 }
 
 func (s *runtimeCryptoService) Decrypt(
-	ctx context.Context, keyRef kmprovider.KeyRef, params cryptolab.AlgorithmParams, content []byte,
+	ctx context.Context, keyRef *kmprovider.KeyRef, params cryptolab.AlgorithmParams, content []byte,
 ) ([]byte, error) {
 	switch params.Algorithm {
 	case cryptolab.AlgorithmAESGCM:
@@ -87,13 +93,19 @@ func (s *runtimeCryptoService) Decrypt(
 		}
 		return s.cfgService.Decrypt(ctx, content)
 	case cryptolab.AlgorithmRSAOAEP256:
-		rsaPriv, err := s.getRSAPrivateKey(keyRef)
+		if keyRef == nil {
+			return nil, errors.New("keyRef required for RSA-OAEP-256")
+		}
+		rsaPriv, err := s.getRSAPrivateKey(*keyRef)
 		if err != nil {
 			return nil, err
 		}
 		return cryptolab.Decrypt(rsaPriv, params, content)
 	case cryptolab.AlgorithmECDHES, cryptolab.AlgorithmECDHESA128KW, cryptolab.AlgorithmECDHESA256KW:
-		ecPriv, err := s.getECPrivateKey(keyRef)
+		if keyRef == nil {
+			return nil, errors.New("keyRef required for ECDH-ES")
+		}
+		ecPriv, err := s.getECPrivateKey(*keyRef)
 		if err != nil {
 			return nil, err
 		}
@@ -124,7 +136,7 @@ func (s *runtimeCryptoService) GetPublicKeys(
 }
 
 func (s *runtimeCryptoService) GetTLSMaterial(
-	_ context.Context, _ kmprovider.KeyRef,
+	_ context.Context, _ *kmprovider.KeyRef,
 ) (*kmprovider.TLSMaterial, error) {
 	return nil, errors.New("not implemented")
 }

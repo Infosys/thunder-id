@@ -46,9 +46,7 @@ func newTestSvcErr() *serviceerror.ServiceError {
 	}
 }
 
-// TestEncrypt_RSAOAEP256_Success covers line 68: the success path for RSA-OAEP-256
-// when the PKI service returns a valid RSA certificate.
-func TestEncrypt_RSAOAEP256_Success(t *testing.T) {
+func TestEncrypt_RSAOAEP256_SuccessViaConstructor(t *testing.T) {
 	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	require.NoError(t, err)
 
@@ -68,15 +66,13 @@ func TestEncrypt_RSAOAEP256_Success(t *testing.T) {
 		},
 	}
 	wrappedCEK, details, err := svc.Encrypt(
-		context.Background(), kmprovider.KeyRef{KeyID: testKeyID}, params, nil,
+		context.Background(), &kmprovider.KeyRef{KeyID: testKeyID}, params, nil,
 	)
 	require.NoError(t, err)
 	assert.NotEmpty(t, wrappedCEK)
 	assert.NotNil(t, details)
 }
 
-// TestEncrypt_RSAOAEP256_GetPublicKeyError covers the error return path inside the
-// RSA-OAEP-256 case (lines 65-66) when the PKI service cannot find the key.
 func TestEncrypt_RSAOAEP256_GetPublicKeyError(t *testing.T) {
 	pkiMock := pkimock.NewPKIServiceInterfaceMock(t)
 	pkiMock.EXPECT().
@@ -91,13 +87,11 @@ func TestEncrypt_RSAOAEP256_GetPublicKeyError(t *testing.T) {
 			ContentEncryptionAlgorithm: "A256GCM",
 		},
 	}
-	_, _, err := svc.Encrypt(context.Background(), kmprovider.KeyRef{KeyID: testKeyID}, params, []byte("data"))
+	_, _, err := svc.Encrypt(context.Background(), &kmprovider.KeyRef{KeyID: testKeyID}, params, []byte("data"))
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), testKeyID)
 }
 
-// TestEncrypt_ECDHES_Success covers the ECDH-ES algorithm case (lines 69-70, 74) on the
-// happy path where the PKI service returns a valid EC certificate.
 func TestEncrypt_ECDHES_Success(t *testing.T) {
 	ecKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	require.NoError(t, err)
@@ -117,13 +111,11 @@ func TestEncrypt_ECDHES_Success(t *testing.T) {
 			ContentEncryptionAlgorithm: "A128GCM",
 		},
 	}
-	_, details, err := svc.Encrypt(context.Background(), kmprovider.KeyRef{KeyID: testKeyID}, params, nil)
+	_, details, err := svc.Encrypt(context.Background(), &kmprovider.KeyRef{KeyID: testKeyID}, params, nil)
 	require.NoError(t, err)
 	assert.NotNil(t, details)
 }
 
-// TestEncrypt_ECDHES_GetPublicKeyError covers the error return path inside the
-// ECDH-ES case (lines 71-72) when the PKI service cannot find the key.
 func TestEncrypt_ECDHES_GetPublicKeyError(t *testing.T) {
 	pkiMock := pkimock.NewPKIServiceInterfaceMock(t)
 	pkiMock.EXPECT().
@@ -138,18 +130,305 @@ func TestEncrypt_ECDHES_GetPublicKeyError(t *testing.T) {
 			ContentEncryptionAlgorithm: "A128GCM",
 		},
 	}
-	_, _, err := svc.Encrypt(context.Background(), kmprovider.KeyRef{KeyID: testKeyID}, params, nil)
+	_, _, err := svc.Encrypt(context.Background(), &kmprovider.KeyRef{KeyID: testKeyID}, params, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), testKeyID)
 }
 
-// TestEncrypt_UnsupportedAlgorithm covers the default branch (lines 75-76) for an
-// algorithm that is not handled by the switch.
 func TestEncrypt_UnsupportedAlgorithm(t *testing.T) {
 	svc := NewRuntimeCryptoService(nil, nil)
 
 	params := cryptolab.AlgorithmParams{Algorithm: "UNSUPPORTED"}
-	_, _, err := svc.Encrypt(context.Background(), kmprovider.KeyRef{KeyID: testKeyID}, params, []byte("data"))
+	_, _, err := svc.Encrypt(context.Background(), &kmprovider.KeyRef{KeyID: testKeyID}, params, []byte("data"))
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "unsupported algorithm")
+}
+
+// Encrypt – RSA-OAEP-256
+func TestEncrypt_RSAOAEP256_NilKeyRef(t *testing.T) {
+	svc := &runtimeCryptoService{pkiService: pkimock.NewPKIServiceInterfaceMock(t)}
+	params := cryptolab.AlgorithmParams{
+		Algorithm:  cryptolab.AlgorithmRSAOAEP256,
+		RSAOAEP256: cryptolab.RSAOAEP256Params{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	_, _, err := svc.Encrypt(context.Background(), nil, params, []byte("data"))
+	assert.EqualError(t, err, "keyRef required for RSA-OAEP-256")
+}
+
+func TestEncrypt_RSAOAEP256_PKIError(t *testing.T) {
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetX509Certificate("key1").Return(nil, &serviceerror.InternalServerError)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{
+		Algorithm:  cryptolab.AlgorithmRSAOAEP256,
+		RSAOAEP256: cryptolab.RSAOAEP256Params{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	_, _, err := svc.Encrypt(context.Background(), keyRef, params, []byte("data"))
+	assert.Error(t, err)
+}
+
+func TestEncrypt_RSAOAEP256_NonRSAPublicKey(t *testing.T) {
+	ecKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	require.NoError(t, err)
+
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetX509Certificate("key1").Return(
+		&x509.Certificate{PublicKey: &ecKey.PublicKey}, nil,
+	)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{
+		Algorithm:  cryptolab.AlgorithmRSAOAEP256,
+		RSAOAEP256: cryptolab.RSAOAEP256Params{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	_, _, err = svc.Encrypt(context.Background(), keyRef, params, []byte("data"))
+	assert.EqualError(t, err, "key is not an RSA public key")
+}
+
+func TestEncrypt_RSAOAEP256_Success(t *testing.T) {
+	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	require.NoError(t, err)
+
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetX509Certificate("key1").Return(
+		&x509.Certificate{PublicKey: &rsaKey.PublicKey}, nil,
+	)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{
+		Algorithm:  cryptolab.AlgorithmRSAOAEP256,
+		RSAOAEP256: cryptolab.RSAOAEP256Params{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	ciphertext, details, err := svc.Encrypt(context.Background(), keyRef, params, nil)
+	require.NoError(t, err)
+	assert.NotEmpty(t, ciphertext)
+	require.NotNil(t, details)
+	assert.NotEmpty(t, details.CEK)
+}
+
+// Encrypt – ECDH-ES variants
+func TestEncrypt_ECDHES_NilKeyRef(t *testing.T) {
+	svc := &runtimeCryptoService{pkiService: pkimock.NewPKIServiceInterfaceMock(t)}
+	params := cryptolab.AlgorithmParams{
+		Algorithm: cryptolab.AlgorithmECDHES,
+		ECDHES:    cryptolab.ECDHESParams{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	_, _, err := svc.Encrypt(context.Background(), nil, params, []byte("data"))
+	assert.EqualError(t, err, "keyRef required for ECDH-ES")
+}
+
+func TestEncrypt_ECDHES_PKIError(t *testing.T) {
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetX509Certificate("key1").Return(nil, &serviceerror.InternalServerError)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{
+		Algorithm: cryptolab.AlgorithmECDHES,
+		ECDHES:    cryptolab.ECDHESParams{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	_, _, err := svc.Encrypt(context.Background(), keyRef, params, []byte("data"))
+	assert.Error(t, err)
+}
+
+func TestEncrypt_ECDHES_NonECPublicKey(t *testing.T) {
+	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	require.NoError(t, err)
+
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetX509Certificate("key1").Return(
+		&x509.Certificate{PublicKey: &rsaKey.PublicKey}, nil,
+	)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{
+		Algorithm: cryptolab.AlgorithmECDHES,
+		ECDHES:    cryptolab.ECDHESParams{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	_, _, err = svc.Encrypt(context.Background(), keyRef, params, nil)
+	assert.EqualError(t, err, "key is not an EC public key")
+}
+
+func TestEncrypt_ECDHESVariants_Success(t *testing.T) {
+	algorithms := []cryptolab.Algorithm{
+		cryptolab.AlgorithmECDHES,
+		cryptolab.AlgorithmECDHESA128KW,
+		cryptolab.AlgorithmECDHESA256KW,
+	}
+
+	for _, alg := range algorithms {
+		t.Run(string(alg), func(t *testing.T) {
+			ecKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+			require.NoError(t, err)
+
+			pki := pkimock.NewPKIServiceInterfaceMock(t)
+			pki.EXPECT().GetX509Certificate("key1").Return(
+				&x509.Certificate{PublicKey: &ecKey.PublicKey}, nil,
+			)
+
+			svc := &runtimeCryptoService{pkiService: pki}
+			keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+			params := cryptolab.AlgorithmParams{
+				Algorithm: alg,
+				ECDHES:    cryptolab.ECDHESParams{ContentEncryptionAlgorithm: "A256GCM"},
+			}
+
+			_, details, err := svc.Encrypt(context.Background(), keyRef, params, nil)
+			require.NoError(t, err)
+			require.NotNil(t, details)
+			assert.NotNil(t, details.EPK)
+			assert.NotEmpty(t, details.CEK)
+		})
+	}
+}
+
+// Decrypt – RSA-OAEP-256
+func TestDecrypt_RSAOAEP256_NilKeyRef(t *testing.T) {
+	svc := &runtimeCryptoService{pkiService: pkimock.NewPKIServiceInterfaceMock(t)}
+	params := cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmRSAOAEP256}
+
+	_, err := svc.Decrypt(context.Background(), nil, params, []byte("ciphertext"))
+	assert.EqualError(t, err, "keyRef required for RSA-OAEP-256")
+}
+
+func TestDecrypt_RSAOAEP256_PKIError(t *testing.T) {
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetPrivateKey("key1").Return(nil, &serviceerror.InternalServerError)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmRSAOAEP256}
+
+	_, err := svc.Decrypt(context.Background(), keyRef, params, []byte("ciphertext"))
+	assert.Error(t, err)
+}
+
+func TestDecrypt_RSAOAEP256_NonRSAPrivateKey(t *testing.T) {
+	ecKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	require.NoError(t, err)
+
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetPrivateKey("key1").Return(ecKey, nil)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmRSAOAEP256}
+
+	_, err = svc.Decrypt(context.Background(), keyRef, params, []byte("ciphertext"))
+	assert.EqualError(t, err, "key is not an RSA private key")
+}
+
+func TestDecrypt_RSAOAEP256_RoundTrip(t *testing.T) {
+	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	require.NoError(t, err)
+
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetX509Certificate("key1").Return(
+		&x509.Certificate{PublicKey: &rsaKey.PublicKey}, nil,
+	)
+	pki.EXPECT().GetPrivateKey("key1").Return(rsaKey, nil)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	encParams := cryptolab.AlgorithmParams{
+		Algorithm:  cryptolab.AlgorithmRSAOAEP256,
+		RSAOAEP256: cryptolab.RSAOAEP256Params{ContentEncryptionAlgorithm: "A256GCM"},
+	}
+
+	wrappedCEK, details, err := svc.Encrypt(context.Background(), keyRef, encParams, nil)
+	require.NoError(t, err)
+	require.NotNil(t, details)
+
+	decParams := cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmRSAOAEP256}
+	unwrappedCEK, err := svc.Decrypt(context.Background(), keyRef, decParams, wrappedCEK)
+	require.NoError(t, err)
+	assert.Equal(t, details.CEK, unwrappedCEK)
+}
+
+// Decrypt – ECDH-ES variants
+func TestDecrypt_ECDHES_NilKeyRef(t *testing.T) {
+	svc := &runtimeCryptoService{pkiService: pkimock.NewPKIServiceInterfaceMock(t)}
+	params := cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmECDHES}
+
+	_, err := svc.Decrypt(context.Background(), nil, params, nil)
+	assert.EqualError(t, err, "keyRef required for ECDH-ES")
+}
+
+func TestDecrypt_ECDHES_PKIError(t *testing.T) {
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetPrivateKey("key1").Return(nil, &serviceerror.InternalServerError)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmECDHES}
+
+	_, err := svc.Decrypt(context.Background(), keyRef, params, nil)
+	assert.Error(t, err)
+}
+
+func TestDecrypt_ECDHES_NonECPrivateKey(t *testing.T) {
+	rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	require.NoError(t, err)
+
+	pki := pkimock.NewPKIServiceInterfaceMock(t)
+	pki.EXPECT().GetPrivateKey("key1").Return(rsaKey, nil)
+
+	svc := &runtimeCryptoService{pkiService: pki}
+	keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+	params := cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmECDHES}
+
+	_, err = svc.Decrypt(context.Background(), keyRef, params, nil)
+	assert.EqualError(t, err, "key is not an EC private key")
+}
+
+func TestDecrypt_ECDHESVariants_RoundTrip(t *testing.T) {
+	algorithms := []cryptolab.Algorithm{
+		cryptolab.AlgorithmECDHES,
+		cryptolab.AlgorithmECDHESA128KW,
+		cryptolab.AlgorithmECDHESA256KW,
+	}
+
+	for _, alg := range algorithms {
+		t.Run(string(alg), func(t *testing.T) {
+			ecKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+			require.NoError(t, err)
+
+			pki := pkimock.NewPKIServiceInterfaceMock(t)
+			pki.EXPECT().GetX509Certificate("key1").Return(
+				&x509.Certificate{PublicKey: &ecKey.PublicKey}, nil,
+			)
+			pki.EXPECT().GetPrivateKey("key1").Return(ecKey, nil)
+
+			svc := &runtimeCryptoService{pkiService: pki}
+			keyRef := &kmprovider.KeyRef{KeyID: "key1"}
+
+			encParams := cryptolab.AlgorithmParams{
+				Algorithm: alg,
+				ECDHES:    cryptolab.ECDHESParams{ContentEncryptionAlgorithm: "A256GCM"},
+			}
+			ciphertext, encDetails, err := svc.Encrypt(context.Background(), keyRef, encParams, nil)
+			require.NoError(t, err)
+			require.NotNil(t, encDetails)
+
+			decParams := cryptolab.AlgorithmParams{
+				Algorithm: alg,
+				ECDHES:    cryptolab.ECDHESParams{EPK: encDetails.EPK, ContentEncryptionAlgorithm: "A256GCM"},
+			}
+			derivedCEK, err := svc.Decrypt(context.Background(), keyRef, decParams, ciphertext)
+			require.NoError(t, err)
+			assert.Equal(t, encDetails.CEK, derivedCEK)
+		})
+	}
 }

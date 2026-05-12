@@ -601,7 +601,7 @@ func TestEncryptedContext_SensitiveFieldsHidden(t *testing.T) {
 		RunAndReturn(
 			func(
 				ctx context.Context,
-				_ kmprovider.KeyRef,
+				_ *kmprovider.KeyRef,
 				_ cryptolab.AlgorithmParams,
 				content []byte) ([]byte, *cryptolab.CryptoDetails, error) {
 				encrypted, encErr := cfgSvc.Encrypt(ctx, content)
@@ -670,7 +670,7 @@ func TestEncryptDecryptRoundTrip_AllFieldsPreserved(t *testing.T) {
 	mockCrypto.EXPECT().Encrypt(mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		RunAndReturn(func(
 			ctx context.Context,
-			_ kmprovider.KeyRef,
+			_ *kmprovider.KeyRef,
 			_ cryptolab.AlgorithmParams,
 			content []byte) ([]byte, *cryptolab.CryptoDetails, error) {
 			encrypted, encErr := cfgSvc.Encrypt(ctx, content)
@@ -679,7 +679,7 @@ func TestEncryptDecryptRoundTrip_AllFieldsPreserved(t *testing.T) {
 	mockCrypto.EXPECT().Decrypt(mock.Anything, mock.Anything, mock.Anything, mock.Anything).
 		RunAndReturn(func(
 			ctx context.Context,
-			_ kmprovider.KeyRef,
+			_ *kmprovider.KeyRef,
 			_ cryptolab.AlgorithmParams, content []byte) ([]byte, error) {
 			return cfgSvc.Decrypt(ctx, content)
 		})
@@ -716,7 +716,7 @@ func TestEncryptDecryptRoundTrip_AllFieldsPreserved(t *testing.T) {
 
 	// Step 2: Simulate getFlowContext decrypt path — call through the mock so RunAndReturn fires
 	decryptedBytes, err := mockCrypto.Decrypt(
-		context.Background(), kmprovider.KeyRef{},
+		context.Background(), nil,
 		cryptolab.AlgorithmParams{Algorithm: cryptolab.AlgorithmAESGCM},
 		[]byte(encryptedEngineCtx.Context))
 	assert.NoError(t, err)
@@ -1266,4 +1266,58 @@ func TestReadEntitySystemAttributes_InvalidJSON(t *testing.T) {
 func TestReadEntitySystemAttributes_Valid(t *testing.T) {
 	e := &entityprovider.Entity{SystemAttributes: []byte(`{"name":"X"}`)}
 	assert.Equal(t, map[string]interface{}{"name": "X"}, readEntitySystemAttributes(e))
+}
+
+func TestEncryptEngineContext_SerializeError(t *testing.T) {
+	// Triggers line 478: FromEngineContext fails because Attributes contains an
+	// unjsonifiable value (channel), wrapping the error with "failed to serialize engine context".
+	engineCtx := &EngineContext{
+		AuthenticatedUser: authncm.AuthenticatedUser{
+			Attributes: map[string]interface{}{
+				"bad": make(chan int), // channels cannot be marshaled to JSON
+			},
+		},
+		UserInputs:       map[string]string{},
+		RuntimeData:      map[string]string{},
+		ExecutionHistory: map[string]*common.NodeExecutionRecord{},
+	}
+
+	svc := &flowExecService{}
+	_, err := svc.encryptEngineContext(context.Background(), engineCtx)
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to serialize engine context")
+}
+
+func TestEncryptEngineContext_EncryptError(t *testing.T) {
+	// Triggers line 483: serialization succeeds but cryptoSvc.Encrypt returns an error,
+	// wrapping it with "failed to encrypt context".
+	testConfig := &config.Config{}
+	_ = config.InitializeServerRuntime("/tmp/test", testConfig)
+
+	flowFactory, _ := core.Initialize(cache.Initialize())
+	testGraph := flowFactory.CreateGraph("test-graph-id", common.FlowTypeAuthentication)
+
+	engineCtx := &EngineContext{
+		ExecutionID: "exec-id",
+		AppID:       "app-id",
+		FlowType:    common.FlowTypeAuthentication,
+		AuthenticatedUser: authncm.AuthenticatedUser{
+			Attributes: map[string]interface{}{},
+		},
+		UserInputs:       map[string]string{},
+		RuntimeData:      map[string]string{},
+		ExecutionHistory: map[string]*common.NodeExecutionRecord{},
+		Graph:            testGraph,
+	}
+
+	mockCrypto := cryptomock.NewRuntimeCryptoProviderMock(t)
+	mockCrypto.EXPECT().Encrypt(mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+		Return(nil, nil, errors.New("encryption backend unavailable"))
+
+	svc := &flowExecService{cryptoSvc: mockCrypto}
+	_, err := svc.encryptEngineContext(context.Background(), engineCtx)
+
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "failed to encrypt context")
 }
