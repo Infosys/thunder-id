@@ -167,6 +167,17 @@ jobs:
           echo "✅ Updated README.md curl URL to $VERSION"
           grep 'docker-compose.yml' README.md
 
+          echo "📝 Updating get-thunderid.mdx docker-compose curl URL to $VERSION"
+
+          # Update the docker-compose.yml curl URL in docs
+          sed -i -E "s|(https://raw\.githubusercontent\.com/thunder-id/thunderid/)v[0-9]+\.[0-9]+\.[0-9]+(/.+docker-compose\.yml)|\1${VERSION}\2|g" docs/content/guides/getting-started/get-thunderid.mdx
+
+          echo "✅ Updated get-thunderid.mdx curl URL to $VERSION"
+          grep -q "thunder-id/thunderid/${VERSION}/install/quick-start/docker-compose.yml" docs/content/guides/getting-started/get-thunderid.mdx || {
+            echo "❌ Error: Failed to update get-thunderid.mdx docker-compose URL to $VERSION"
+            exit 1
+          }
+
       - name: 📝 Update Helm and Sample App Versions
         if: ${{ steps.get_version.outputs.use_existing_version != 'true' }}
         run: |
@@ -212,6 +223,7 @@ jobs:
           git add \
             version.txt \
             README.md \
+            docs/content/guides/getting-started/get-thunderid.mdx \
             install/helm/Chart.yaml \
             install/openchoreo/helm/Chart.yaml \
             install/openchoreo/helm/charts/${PRODUCT_NAME_LOWER}-oc-componenttype/Chart.yaml \
