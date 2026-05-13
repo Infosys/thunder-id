@@ -575,7 +575,7 @@ export default function ReleasesPage() {
           <div className="releases-hero-actions">
             <a
               className="button button--primary"
-              href={repository?.releasesUrl ?? 'https://github.com/asgardeo/thunder/releases'}
+              href={repository?.releasesUrl ?? 'https://github.com/thunder-id/thunderid/releases'}
               target="_blank"
               rel="noreferrer"
             >
@@ -626,7 +626,7 @@ export default function ReleasesPage() {
         <section className="releases-footer-note">
           <p>
             Source:{' '}
-            <Link to={repository?.url ?? 'https://github.com/asgardeo/thunder'}>
+            <Link to={repository?.url ?? 'https://github.com/thunder-id/thunderid'}>
               {repository?.fullName ?? siteConfig.title}
             </Link>
             {data?.generatedAt ? ` · Updated ${new Date(data.generatedAt).toLocaleString('en-US')}` : ''}

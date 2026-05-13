@@ -25,7 +25,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const OUTPUT_FILE = join(__dirname, '..', 'static', 'data', 'releases.json');
-const GITHUB_REPO = 'asgardeo/thunder';
+const GITHUB_REPO = 'thunder-id/thunderid';
 const GITHUB_REPO_API_URL = `https://api.github.com/repos/${GITHUB_REPO}`;
 const GITHUB_RELEASES_API_URL = `${GITHUB_REPO_API_URL}/releases`;
 
@@ -126,7 +126,7 @@ function sanitizeReleaseBody(body = '', releaseTag) {
 
   sanitized = sanitized.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
     if (!src.startsWith('http')) {
-      const githubRawUrl = `https://raw.githubusercontent.com/asgardeo/thunder/${releaseTag}/${src}`;
+      const githubRawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO}/${releaseTag}/${src}`;
 
       return `![${alt}](${githubRawUrl})`;
     }
@@ -360,25 +360,45 @@ async function buildChangelogData(repository, releases) {
   };
 }
 
+function buildFallbackChangelogData() {
+  return {
+    generatedAt: new Date().toISOString(),
+    latestRelease: null,
+    releases: [],
+    repository: {
+      description: 'Thunder release notes and downloads.',
+      forks: 0,
+      fullName: GITHUB_REPO,
+      stars: 0,
+      subscribers: 0,
+      url: `https://github.com/${GITHUB_REPO}`,
+      releasesUrl: `https://github.com/${GITHUB_REPO}/releases`,
+    },
+  };
+}
+
+function writeChangelogData(changelogData) {
+  mkdirSync(dirname(OUTPUT_FILE), {recursive: true});
+  writeFileSync(OUTPUT_FILE, `${JSON.stringify(changelogData, null, 2)}\n`, 'utf8');
+}
+
 async function generate() {
   try {
     const [repository, releases] = await Promise.all([fetchRepository(), fetchReleases()]);
-
-    if (!repository && releases.length === 0) {
-      if (existsSync(OUTPUT_FILE)) {
-        logger.warn(`Skipping changelog data update because GitHub data is unavailable. Preserving ${OUTPUT_FILE}.`);
-
-        return;
-      }
-    }
-
     const changelogData = await buildChangelogData(repository, releases);
 
-    mkdirSync(dirname(OUTPUT_FILE), {recursive: true});
-    writeFileSync(OUTPUT_FILE, `${JSON.stringify(changelogData, null, 2)}\n`, 'utf8');
+    writeChangelogData(changelogData);
     logger.info(`Changelog data generated at ${OUTPUT_FILE}`);
   } catch (error) {
-    logger.error('❌ Failed to generate changelog — keeping existing file:', error);
+    if (existsSync(OUTPUT_FILE)) {
+      logger.error('❌ Failed to generate changelog — keeping existing file:', error);
+
+      return;
+    }
+
+    logger.error('❌ Failed to generate changelog — writing fallback release data:', error);
+    writeChangelogData(buildFallbackChangelogData());
+    logger.info(`Fallback changelog data generated at ${OUTPUT_FILE}`);
   }
 }
 
