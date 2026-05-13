@@ -454,6 +454,16 @@ type LayoutConfig struct {
 	Store string `yaml:"store" json:"store"`
 }
 
+// TranslationConfig holds the translation service configuration.
+type TranslationConfig struct {
+	// Store defines the storage mode for translations.
+	// Valid values: "mutable", "declarative", "composite" (hybrid mode)
+	// If not specified, falls back to global DeclarativeResources.Enabled setting:
+	//   - If DeclarativeResources.Enabled = true: behaves as "declarative"
+	//   - If DeclarativeResources.Enabled = false: behaves as "mutable"
+	Store string `yaml:"store" json:"store"`
+}
+
 // PasskeyConfig holds the passkey configuration details.
 type PasskeyConfig struct {
 	AllowedOrigins []string `yaml:"allowed_origins" json:"allowed_origins"`
@@ -646,6 +656,7 @@ type Config struct {
 	Role                 RoleConfig             `yaml:"role" json:"role"`
 	Theme                ThemeConfig            `yaml:"theme" json:"theme"`
 	Layout               LayoutConfig           `yaml:"layout" json:"layout"`
+	Translation          TranslationConfig      `yaml:"translation" json:"translation"`
 	Email                EmailConfig            `yaml:"email" json:"email"`
 	Consent              ConsentConfig          `yaml:"consent" json:"consent"`
 }
