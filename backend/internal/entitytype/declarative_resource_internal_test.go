@@ -228,11 +228,12 @@ func TestValidateEntityTypeWrapper(t *testing.T) {
 // TestParseToEntityTypeDTO tests the parseToEntityTypeDTO function.
 func TestParseToEntityTypeDTO(t *testing.T) {
 	testCases := []struct {
-		name    string
-		yaml    string
-		want    *EntityType
-		wantErr bool
-		errMsg  string
+		name           string
+		yaml           string
+		want           *EntityType
+		wantErr        bool
+		errMsg         string
+		validateSchema bool
 	}{
 		{
 			name: "valid YAML",
@@ -287,6 +288,38 @@ schema: '{invalid json}'
 			wantErr: true,
 			errMsg:  "schema field contains invalid JSON",
 		},
+		{
+			name: "schema as YAML object",
+			yaml: `
+id: schema-1
+name: Test Schema
+organization_unit_id: ou-1
+schema:
+  username:
+    type: string
+    required: true
+`,
+			want: &EntityType{
+				ID:   "schema-1",
+				Name: "Test Schema",
+				OUID: "ou-1",
+				Schema: json.RawMessage(
+					`{"username":{"required":true,"type":"string"}}`,
+				),
+			},
+			wantErr:        false,
+			validateSchema: true,
+		},
+		{
+			name: "missing schema field",
+			yaml: `
+id: schema-1
+name: Test Schema
+organization_unit_id: ou-1
+`,
+			wantErr: true,
+			errMsg:  "schema field contains invalid JSON",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -304,6 +337,14 @@ schema: '{invalid json}'
 				assert.Equal(t, tc.want.Name, result.Name)
 				assert.Equal(t, tc.want.OUID, result.OUID)
 				assert.Equal(t, tc.want.AllowSelfRegistration, result.AllowSelfRegistration)
+				if tc.validateSchema {
+					var got, expected map[string]interface{}
+					assert.NoError(t, json.Unmarshal(result.Schema, &got), "result schema must decode to JSON object")
+					assert.NoError(t, json.Unmarshal(tc.want.Schema, &expected),
+						"test fixture schema must decode to JSON object")
+					assert.Equal(t, expected, got, "decoded schema must deep-equal the expected value")
+					assert.NotEqual(t, map[string]interface{}{}, got, "schema must not decode to an empty object")
+				}
 			}
 		})
 	}

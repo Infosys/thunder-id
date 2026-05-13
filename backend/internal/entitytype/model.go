@@ -129,5 +129,5 @@ type EntityTypeRequestWithID struct {
 	OUID                  string            `yaml:"organization_unit_id"`
 	AllowSelfRegistration bool              `yaml:"allow_self_registration,omitempty"`
 	SystemAttributes      *SystemAttributes `yaml:"system_attributes,omitempty"`
-	Schema                string            `yaml:"schema"`
+	Schema                interface{}       `yaml:"schema"`
 }

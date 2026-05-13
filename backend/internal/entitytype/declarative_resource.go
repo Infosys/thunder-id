@@ -177,7 +177,19 @@ func parseToEntityTypeDTO(data []byte) (*EntityType, error) {
 		return nil, err
 	}
 
-	schemaBytes := []byte(schemaRequest.Schema)
+	var schemaBytes []byte
+	if schemaRequest.Schema != nil {
+		switch v := schemaRequest.Schema.(type) {
+		case string:
+			schemaBytes = []byte(v)
+		default:
+			var err error
+			schemaBytes, err = json.Marshal(v)
+			if err != nil {
+				return nil, fmt.Errorf("failed to marshal schema to JSON: %w", err)
+			}
+		}
+	}
 	if !json.Valid(schemaBytes) {
 		return nil, fmt.Errorf("schema field contains invalid JSON")
 	}
@@ -197,7 +209,7 @@ func parseToEntityTypeDTO(data []byte) (*EntityType, error) {
 		OUID:                  schemaRequest.OUID,
 		AllowSelfRegistration: schemaRequest.AllowSelfRegistration,
 		SystemAttributes:      schemaRequest.SystemAttributes,
-		Schema:                []byte(schemaRequest.Schema),
+		Schema:                schemaBytes,
 	}
 
 	return schemaDTO, nil
