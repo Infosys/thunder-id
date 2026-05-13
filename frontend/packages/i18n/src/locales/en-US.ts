@@ -3016,6 +3016,29 @@ const translations = {
     'feature_status.new': 'New',
     'feature_status.coming_soon': 'Coming Soon',
   },
+
+  // ============================================================================
+  // How Solution Works Illustration - Shared illustration translations
+  // ============================================================================
+  howSolutionWorksIllustration: {
+    validateTest: 'Validate / Test',
+    configureProject: 'Configure Project',
+    run: 'Run',
+    console: '{{productName}} Console',
+    runtimeLocal: '{{productName}} Runtime Local',
+    projectEnvConfigs: 'Project + ENV Configs',
+    runtimeHosted: '{{productName}} Runtime Hosted',
+    saveExport: 'Save & Export',
+    import: 'Import',
+    runInProduction: 'Run {{productName}} in Production',
+    runtimeComponentsOnly: '(with required runtime components only)',
+    designConfigure: 'Design / Configure {{productName}} Project',
+    designComponents: '(with design components)',
+    commandProduction: './start.sh project-foo.yml --env production.env',
+    commandStart: './start.sh',
+    adminApp: 'Admin App',
+    loginApp: 'Login App',
+  },
 } as const;
 
 export default translations;

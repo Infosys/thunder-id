@@ -163,9 +163,9 @@ export const DefaultThemeConfig = {
 
           return {
             color: '#ffffff',
-            background: 'linear-gradient(90deg, #3a87ed 0%, #008e8f 100%)',
+            background: 'linear-gradient(90deg, #3a87ed 0%, #6b85a8 100%)',
             '&:hover': {
-              background: 'linear-gradient(90deg, #2d78e0 0%, #007a7b 100%)',
+              background: 'linear-gradient(90deg, #3a87ed 0%, #6b85a8 100%)',
             },
           };
         },
