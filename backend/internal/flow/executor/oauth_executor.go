@@ -129,12 +129,6 @@ func (o *oAuthExecutor) Execute(ctx *core.NodeContext) (*common.ExecutorResponse
 		RuntimeData:    make(map[string]string),
 	}
 
-	if ctx.FlowType != common.FlowTypeAuthentication && ctx.FlowType != common.FlowTypeRegistration {
-		logger.Warn("Invalid flow type for OAuth executor. Skipping execution")
-		execResp.Status = common.ExecComplete
-		return execResp, nil
-	}
-
 	if !o.HasRequiredInputs(ctx, execResp) {
 		logger.Debug("Required inputs for OAuth authentication executor is not provided")
 		err := o.BuildAuthorizeFlow(ctx, execResp)
