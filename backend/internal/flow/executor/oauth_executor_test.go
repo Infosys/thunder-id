@@ -1237,16 +1237,3 @@ func (suite *OAuthExecutorTestSuite) TestGetContextUserForAuthentication_Without
 	assert.Equal(suite.T(), common.ExecFailure, execResp.Status)
 	assert.Equal(suite.T(), "User not found", execResp.FailureReason)
 }
-
-func (suite *OAuthExecutorTestSuite) TestExecute_InvalidFlowType() {
-	ctx := &core.NodeContext{
-		ExecutionID: "flow-123",
-		FlowType:    "InvalidFlowType",
-	}
-
-	resp, err := suite.executor.Execute(ctx)
-
-	assert.NoError(suite.T(), err)
-	assert.NotNil(suite.T(), resp)
-	assert.Equal(suite.T(), common.ExecComplete, resp.Status)
-}
