@@ -232,6 +232,9 @@ jobs:
     if: ${{ always() && (needs.dependency-guard.result == 'success' || needs.dependency-guard.result == 'skipped') && (github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || github.event_name == 'merge_group') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -299,9 +302,11 @@ jobs:
           if-no-files-found: error
 
       - name: 📊 Upload Unit Test Coverage Report to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
+        timeout-minutes: 5
+        continue-on-error: true
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           files: backend/coverage_unit.out
           disable_search: true
           flags: backend-unit
@@ -401,6 +406,9 @@ jobs:
     if: always() && needs.test-frontend.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -422,9 +430,11 @@ jobs:
           cat coverage/console/console-coverage-shard-*/lcov.info > coverage/console-merged-lcov.info
 
       - name: 📊 Upload `@thunderid/console` Unit Test Coverage Report to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
+        timeout-minutes: 5
+        continue-on-error: true
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           files: coverage/console-merged-lcov.info
           disable_search: true
           flags: frontend-apps-console-unit
@@ -432,9 +442,11 @@ jobs:
           fail_ci_if_error: false
 
       - name: 📊 Upload `@thunderid/gate` Unit Test Coverage Report to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
+        timeout-minutes: 5
+        continue-on-error: true
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           files: coverage/gate/lcov.info
           disable_search: true
           flags: frontend-apps-gate-unit
@@ -482,6 +494,9 @@ jobs:
     if: ${{ always() && needs.build.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       matrix:
         database: [sqlite, postgres, redis]
@@ -554,9 +569,11 @@ jobs:
           coverage-enabled: true
 
       - name: 📊 Upload Integration Test Coverage Report to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
+        timeout-minutes: 5
+        continue-on-error: true
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           files: target/coverage_integration.out
           disable_search: true
           flags: backend-integration-${{ matrix.database }}
