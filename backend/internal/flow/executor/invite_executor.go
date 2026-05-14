@@ -107,6 +107,7 @@ func (e *inviteExecutor) executeGenerate(ctx *core.NodeContext) (*common.Executo
 
 	execResp.ForwardedData[common.ForwardedDataKeyTemplateData] = map[string]interface{}{
 		"inviteLink": inviteLink,
+		"appName":    ctx.Application.Name,
 	}
 
 	if ctx.FlowType == common.FlowTypeUserOnboarding {
