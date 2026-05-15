@@ -1,6 +1,6 @@
 {
   "name": "@thunderid/nextjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Next.js SDK for ThunderID",
   "keywords": [
     "thunderid",
