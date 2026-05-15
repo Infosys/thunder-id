@@ -1,6 +1,6 @@
 {
   "name": "@thunderid/nuxt",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Nuxt SDK for ThunderID",
   "keywords": [
     "thunderid",
@@ -70,10 +70,10 @@
     "typecheck": "nuxt module-build prepare && vue-tsc --noEmit"
   },
   "dependencies": {
+    "@nuxt/kit": "3.16.2",
     "@thunderid/browser": "workspace:^",
     "@thunderid/node": "workspace:^",
     "@thunderid/vue": "workspace:^",
-    "@nuxt/kit": "3.16.2",
     "defu": "6.1.5",
     "jose": "catalog:"
   },
