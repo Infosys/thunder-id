@@ -1,6 +1,6 @@
 {
   "name": "@thunderid/javascript",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "JavaScript Ecosystem SDK for ThunderID",
   "keywords": [
     "thunderid",
@@ -45,9 +45,9 @@
     "typecheck": "tsc -p tsconfig.lib.json"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
     "@thunderid/eslint-plugin": "workspace:^",
     "@thunderid/prettier-config": "workspace:^",
+    "@types/node": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
@@ -56,8 +56,8 @@
     "vitest": "catalog:"
   },
   "dependencies": {
-    "tslib": "catalog:",
-    "jose": "catalog:"
+    "jose": "catalog:",
+    "tslib": "catalog:"
   },
   "publishConfig": {
     "access": "public"
