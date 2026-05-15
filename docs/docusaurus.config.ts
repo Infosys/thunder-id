@@ -114,6 +114,8 @@ const config: Config = {
     },
   },
 
+  clientModules: [require.resolve('./src/clientModules/tabTocSync.js')],
+
   plugins: [webpackPlugin, personaPlugin],
 
   presets: [
@@ -172,21 +174,11 @@ const config: Config = {
       },
       items: [
         {
-          type: 'custom-PersonaDropdown',
-          position: 'left',
-        },
-        {
           type: 'docSidebar',
           sidebarId: 'docsSidebar',
           position: 'right',
           label: 'Docs',
           className: 'navbar__link--docs',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'useCasesSidebar',
-          position: 'right',
-          label: 'Use Cases',
         },
         {
           type: 'doc',
