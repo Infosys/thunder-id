@@ -58,15 +58,14 @@ runs:
       shell: bash
       run: |
         cd sdks/${{ inputs.sdk }}
-        VERSION=$(pnpm version ${{ inputs.bump-type }} --no-git-tag-version)
-        echo "version=${VERSION#v}" >> $GITHUB_OUTPUT
-        echo "✅ Bumped @thunderid/${{ inputs.sdk }} to ${VERSION#v}"
+        pnpm version ${{ inputs.bump-type }} --no-git-tag-version
+        VERSION=$(node -p "require('./package.json').version")
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "✅ Bumped @thunderid/${{ inputs.sdk }} to ${VERSION}"
 
     - name: 🔨 Build
       shell: bash
-      run: |
-        cd sdks/${{ inputs.sdk }}
-        pnpm build
+      run: pnpm build:sdks
 
     - name: 🧪 Test
       shell: bash
