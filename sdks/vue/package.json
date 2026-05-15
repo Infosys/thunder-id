@@ -1,6 +1,6 @@
 {
   "name": "@thunderid/vue",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Vue SDK for ThunderID",
   "keywords": [
     "thunderid",
@@ -44,14 +44,14 @@
     "typecheck": "tsc -p tsconfig.lib.json"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "@vue/test-utils": "2.4.6",
     "@thunderid/eslint-plugin": "workspace:^",
     "@thunderid/prettier-config": "workspace:^",
-    "rolldown": "catalog:",
+    "@types/node": "catalog:",
+    "@vue/test-utils": "2.4.6",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
+    "rolldown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vue": "3.5.30"
