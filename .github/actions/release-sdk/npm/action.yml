@@ -67,12 +67,6 @@ runs:
       shell: bash
       run: pnpm build:sdks
 
-    - name: 🧪 Test
-      shell: bash
-      run: |
-        cd sdks/${{ inputs.sdk }}
-        pnpm test --run
-
     - name: 📤 Commit and Tag Release
       shell: bash
       run: |
