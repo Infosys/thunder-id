@@ -18,21 +18,21 @@ import {
 
 # React Quickstart
 
-This is **step 4** of the getting started sequence. By the end you will have a working React app with sign-in and sign-out powered by ThunderID.
+This is **step 4** of the getting started sequence. By the end you will have a working React app with sign-in and sign-out powered by <ProductName />.
 
 <TutorialHero>
 
 ## What You Will Learn
 
 <TutorialHeroItem icon={<Boxes />}>Create a new React app using Vite</TutorialHeroItem>
-<TutorialHeroItem icon={<Package />}>Install the <code>@asgardeo/react</code> package</TutorialHeroItem>
+<TutorialHeroItem icon={<Package />}>Install the <code>@thunderid/react</code> package</TutorialHeroItem>
 <TutorialHeroItem icon={<LogIn />}>Add working sign-in and sign-out</TutorialHeroItem>
 <TutorialHeroItem icon={<BookOpen />}>Display the signed-in user's profile</TutorialHeroItem>
 
 ## Prerequisites
 
 <TutorialHeroItem icon={<Clock />}>About 15 minutes</TutorialHeroItem>
-<TutorialHeroItem icon={<Server />}>Steps 1–3 complete: ThunderID running, an application registered, and a sign-in flow built. Start at [Get ThunderID](../../getting-started/get-thunderid) if you haven't already.</TutorialHeroItem>
+<TutorialHeroItem icon={<Server />}>Steps 1–3 complete: <ProductName /> running, an application registered, and a sign-in flow built. Start at <a href="../../getting-started/get-thunderid">Get <ProductName /></a> if you haven't already.</TutorialHeroItem>
 <TutorialHeroItem icon={<Hexagon />}>Node.js installed on your system</TutorialHeroItem>
 <TutorialHeroItem icon={<Package />}>npm, yarn, or pnpm</TutorialHeroItem>
 <TutorialHeroItem icon={<FileCode />}>Your preferred code editor</TutorialHeroItem>
@@ -114,50 +114,49 @@ Create your new React app using Vite:
   </CodeBlock>
 </CodeGroup>
 
-## Install @asgardeo/react
+## Install @thunderid/react
 
-<ProductName /> uses the Asgardeo React SDK for authentication. Install it in your project:
+Install the <ProductName /> React SDK in your project:
 
 <CodeGroup>
   <CodeBlock lang="bash" label="npm">
-    npm install @asgardeo/react
+    npm install @thunderid/react
   </CodeBlock>
 
   <CodeBlock lang="bash" label="Yarn">
-    yarn add @asgardeo/react
+    yarn add @thunderid/react
   </CodeBlock>
 
   <CodeBlock lang="bash" label="pnpm">
-    pnpm add @asgardeo/react
+    pnpm add @thunderid/react
   </CodeBlock>
 
   <CodeBlock lang="bash" label="Bun">
-    bun add @asgardeo/react
+    bun add @thunderid/react
   </CodeBlock>
 </CodeGroup>
 
-## Add AsgardeoProvider to Your App
+## Add ThunderIDProvider to Your App
 
-The `<AsgardeoProvider />` serves as a context provider for the SDK. Integrate it by wrapping your root component.
+The `<ThunderIDProvider />` serves as a context provider for the SDK. Integrate it by wrapping your root component.
 
 Update the `main.jsx` file with the following:
 
 ```jsx title="src/main.jsx" showLineNumbers
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { AsgardeoProvider } from '@asgardeo/react'
+import { ThunderIDProvider } from '@thunderid/react'
 import App from './App.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AsgardeoProvider
+    <ThunderIDProvider
       clientId="<your-client-id>"
       baseUrl="https://localhost:8090"
-      platform="AsgardeoV2"
     >
       <App />
-    </AsgardeoProvider>
+    </ThunderIDProvider>
   </StrictMode>
 )
 ```
@@ -172,11 +171,10 @@ Replace `<your-client-id>` with the Client ID you obtained when creating the app
 |-----------|-------------|
 | `clientId` | The Client ID from your <ProductName /> application |
 | `baseUrl` | Your <ProductName /> instance URL (e.g., `https://localhost:8090`) |
-| `platform` | Must be set to `"AsgardeoV2"` for <ProductName /> |
 
 ## Add Sign-In and Sign-Out
 
-The Asgardeo React SDK provides `SignInButton` and `SignOutButton` components along with `SignedIn` and `SignedOut` components for conditional rendering.
+The <ProductName /> React SDK provides `SignInButton` and `SignOutButton` components along with `SignedIn` and `SignedOut` components for conditional rendering.
 
 Replace the content of `App.jsx` with:
 
@@ -187,7 +185,7 @@ import {
   SignInButton,
   SignOutButton,
   Loading
-} from '@asgardeo/react'
+} from '@thunderid/react'
 import './App.css'
 
 function App() {
@@ -225,7 +223,7 @@ import {
   SignOutButton,
   Loading,
   User
-} from '@asgardeo/react'
+} from '@thunderid/react'
 import './App.css'
 
 function App() {
@@ -296,7 +294,7 @@ Start the development server:
 Visit your app at [http://localhost:5173](http://localhost:5173)
 
 :::tip Success
-You should see the sign-in button. Click it — you'll be redirected to the ThunderID-hosted sign-in page, authenticate with the test user you created in step 2, and land back in your app with the user profile displayed.
+You should see the sign-in button. Click it — you'll be redirected to the <ProductName />-hosted sign-in page, authenticate with the test user you created in step 2, and land back in your app with the user profile displayed.
 :::
 
 </Stepper>
@@ -305,7 +303,7 @@ You should see the sign-in button. Click it — you'll be redirected to the Thun
 
 You have completed the full getting started sequence:
 
-1. ✅ ThunderID running
+1. ✅ <ProductName /> running
 2. ✅ Application registered with a Client ID
 3. ✅ Sign-in flow built in the Flow Designer
 4. ✅ React app integrated and authenticating

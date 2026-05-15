@@ -1,21 +1,21 @@
 ---
-title: useAsgardeo()
-description: Access the Asgardeo authentication context
+title: useThunderID()
+description: Access the authentication context
 ---
 
-# `useAsgardeo()`
+# `useThunderID()`
 
-The `useAsgardeo` hook provides access to the Asgardeo authentication context in React applications. It allows you to retrieve authentication state, user information, and other context values managed by the `AsgardeoProvider`.
+The `useThunderID` hook provides access to the ThunderID authentication context in React applications. It allows you to retrieve authentication state, user information, and other context values managed by the `ThunderIDProvider`.
 
 ## Usage
 
 Import and use the hook in any functional component to access authentication data:
 
 ```jsx title="src/MyComponent.jsx" showLineNumbers
-import { useAsgardeo } from '@asgardeo/react'
+import { useThunderID } from '@thunderid/react'
 
 function MyComponent() {
-  const { isSignedIn, user, signIn, signOut } = useAsgardeo()
+  const { isSignedIn, user, signIn, signOut } = useThunderID()
 
   return (
     <div>
@@ -35,12 +35,12 @@ export default MyComponent
 ```
 
 :::note
-This hook must be used inside a component rendered within `AsgardeoProvider`. Otherwise, it will throw an error.
+This hook must be used inside a component rendered within `ThunderIDProvider`. Otherwise, it will throw an error.
 :::
 
 ## Return Values
 
-The hook returns all properties and methods provided by `AsgardeoContextProps`:
+The hook returns all properties and methods provided by `ThunderIDContextProps`:
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
@@ -53,8 +53,8 @@ The hook returns all properties and methods provided by `AsgardeoContextProps`:
 
 ## Error Handling
 
-If `useAsgardeo` is called outside of an `AsgardeoProvider`, it throws:
+If `useThunderID` is called outside of a `ThunderIDProvider`, it throws:
 
 ```text
-Error: useAsgardeo must be used within an AsgardeoProvider
+Error: useThunderID must be used within a ThunderIDProvider
 ```
