@@ -38,7 +38,9 @@ runs:
     - name: 📦 Set up pnpm
       uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
       with:
-        version: ${{ inputs.pnpm-version }}
+        run_install: false
+        # TODO: Explicitly use the `latest` version once the action supports it without issues. For now, we specify the version to avoid breaking changes.
+        # version: ${{ inputs.pnpm-version }}
 
     - name: ⚙️ Set up Node.js
       uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
