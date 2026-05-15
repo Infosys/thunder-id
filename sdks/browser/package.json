@@ -1,6 +1,6 @@
 {
   "name": "@thunderid/browser",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Browser runtime SDK for ThunderID",
   "keywords": [
     "thunderid",
@@ -43,16 +43,16 @@
     "typecheck": "tsc -p tsconfig.lib.json"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
-    "@vitest/browser-playwright": "catalog:",
     "@thunderid/eslint-plugin": "workspace:^",
     "@thunderid/prettier-config": "workspace:^",
-    "rolldown": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
     "eslint": "catalog:",
     "jsdom": "catalog:",
     "playwright": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
+    "rolldown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
