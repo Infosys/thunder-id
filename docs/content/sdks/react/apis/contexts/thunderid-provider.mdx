@@ -1,40 +1,39 @@
 ---
-title: <AsgardeoProvider />
-description: Root context provider for Asgardeo authentication
+title: <ThunderIDProvider />
+description: Root context provider for authentication
 ---
 
-# `<AsgardeoProvider />`
+# `<ThunderIDProvider />`
 
-The `AsgardeoProvider` is the root context provider component that configures the `@asgardeo/react` and provides <ProductName /> context to your entire React application. It must wrap your application to enable authentication features.
+The `ThunderIDProvider` is the root context provider component that configures `@thunderid/react` and provides <ProductName /> context to your entire React application. It must wrap your application to enable authentication features.
 
 ## Overview
 
-The `AsgardeoProvider` initializes the Asgardeo authentication client, manages authentication state, and provides context to child components through React Context. It handles token management, user sessions, organization switching, and branding preferences automatically.
+The `ThunderIDProvider` initializes the ThunderID authentication client, manages authentication state, and provides context to child components through React Context. It handles token management, user sessions, organization switching, and branding preferences automatically.
 
 ## Usage
 
-The `AsgardeoProvider` must be used at the root of your React application to ensure that all components have access to authentication features.
+The `ThunderIDProvider` must be used at the root of your React application to ensure that all components have access to authentication features.
 
 ### Basic Usage
 
-A minimal setup involves wrapping your root component with the `AsgardeoProvider` and providing the necessary `clientId`, `baseUrl` & `platform` props.
+A minimal setup involves wrapping your root component with the `ThunderIDProvider` and providing the necessary `clientId` and `baseUrl` props.
 
 ```jsx title="src/main.jsx" showLineNumbers
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { AsgardeoProvider } from '@asgardeo/react'
+import { ThunderIDProvider } from '@thunderid/react'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AsgardeoProvider
+    <ThunderIDProvider
       clientId="<your-app-client-id>"
       baseUrl="https://localhost:8090"
-      platform="AsgardeoV2"
     >
       <App />
-    </AsgardeoProvider>
+    </ThunderIDProvider>
   </StrictMode>
 )
 ```
@@ -55,11 +54,11 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { AsgardeoProvider } from '@asgardeo/react'
+import { ThunderIDProvider } from '@thunderid/react'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AsgardeoProvider
+    <ThunderIDProvider
       clientId="<your-app-client-id>"
       baseUrl="https://localhost:8090"
       scopes="openid profile internal_login internal_organization_create internal_organization_view internal_organization_update internal_organization_delete"
@@ -92,22 +91,21 @@ createRoot(document.getElementById('root')).render(
           },
         },
       }}
-      platform="AsgardeoV2"
     >
       <App />
-    </AsgardeoProvider>
+    </ThunderIDProvider>
   </StrictMode>
 )
 ```
 
 ## Props
 
-The `AsgardeoProvider` component accepts the following props:
+The `ThunderIDProvider` component accepts the following props:
 
 | Prop | Type | Required | Description |
 | :--- | :--- | :---: | :--- |
 | `clientId` | `string` | ✅ | Client ID of your application |
-| `baseUrl` | `string` | ✅ | The base URL of the Asgardeo tenant (e.g., `https://api.asgardeo.io/t/abc-org`) |
+| `baseUrl` | `string` | ✅ | The base URL of the <ProductName /> instance (e.g., `https://localhost:8090`) |
 | `clientSecret` | `string` | ❌ | Client secret of your application. Only required for confidential clients. |
 | `scopes` | `string \| string[]` | ❌ | OpenID Connect Scopes to request during the sign-in. Defaults to `'openid profile internal_login'` if not provided. |
 | `storage` | `sessionStorage` or `localStorage \| webWorker` | ❌ | Storage mechanism to use for session management. Defaults to `sessionStorage` if not provided. |
@@ -116,7 +114,6 @@ The `AsgardeoProvider` component accepts the following props:
 | `afterSignOutUrl` | `string` | ❌ | URL to redirect to after sign-out process is completed. |
 | `tokenValidation` | `TokenValidation` | ❌ | Configuration for token validation. |
 | `preferences` | `Preferences` | ❌ | Customization options for UI behavior, internationalization (i18n) and styling. |
-| `platform` | `string` | ✅ | Platform version to use (e.g., "AsgardeoV2") |
 
 ### TokenValidation
 
@@ -141,7 +138,7 @@ The `preferences` prop allows you to customize the UI components provided by the
 
 | Property | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `inheritFromBranding` | `boolean` | `true` | Whether to inherit theme from Asgardeo organization/application branding |
+| `inheritFromBranding` | `boolean` | `true` | Whether to inherit theme from <ProductName /> organization/application branding |
 | `mode` | `light \| dark \| system` | `'system'` | Theme mode. `'system'` follows user's OS preference |
 | `overrides` | `ThemeConfig` | `{}` | Custom theme overrides for colors, typography, spacing, etc. |
 

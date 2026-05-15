@@ -74,8 +74,19 @@ runs:
         git config --local user.email "${{ inputs.git-user-email }}"
         git add sdks/${{ inputs.sdk }}/package.json
         git diff --cached --quiet || git commit -m "[Release] @thunderid/${{ inputs.sdk }}@${{ steps.bump.outputs.version }}"
-        git pull --rebase origin ${{ github.ref_name }}
-        git push origin HEAD:${{ github.ref_name }}
+        MAX_RETRIES=5
+        for i in $(seq 1 $MAX_RETRIES); do
+          git pull --rebase origin ${{ github.ref_name }}
+          if git push origin HEAD:${{ github.ref_name }}; then
+            break
+          fi
+          if [ "$i" -eq "$MAX_RETRIES" ]; then
+            echo "❌ Push failed after $MAX_RETRIES attempts"
+            exit 1
+          fi
+          echo "⚠️ Push rejected (remote moved), retrying in $((i * 3))s (attempt $((i + 1))/$MAX_RETRIES)..."
+          sleep $((i * 3))
+        done
         TAG=$(echo "${{ inputs.tag-convention }}" | sed 's/{sdk}/${{ inputs.sdk }}/g; s/{version}/${{ steps.bump.outputs.version }}/g')
         git tag "$TAG"
         git push origin "$TAG"
