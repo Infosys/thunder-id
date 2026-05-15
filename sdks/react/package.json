@@ -1,6 +1,6 @@
 {
   "name": "@thunderid/react",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "React SDK for ThunderID",
   "keywords": [
     "thunderid",
@@ -44,15 +44,15 @@
   },
   "devDependencies": {
     "@testing-library/react": "catalog:",
-    "@types/node": "catalog:",
-    "@types/react": "catalog:",
     "@thunderid/eslint-plugin": "workspace:^",
     "@thunderid/prettier-config": "workspace:^",
-    "rolldown": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "react": "catalog:",
     "rimraf": "catalog:",
+    "rolldown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
@@ -61,9 +61,9 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "@thunderid/browser": "workspace:^",
     "@emotion/css": "catalog:",
     "@floating-ui/react": "catalog:",
+    "@thunderid/browser": "workspace:^",
     "@types/react-dom": "catalog:",
     "dompurify": "catalog:",
     "react-dom": "catalog:",
