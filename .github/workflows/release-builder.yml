@@ -656,13 +656,13 @@ jobs:
 
           # Update the react-sdk sample app package.json
           cd samples/apps/react-sdk-sample
-          pnpm version $NEXT_VERSION --no-git-tag-version --allow-same-version
+          pnpm version $NEXT_VERSION --no-git-tag-version --no-git-checks --allow-same-version
 
           cd "$GITHUB_WORKSPACE"
 
           # Update the react-api-based sample app package.json
           cd samples/apps/react-api-based-sample
-          pnpm version $NEXT_VERSION --no-git-tag-version --allow-same-version
+          pnpm version $NEXT_VERSION --no-git-tag-version --no-git-checks --allow-same-version
 
           cd "$GITHUB_WORKSPACE"
           echo "✅ Updated sample apps version to $NEXT_VERSION"
