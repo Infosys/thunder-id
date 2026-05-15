@@ -1,6 +1,6 @@
 {
   "name": "@thunderid/express",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Express.js SDK for ThunderID",
   "keywords": [
     "thunderid",
@@ -43,9 +43,9 @@
     "typecheck": "tsc -p tsconfig.lib.json"
   },
   "devDependencies": {
-    "@types/node": "22.15.3",
     "@thunderid/eslint-plugin": "workspace:^",
     "@thunderid/prettier-config": "workspace:^",
+    "@types/node": "22.15.3",
     "eslint": "catalog:",
     "express": "5.2.1",
     "prettier": "catalog:",
