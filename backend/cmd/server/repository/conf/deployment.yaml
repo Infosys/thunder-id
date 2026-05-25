@@ -2,10 +2,10 @@ server:
   hostname: "localhost"
   port: 8090
 
-gate_client:
-  login_path: "/login"
-  scheme: "http"
-  port: 3000
+# gate_client:
+#   login_path: "/login"
+#   scheme: "http"
+#   port: 3000
 
 tls:
   min_version: "1.2"
@@ -87,5 +87,5 @@ authn_provider:
     ida_kyc_exchange_version: "1.0"
   
 consent:
-  enabled: true
+  enabled: false
   base_url: "http://localhost:4000/api/v1"

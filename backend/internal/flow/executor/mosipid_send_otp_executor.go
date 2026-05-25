@@ -173,7 +173,6 @@ func buildAuthnMetadata(ctx *core.NodeContext) *authnprovider.AuthnMetadata {
 	}
 
 	metadata.AppMetadata["app_id"] = ctx.AppID
-	metadata.AppMetadata["transaction_id"] = ctx.FlowID
 
 	// Extract client IDs from InboundAuthConfig
 	var clientIDs []string

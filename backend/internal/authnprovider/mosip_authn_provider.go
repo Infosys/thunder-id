@@ -121,7 +121,7 @@ func NewMOSIPAuthnProvider(
 
 func (m *MOSIPAuthnProvider) SendOTP(ctx context.Context, identifiers map[string]interface{}, metadata *AuthnMetadata) (*SendOTPResult, *AuthnProviderError) {
 
-	transactionId, _ := metadata.AppMetadata["transaction_id"].(string)
+	transactionId := "1234567890"
 	individualId, ok := identifiers["username"].(string)
 	if !ok || individualId == "" {
 		return nil, NewError(ErrorCodeMissingOrInvalidIndividualID, "missing or invalid individual_id in identifiers", "missing or invalid individual_id in identifiers")
@@ -171,7 +171,7 @@ func (m *MOSIPAuthnProvider) Authenticate(ctx context.Context, identifiers map[s
 		Env:                    m.env,
 		ConsentObtained:        true,
 		IndividualID:           individualID,
-		TransactionID:          metadata.AppMetadata["transaction_id"].(string),
+		TransactionID:          "1234567890",
 		ClaimsMetadataRequired: &claimsMetadataRequired,
 	}
 
@@ -260,7 +260,7 @@ func (m *MOSIPAuthnProvider) GetAttributes(ctx context.Context, token string, re
 		ID:              m.idaKycExchangeID,
 		Version:         m.idaKycExchangeVersion,
 		RequestTime:     GetUTCDateTime(),
-		TransactionID:   metadata.AppMetadata["transaction_id"].(string),
+		TransactionID:   "1234567890",
 		KycToken:        kycToken,
 		ConsentObtained: consentedAttributes,
 		Locales:         m.locales,
