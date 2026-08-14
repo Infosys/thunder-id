@@ -70,6 +70,14 @@ type ActorProvider interface {
 	GetActorRoles(actorID string, groupIDs []string) ([]string, *common.ServiceError)
 }
 
+// LocalizedFieldProvider is an optional ActorProvider capability that resolves language-specific
+// values for an entity's display fields; fields with nothing to offer are absent from the result.
+type LocalizedFieldProvider interface {
+	ResolveLocalizedFields(
+		ctx context.Context, id string, fields []string, language string,
+	) map[string]string
+}
+
 // I18nProvider defines the interface for the i18n provider.
 type I18nProvider interface {
 	ResolveTranslations(

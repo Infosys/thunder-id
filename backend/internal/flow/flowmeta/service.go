@@ -102,6 +102,7 @@ func (fms *flowMetaService) GetFlowMetadata(
 
 	fms.populateDesignMetadata(ctx, metaType, id, ouID, response)
 	fms.populateI18nMetadata(ctx, response, lang, ns)
+	fms.injectLocalizedFields(ctx, response, id, lang)
 
 	fms.logger.Debug(ctx, "Successfully retrieved flow metadata",
 		log.String("type", string(metaType)),
@@ -286,4 +287,43 @@ func (fms *flowMetaService) populateI18nMetadata(
 	}
 
 	response.I18n.Languages = languages
+}
+
+// applicationI18nNamespace and applicationI18nKey mirror the i18n reference format applications
+// are keyed under so a resolved field lands where the Gate already expects to find it.
+const applicationI18nNamespace = "custom"
+
+func applicationI18nKey(id, field string) string {
+	return "app." + id + "." + field
+}
+
+// applicationLocalizedFields lists the application fields a provider may be asked to localize.
+var applicationLocalizedFields = []string{"name"}
+
+// injectLocalizedFields overrides application display fields with provider-supplied localized
+// values, when the configured ActorProvider supports it. A no-op for providers that don't.
+func (fms *flowMetaService) injectLocalizedFields(ctx context.Context, response *FlowMetadataResponse, id, lang string) {
+	resolver, ok := fms.actorProvider.(providers.LocalizedFieldProvider)
+	if !ok || response.Application == nil {
+		return
+	}
+
+	resolved := resolver.ResolveLocalizedFields(ctx, id, applicationLocalizedFields, lang)
+	if len(resolved) == 0 {
+		return
+	}
+
+	if response.I18n.Translations == nil {
+		response.I18n.Translations = make(map[string]map[string]string)
+	}
+	for field, value := range resolved {
+		if value == "" {
+			continue
+		}
+		if response.I18n.Translations[applicationI18nNamespace] == nil {
+			response.I18n.Translations[applicationI18nNamespace] = make(map[string]string)
+		}
+		response.I18n.Translations[applicationI18nNamespace][applicationI18nKey(id, field)] = value
+		response.I18n.TotalResults++
+	}
 }

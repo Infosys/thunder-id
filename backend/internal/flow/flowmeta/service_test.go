@@ -356,6 +356,83 @@ func (suite *FlowMetaServiceTestSuite) TestGetFlowMetadata_SystemFlow_NoTypeOrID
 	assert.Contains(suite.T(), result.I18n.Translations, "system")
 }
 
+// fakeLocalizedFieldProviderActorProvider embeds a real ActorProvider and adds the
+// LocalizedFieldProvider capability, so the existing ActorProvider behavior is untouched while
+// the new interface is exercised in isolation.
+type fakeLocalizedFieldProviderActorProvider struct {
+	providers.ActorProvider
+	fields map[string]string
+}
+
+func (f *fakeLocalizedFieldProviderActorProvider) ResolveLocalizedFields(
+	_ context.Context, _ string, _ []string, _ string,
+) map[string]string {
+	return f.fields
+}
+
+func (suite *FlowMetaServiceTestSuite) newServiceWithResolver(
+	fields map[string]string,
+) FlowMetaServiceInterface {
+	baseProvider := actorprovider.Initialize(suite.mockInboundClient, suite.mockEntityProvider, noopAuthnMgr(), nil)
+	resolverProvider := &fakeLocalizedFieldProviderActorProvider{ActorProvider: baseProvider, fields: fields}
+	return newFlowMetaService(resolverProvider, suite.mockOUService, suite.mockDesignResolve, suite.mockI18nService)
+}
+
+func (suite *FlowMetaServiceTestSuite) TestGetFlowMetadata_LocalizedApplicationName_ResolvesViaProvider() {
+	appID := testAppID
+	ouID := testOUID
+	language := "hi"
+
+	suite.expectInboundLookup(appID, "Acme", true, nil)
+	suite.mockOUService.On("GetOrganizationUnitList", mock.Anything, 1, 0, mock.Anything).Return(
+		&providers.OrganizationUnitListResponse{
+			TotalResults:      1,
+			OrganizationUnits: []providers.OrganizationUnitBasic{{ID: ouID, Handle: "default", Name: "Default OU"}},
+		}, nil)
+	suite.mockOUService.On("GetOrganizationUnit", mock.Anything, ouID).
+		Return(providers.OrganizationUnit{ID: ouID, Handle: "default", Name: "Default OU"}, nil)
+	suite.mockDesignResolve.On("ResolveDesign", mock.Anything, providers.DesignResolveTypeAPP, appID).
+		Return(&providers.DesignResponse{Theme: json.RawMessage(`{}`), Layout: json.RawMessage(`{}`)}, nil)
+	suite.mockI18nService.On("ResolveTranslations", mock.Anything, language, "").Return(
+		&providers.LanguageTranslationsResponse{Language: language, Translations: map[string]map[string]string{}}, nil)
+	suite.mockI18nService.On("ListLanguages", mock.Anything).Return([]string{"en", "hi"}, nil)
+
+	service := suite.newServiceWithResolver(map[string]string{"name": "एक्मे"})
+	result, svcErr := service.GetFlowMetadata(suite.ctx, MetaTypeAPP, appID, &language, nil)
+
+	assert.Nil(suite.T(), svcErr)
+	assert.Equal(suite.T(), "एक्मे", result.I18n.Translations["custom"]["app."+appID+".name"])
+	assert.Equal(suite.T(), 1, result.I18n.TotalResults)
+}
+
+func (suite *FlowMetaServiceTestSuite) TestGetFlowMetadata_LocalizedApplicationName_NoOpWhenNothingResolved() {
+	appID := testAppID
+	ouID := testOUID
+	language := "hi"
+
+	suite.expectInboundLookup(appID, "Acme", true, nil)
+	suite.mockOUService.On("GetOrganizationUnitList", mock.Anything, 1, 0, mock.Anything).Return(
+		&providers.OrganizationUnitListResponse{
+			TotalResults:      1,
+			OrganizationUnits: []providers.OrganizationUnitBasic{{ID: ouID, Handle: "default", Name: "Default OU"}},
+		}, nil)
+	suite.mockOUService.On("GetOrganizationUnit", mock.Anything, ouID).
+		Return(providers.OrganizationUnit{ID: ouID, Handle: "default", Name: "Default OU"}, nil)
+	suite.mockDesignResolve.On("ResolveDesign", mock.Anything, providers.DesignResolveTypeAPP, appID).
+		Return(&providers.DesignResponse{Theme: json.RawMessage(`{}`), Layout: json.RawMessage(`{}`)}, nil)
+	suite.mockI18nService.On("ResolveTranslations", mock.Anything, language, "").Return(
+		&providers.LanguageTranslationsResponse{Language: language, Translations: map[string]map[string]string{}}, nil)
+	suite.mockI18nService.On("ListLanguages", mock.Anything).Return([]string{"en", "hi"}, nil)
+
+	// No lang map on the client: resolver returns an empty map, nothing gets injected.
+	service := suite.newServiceWithResolver(map[string]string{})
+	result, svcErr := service.GetFlowMetadata(suite.ctx, MetaTypeAPP, appID, &language, nil)
+
+	assert.Nil(suite.T(), svcErr)
+	assert.Empty(suite.T(), result.I18n.Translations["custom"])
+	assert.Equal(suite.T(), 0, result.I18n.TotalResults)
+}
+
 // noopAuthnMgr returns an authentication-provider mock with no expectations, for tests that
 // build a real actor provider but never exercise actor authentication.
 func noopAuthnMgr() *managermock.AuthnProviderManagerMock {
