@@ -4,6 +4,7 @@
 package entityprovider
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/thunder-id/thunderid/pkg/thunderidengine/providers"
@@ -22,11 +23,11 @@ type EntityProviderInterface interface {
 	GetLinkedEntities(idpID, sub string) ([]*providers.Entity, *EntityProviderError)
 
 	// GetEntity retrieves an entity by ID. Credentials are never returned.
-	GetEntity(entityID string) (*providers.Entity, *EntityProviderError)
+	GetEntity(ctx context.Context, entityID string) (*providers.Entity, *EntityProviderError)
 
 	// GetEntityProfile retrieves an entity's profile by ID, without its runtime state. State is empty.
 	// Use it whenever the caller does not need the entity's status.
-	GetEntityProfile(entityID string) (*providers.Entity, *EntityProviderError)
+	GetEntityProfile(ctx context.Context, entityID string) (*providers.Entity, *EntityProviderError)
 
 	// UpdateEntity updates an existing entity's core fields. The entity's state is not written.
 	UpdateEntity(entityID string, entity *providers.Entity) (*providers.Entity, *EntityProviderError)
@@ -51,10 +52,10 @@ type EntityProviderInterface interface {
 		credentials json.RawMessage) *EntityProviderError
 
 	// GetTransitiveEntityGroups retrieves all groups an entity belongs to, including inherited groups.
-	GetTransitiveEntityGroups(entityID string) ([]providers.EntityGroup, *EntityProviderError)
+	GetTransitiveEntityGroups(ctx context.Context, entityID string) ([]providers.EntityGroup, *EntityProviderError)
 
 	// GetTransitiveGroupAncestors resolves the ancestor chain of a single group.
-	GetTransitiveGroupAncestors(groupID string) ([]string, *EntityProviderError)
+	GetTransitiveGroupAncestors(ctx context.Context, groupID string) ([]string, *EntityProviderError)
 
 	// ValidateEntityIDs validates that the given entity IDs exist. Returns IDs that are invalid.
 	ValidateEntityIDs(entityIDs []string) ([]string, *EntityProviderError)

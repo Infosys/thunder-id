@@ -1033,7 +1033,7 @@ func (suite *IdentifyingExecutorTestSuite) TestIdentifyEntity_WithEntityID_Succe
 	filters := map[string]interface{}{userAttributeUserID: entityID}
 	execResp := &providers.ExecutorResponse{RuntimeData: make(map[string]string)}
 
-	suite.mockEntityProvider.On("GetEntityProfile", entityID).
+	suite.mockEntityProvider.On("GetEntityProfile", mock.Anything, entityID).
 		Return(&providers.Entity{ID: entityID}, nil)
 
 	result, err := suite.executor.IdentifyEntity(context.Background(), filters, execResp, entitytype.TypeCategoryUser)
@@ -1048,7 +1048,7 @@ func (suite *IdentifyingExecutorTestSuite) TestIdentifyEntity_WithEntityID_NotFo
 	filters := map[string]interface{}{userAttributeUserID: "missing-id"}
 	execResp := &providers.ExecutorResponse{RuntimeData: make(map[string]string)}
 
-	suite.mockEntityProvider.On("GetEntityProfile", "missing-id").
+	suite.mockEntityProvider.On("GetEntityProfile", mock.Anything, "missing-id").
 		Return(nil, entityprovider.NewEntityProviderError(entityprovider.ErrorCodeEntityNotFound, "", ""))
 
 	result, err := suite.executor.IdentifyEntity(context.Background(), filters, execResp, entitytype.TypeCategoryUser)
@@ -1064,7 +1064,7 @@ func (suite *IdentifyingExecutorTestSuite) TestIdentifyEntity_WithEntityID_Syste
 	filters := map[string]interface{}{userAttributeUserID: testUserID}
 	execResp := &providers.ExecutorResponse{RuntimeData: make(map[string]string)}
 
-	suite.mockEntityProvider.On("GetEntityProfile", testUserID).
+	suite.mockEntityProvider.On("GetEntityProfile", mock.Anything, testUserID).
 		Return(nil, entityprovider.NewEntityProviderError(entityprovider.ErrorCodeSystemError, "", ""))
 
 	result, err := suite.executor.IdentifyEntity(context.Background(), filters, execResp, entitytype.TypeCategoryUser)

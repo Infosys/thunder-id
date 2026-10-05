@@ -84,7 +84,7 @@ func (i *identifyingExecutor) IdentifyEntity(ctx context.Context, filters map[st
 	logger.Debug(ctx, "Identifying entity with filters")
 
 	if entityID, ok := filters[userAttributeUserID].(string); ok && entityID != "" {
-		entity, epErr := i.entityProvider.GetEntityProfile(entityID)
+		entity, epErr := i.entityProvider.GetEntityProfile(ctx, entityID)
 		if epErr != nil {
 			if epErr.Code == entityprovider.ErrorCodeEntityNotFound {
 				execResp.Error = errForEntityCategory(ErrEntityNotFound, category)

@@ -4,6 +4,7 @@
 package entityprovider
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"testing"
@@ -92,7 +93,7 @@ func (suite *DefaultEntityProviderTestSuite) TestGetEntity() {
 	// Test Success
 	suite.mockService.On("GetEntity", mock.Anything, testEntityID).Return(expected, nil).Once()
 
-	e, err := suite.provider.GetEntity(testEntityID)
+	e, err := suite.provider.GetEntity(context.Background(), testEntityID)
 	suite.Nil(err)
 	suite.Equal(testEntityID, e.ID)
 	suite.Equal(providers.EntityCategory("user"), e.Category)
@@ -101,7 +102,7 @@ func (suite *DefaultEntityProviderTestSuite) TestGetEntity() {
 	suite.mockService.On("GetEntity", mock.Anything, testEntityID).
 		Return(nil, entity.ErrEntityNotFound).Once()
 
-	e, err = suite.provider.GetEntity(testEntityID)
+	e, err = suite.provider.GetEntity(context.Background(), testEntityID)
 	suite.Nil(e)
 	suite.NotNil(err)
 	suite.Equal(ErrorCodeEntityNotFound, err.Code)
@@ -117,7 +118,7 @@ func (suite *DefaultEntityProviderTestSuite) TestGetEntityProfile() {
 
 	suite.mockService.On("GetEntityProfile", mock.Anything, testEntityID).Return(expected, nil).Once()
 
-	e, err := suite.provider.GetEntityProfile(testEntityID)
+	e, err := suite.provider.GetEntityProfile(context.Background(), testEntityID)
 	suite.Nil(err)
 	suite.Equal(testEntityID, e.ID)
 	suite.Equal(providers.EntityCategory("user"), e.Category)
@@ -126,7 +127,7 @@ func (suite *DefaultEntityProviderTestSuite) TestGetEntityProfile() {
 	suite.mockService.On("GetEntityProfile", mock.Anything, testEntityID).
 		Return(nil, entity.ErrEntityNotFound).Once()
 
-	e, err = suite.provider.GetEntityProfile(testEntityID)
+	e, err = suite.provider.GetEntityProfile(context.Background(), testEntityID)
 	suite.Nil(e)
 	suite.NotNil(err)
 	suite.Equal(ErrorCodeEntityNotFound, err.Code)
@@ -338,7 +339,7 @@ func (suite *DefaultEntityProviderTestSuite) TestGetTransitiveEntityGroups() {
 	suite.mockService.On("GetTransitiveEntityGroups", mock.Anything, testEntityID).
 		Return(groups, nil).Once()
 
-	result, err := suite.provider.GetTransitiveEntityGroups(testEntityID)
+	result, err := suite.provider.GetTransitiveEntityGroups(context.Background(), testEntityID)
 	suite.Nil(err)
 	suite.Len(result, 2)
 	suite.Equal("g1", result[0].ID)
@@ -347,7 +348,7 @@ func (suite *DefaultEntityProviderTestSuite) TestGetTransitiveEntityGroups() {
 	suite.mockService.On("GetTransitiveEntityGroups", mock.Anything, testEntityID).
 		Return(nil, entity.ErrEntityNotFound).Once()
 
-	result, err = suite.provider.GetTransitiveEntityGroups(testEntityID)
+	result, err = suite.provider.GetTransitiveEntityGroups(context.Background(), testEntityID)
 	suite.Nil(result)
 	suite.NotNil(err)
 	suite.Equal(ErrorCodeEntityNotFound, err.Code)
@@ -356,7 +357,7 @@ func (suite *DefaultEntityProviderTestSuite) TestGetTransitiveEntityGroups() {
 	suite.mockService.On("GetTransitiveEntityGroups", mock.Anything, testEntityID).
 		Return(nil, errors.New("db error")).Once()
 
-	result, err = suite.provider.GetTransitiveEntityGroups(testEntityID)
+	result, err = suite.provider.GetTransitiveEntityGroups(context.Background(), testEntityID)
 	suite.Nil(result)
 	suite.NotNil(err)
 	suite.Equal(ErrorCodeSystemError, err.Code)
